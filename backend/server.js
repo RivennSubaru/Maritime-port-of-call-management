@@ -4,6 +4,7 @@ const dotenv = require('dotenv');
 const db = require('./config/db');
 
 const userRoutes = require('./routes/users.routes');
+const quaiRoutes = require("./routes/quais.routes");
 
 dotenv.config();
 
@@ -16,6 +17,8 @@ app.use(express.json());
 
 // ROUTES
 app.use("/user", userRoutes);
+app.use("/quai", quaiRoutes);
+
 
 const PORT = process.env.PORT || 8081;
 
