@@ -5,8 +5,8 @@ const db = require('../config/db');
 const addQuai = asyncHandler(async (req, res) => {
     const {nomQuai, emplacementQuai, profondeurQuai, longueurQuai} = req.body;
 
-    const sql = "INSERT INTO quais(nomQuai, emplacementQuai, profondeurQuai, longueursQuai) VALUES(?, ?, ?, ?)";
-    const values = [nomQuai, emplacementQuai, profondeurQuai, longueurQuai];
+    const sql = "INSERT INTO quais(nomQuai, emplacementQuai, profondeurQuai, longueursQuai, longueurDispo, statutQuai) VALUES(?, ?, ?, ?, ?, ?)";
+    const values = [nomQuai, emplacementQuai, profondeurQuai, longueurQuai, longueurQuai, 1];
 
     db.query(sql, values, (err, data) => {
         if (err) {

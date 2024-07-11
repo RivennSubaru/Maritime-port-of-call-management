@@ -16,6 +16,7 @@ import About from './pages/About.jsx'
 import FormEscale from './pages/Formulaire/FormEscale.jsx'
 import FormNavire from './pages/Formulaire/FormNavire.jsx'
 import FormQuai from './pages/Formulaire/FormQuai.jsx'
+import Quai from './component/Quai.jsx'
 
 const queryClient = new QueryClient();
 
@@ -28,12 +29,12 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <Route path='/' element={<App />}>
             <Route index element={<TableauBord/>}/>
 
-            <Route path='tableauBord' element={<TableauBord/>}/>
-            <Route path='escale' element={<ListeEscale/>}/>
-            <Route path='quai' element={<ListeQuai/>}/>
-            <Route path='navire' element={<ListeNavire/>}/>
-            <Route path='stat' element={<Statistique/>}/>
-            <Route path='about' element={<About/>}/>
+            <Route path='/tableauBord' element={<TableauBord/>}/>
+            <Route path='/escale' element={<ListeEscale/>}/>
+            <Route path='/quai' element={<ListeQuai/>}/>
+            <Route path='/navire' element={<ListeNavire/>}/>
+            <Route path='/stat' element={<Statistique/>}/>
+            <Route path='/about' element={<About/>}/>
           </Route>
           
           <Route path='/inscription' element={<Inscription/>}/>
@@ -41,6 +42,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <Route path='/form/escale' element={<FormEscale/>}/>
           <Route path='/form/navire' element={<FormNavire/>}/>
           <Route path='/form/quai' element={<FormQuai/>}/>
+          
+          <Route path='/test/quai' element={<Quai/>}/>
         </Routes>
       </BrowserRouter>
     </QueryClientProvider>
