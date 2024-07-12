@@ -122,13 +122,6 @@ const FormQuai = () => {
                     >
                         Ajouter
                     </Button>
-                    {/* <Grid container justifyContent="flex-end">
-                        <Grid item>
-                            <Link href="/connexion" variant="body2">
-                            Vous avez déja un compte? Se connecter
-                            </Link>
-                        </Grid>
-                    </Grid> */}
                 </Box>
             </Box>
         </Container>

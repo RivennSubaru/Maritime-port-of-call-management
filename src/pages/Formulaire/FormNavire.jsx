@@ -13,30 +13,99 @@ import { useForm, Controller } from 'react-hook-form';
 import axios from 'axios';
 import { useState } from 'react';
 import { toast } from 'react-hot-toast';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
+
+
+// Recupération de la liste de type de navire
+const fetchTypes = async () => {
+    const reponse = await axios.get("http://localhost:8081/type/getAll");
+    return reponse.data;
+}
+// Recupération de la liste des navigateurs
+const fetchNavigator = async () => {
+    const reponse = await axios.get("http://localhost:8081/navigateur/getAll");
+    return reponse.data;
+}
 
 const FormNavire = () => {
+
+    // Useform gestion du formulaire
     const { handleSubmit, control, setValue, reset, watch, formState: { errors } } = useForm();
 
-    const [type, setType] = useState('');
-    const [navigName, setNavigName] = useState('');
-    const [isNewNavigator, setIsNewNavigator] = useState('non');
+    const [type, setType] = useState(''); /* type */
+    const [navigName, setNavigName] = useState(''); /* Nom navigateur */
+    const [isNewNavigator, setIsNewNavigator] = useState('non'); /* formulaire navigateur */
 
+    const navigateTo = useNavigate();
+
+    // Usequery pour fetch les listes
+    const fetchQuery = (fetchData, key) => {
+
+        const {isPending, isError, data = [], error} = useQuery({
+            queryKey: [key],
+            queryFn: fetchData,
+        });
+
+        return {isPending, isError, data, error}
+    }
+
+    // Afficher la liste des type dans la liste déroulante
+    const afficheListeTypes = () => {
+
+        const {isPending, isError, data: types} = fetchQuery(fetchTypes, "types")
+
+        if (isPending) {
+            return [<MenuItem key="loading" value="" disabled>Chargement...</MenuItem>];
+        }
+    
+        if (isError) {
+            return [<MenuItem key="error" value="" disabled>Erreur de chargement</MenuItem>];
+        }
+    
+        return types.map((type) => (
+            <MenuItem key={type.idType} value={type.idType}>{type.labelType}</MenuItem>
+        ));
+    };
+    // Afficher la liste des navigateurs
+    const afficheListeNavigateurs = () => {
+
+        const {isPending, isError, data: navigateurs} = fetchQuery(fetchNavigator, "navigateurs")
+
+        if (isPending) {
+            return [<MenuItem key="loading" value="" disabled>Chargement...</MenuItem>];
+        }
+    
+        if (isError) {
+            return [<MenuItem key="error" value="" disabled>Erreur de chargement</MenuItem>];
+        }
+    
+        return navigateurs.map((navigateur) => (
+            <MenuItem key={navigateur.idNavigateur} value={navigateur.idNavigateur}>{navigateur.nomNavigateur + ' ' + navigateur.prenomNavigateur}</MenuItem>
+        ));
+    };
+
+
+    // Changement dynamique de l'idType du navire en fonction du labelType
     const handleNavireChange = (event) => {
         setType(event.target.value);
         setValue('type', event.target.value);
         setValue('idType', event.target.value);
     };
 
+    // Changement dynamique de l'idNavigateur en fonction du nom du navigateur
     const handleNavigateurChange = (event) => {
         setNavigName(event.target.value);
         setValue('navigName', event.target.value);
         setValue('idNavig', event.target.value);
     };
 
+    // Gestion de l'affichage de la formulaire spéciale navigateur
     const handleRadioChange = (event) => {
         setIsNewNavigator(event.target.value);
     };
+
+
 
     // Envoie de donnée au serveur
     const mutation = useMutation({
@@ -67,6 +136,7 @@ const FormNavire = () => {
         }
     })
 
+    // lors de la soumissions du formulaire
     const onSubmit = async (data) => {
         const toastId = toast.loading("Chargement...");
 
@@ -104,12 +174,13 @@ const FormNavire = () => {
             toast.error("Une erreur est survenu", { id: toastId });
 
         }
-        /* toast.success("Navire et navigateur ajoutés", { id: toastId }); */
 
         reset();
         setType('');
         setNavigName('');
-        setIsNewNavigator('non')
+        setIsNewNavigator('non');
+        
+        navigateTo("/form/navire");
     };
 
     return (
@@ -130,6 +201,8 @@ const FormNavire = () => {
                                 control={control}
                                 defaultValue=""
                                 rules={{ required: "Ce champ est requis" }}
+
+                                // render pour passer les attributs de gest form (onChange...) dans le composant TextField
                                 render={({ field }) => (
                                     <TextField
                                         {...field}
@@ -203,9 +276,12 @@ const FormNavire = () => {
                                             error={!!errors.type}
                                             helperText={errors.type ? errors.type.message : ""}
                                         >
-                                            <MenuItem value={0}>Conteneur</MenuItem>
-                                            <MenuItem value={1}>Matière première</MenuItem>
-                                            <MenuItem value={2}>Passager</MenuItem>
+                                            
+                                            {
+                                                /* Affichages de la liste des types */
+                                                afficheListeTypes() 
+                                            }
+
                                         </Select>
                                     )}
                                 />
@@ -271,6 +347,8 @@ const FormNavire = () => {
                                 <FormControlLabel value="oui" control={<Radio />} label="Oui" />
                             </RadioGroup>
                         </Grid>
+
+
                         {isNewNavigator === 'non' && (
                             <Grid item xs={12} gap={2} sx={{ display: "flex", alignItems: "flex-end", flexDirection: "row-reverse" }}>
                                 <Grid item xs={1.7} sm={1.7}>
@@ -312,9 +390,12 @@ const FormNavire = () => {
                                                 error={!!errors.navigName}
                                                 helperText={errors.navigName ? errors.navigName.message : ""}
                                             >
-                                                <MenuItem value={0}>Mrs Bob</MenuItem>
-                                                <MenuItem value={1}>Mrs Kristopher</MenuItem>
-                                                <MenuItem value={2}>Mrs Boto</MenuItem>
+                                                
+                                                {
+                                                    // Affichage de la liste des navigateurs
+                                                    afficheListeNavigateurs()
+                                                }
+
                                             </Select>
                                         )}
                                     />

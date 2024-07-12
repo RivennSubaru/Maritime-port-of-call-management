@@ -17,4 +17,14 @@ const addNavigateur = asyncHandler(async (req, res) => {
     })
 })
 
-module.exports = {addNavigateur};
+// GET ALL NAVIGATEUR
+const getAllNavigateur = asyncHandler(async (req, res) => {
+    const sql = "SELECT * FROM navigateurs";
+
+    db.query(sql, (err, data) => {
+        if (err) res.status(500).send({error: err.message});
+        res.status(201).send(data);
+    })
+})
+
+module.exports = {addNavigateur, getAllNavigateur};
