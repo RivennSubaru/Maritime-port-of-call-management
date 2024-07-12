@@ -12,9 +12,11 @@ import { FormControlLabel, FormLabel, MenuItem, Radio, RadioGroup, Select, Input
 import { useForm, Controller } from 'react-hook-form';
 import axios from 'axios';
 import { useState } from 'react';
+import { toast } from 'react-hot-toast';
+import { useMutation } from '@tanstack/react-query';
 
 const FormNavire = () => {
-    const { handleSubmit, control, setValue, reset, watch } = useForm();
+    const { handleSubmit, control, setValue, reset, watch, formState: { errors } } = useForm();
 
     const [type, setType] = useState('');
     const [navigName, setNavigName] = useState('');
@@ -36,20 +38,73 @@ const FormNavire = () => {
         setIsNewNavigator(event.target.value);
     };
 
-    const onSubmit = (data) => {
-        if (data.idNavig != "") {
-            const {nomNav, numNav, idType, tirantEau, longueur, idNavig} = data;
-            const navire = {nomNav, numNav, idType, tirantEau, longueur, idNavig};
+    // Envoie de donnée au serveur
+    const mutation = useMutation({
+        mutationFn: async (data) => {
+            if (data.idNavig) {
+                await axios.post("http://localhost:8081/navire/add", data);
+                /* console.log("navire fotsiny") */
 
-            console.log(navire);
-        } else {
-            const {nomNav, numNav, idType, tirantEau, longueur, nomNavigateur, prenomNavigateur, telNavigateur, emailNavigateur} = data;
+            } else if (data.nomNavigateur){
+                await axios.post("http://localhost:8081/navigateur/add", data);
+                /* console.log("navigateur puis...") */
 
-            const navire = {nomNav, numNav, idType, tirantEau, longueur};
-            const navigateur = {nomNavigateur, prenomNavigateur, telNavigateur, emailNavigateur};
-
-            console.log({...navire, ...navigateur});
+            } else {
+                await axios.post("http://localhost:8081/navire/addSousRequete", data);
+                /* console.log("enfin navire"); */
+            }
+        },
+        onError: (error) => {
+            setTimeout(() => {
+                toast(
+                    "Il semble que vous rencontriez un probleme.\n\n Le probleme peut venir soit de la connexion au serveur soit de la base de donnée ou une mauvaise connexion.\nVeuillez réessayer plus tard.",
+                    {
+                      duration: 12000,
+                    }
+                );
+            }, 1000);
+            console.log(error);
         }
+    })
+
+    const onSubmit = async (data) => {
+        const toastId = toast.loading("Chargement...");
+
+        try {
+
+            if (data.idNavig != "") {
+                const {nomNav, numNav, idType, tirantEau, longueur, idNavig} = data;
+                const navire = {nomNav, numNav, idType, tirantEau, longueur, idNavig};
+    
+                toast.loading("Enregistrement du navire...", { id: toastId });
+    
+                await new Promise((resolve) => setTimeout(resolve, 2000));
+    
+                await mutation.mutateAsync(navire);
+    
+            } else {
+
+                const {nomNav, numNav, idType, tirantEau, longueur, nomNavigateur, prenomNavigateur, telNavigateur, emailNavigateur} = await data;
+    
+                const navigateur = {nomNavigateur, prenomNavigateur, telNavigateur, emailNavigateur};
+                const navire = {nomNav, numNav, idType, tirantEau, longueur, telNavigateur};
+    
+                toast.loading("Enregistrement du navigateur...", { id: toastId });
+                /* await new Promise((resolve) => setTimeout(resolve, 2000)); */
+                await mutation.mutateAsync(navigateur);
+
+                toast.loading("Enregistrement du navire...", { id: toastId });
+                /* await new Promise((resolve) => setTimeout(resolve, 2000)); */
+                await mutation.mutateAsync(navire);
+            }
+            
+            toast.success("Ajouté", { id: toastId })
+
+        } catch (error) {
+            toast.error("Une erreur est survenu", { id: toastId });
+
+        }
+        /* toast.success("Navire et navigateur ajoutés", { id: toastId }); */
 
         reset();
         setType('');
@@ -74,6 +129,7 @@ const FormNavire = () => {
                                 name="nomNav"
                                 control={control}
                                 defaultValue=""
+                                rules={{ required: "Ce champ est requis" }}
                                 render={({ field }) => (
                                     <TextField
                                         {...field}
@@ -82,6 +138,8 @@ const FormNavire = () => {
                                         autoFocus
                                         id="nomNav"
                                         label="Nom du navire"
+                                        error={!!errors.nomNav}
+                                        helperText={errors.nomNav ? errors.nomNav.message : ""}
                                     />
                                 )}
                             />
@@ -91,13 +149,16 @@ const FormNavire = () => {
                                 name="numNav"
                                 control={control}
                                 defaultValue=""
+                                rules={{ required: "Ce champ est requis" }}
                                 render={({ field }) => (
                                     <TextField
                                         {...field}
                                         required
                                         fullWidth
                                         id="numNav"
-                                        label="Numeros du navire"
+                                        label="Numéros du navire"
+                                        error={!!errors.numNav}
+                                        helperText={errors.numNav ? errors.numNav.message : ""}
                                     />
                                 )}
                             />
@@ -108,6 +169,7 @@ const FormNavire = () => {
                                     name="idType"
                                     control={control}
                                     defaultValue=""
+                                    rules={{ required: "Ce champ est requis" }}
                                     render={({ field }) => (
                                         <TextField
                                             {...field}
@@ -118,6 +180,7 @@ const FormNavire = () => {
                                             label="ID"
                                             value={type}
                                             disabled
+                                            error={!!errors.idType}
                                         />
                                     )}
                                 />
@@ -128,6 +191,7 @@ const FormNavire = () => {
                                     name="type"
                                     control={control}
                                     defaultValue=""
+                                    rules={{ required: "Ce champ est requis" }}
                                     render={({ field }) => (
                                         <Select
                                             {...field}
@@ -136,6 +200,8 @@ const FormNavire = () => {
                                             label="Type navire"
                                             onChange={handleNavireChange}
                                             fullWidth
+                                            error={!!errors.type}
+                                            helperText={errors.type ? errors.type.message : ""}
                                         >
                                             <MenuItem value={0}>Conteneur</MenuItem>
                                             <MenuItem value={1}>Matière première</MenuItem>
@@ -150,6 +216,7 @@ const FormNavire = () => {
                                 name="tirantEau"
                                 control={control}
                                 defaultValue=""
+                                rules={{ required: "Ce champ est requis" }}
                                 render={({ field }) => (
                                     <TextField
                                         {...field}
@@ -159,6 +226,8 @@ const FormNavire = () => {
                                         id="tirantEau"
                                         type='number'
                                         label="Tirant d'eau (m)"
+                                        error={!!errors.tirantEau}
+                                        helperText={errors.tirantEau ? errors.tirantEau.message : ""}
                                     />
                                 )}
                             />
@@ -168,6 +237,7 @@ const FormNavire = () => {
                                 name="longueur"
                                 control={control}
                                 defaultValue=""
+                                rules={{ required: "Ce champ est requis" }}
                                 render={({ field }) => (
                                     <TextField
                                         {...field}
@@ -177,6 +247,8 @@ const FormNavire = () => {
                                         id="longueur"
                                         type="number"
                                         label="Longueur du navire (m)"
+                                        error={!!errors.longueur}
+                                        helperText={errors.longueur ? errors.longueur.message : ""}
                                     />
                                 )}
                             />
@@ -206,6 +278,7 @@ const FormNavire = () => {
                                         name="idNavig"
                                         control={control}
                                         defaultValue=""
+                                        rules={{ required: "Ce champ est requis" }}
                                         render={({ field }) => (
                                             <TextField
                                                 {...field}
@@ -216,6 +289,7 @@ const FormNavire = () => {
                                                 label="ID"
                                                 value={navigName}
                                                 disabled
+                                                error={!!errors.idNavig}
                                             />
                                         )}
                                     />
@@ -226,6 +300,7 @@ const FormNavire = () => {
                                         name="navigName"
                                         control={control}
                                         defaultValue=""
+                                        rules={{ required: "Ce champ est requis" }}
                                         render={({ field }) => (
                                             <Select
                                                 {...field}
@@ -234,6 +309,8 @@ const FormNavire = () => {
                                                 label="Nom navigateur"
                                                 onChange={handleNavigateurChange}
                                                 fullWidth
+                                                error={!!errors.navigName}
+                                                helperText={errors.navigName ? errors.navigName.message : ""}
                                             >
                                                 <MenuItem value={0}>Mrs Bob</MenuItem>
                                                 <MenuItem value={1}>Mrs Kristopher</MenuItem>
@@ -244,13 +321,18 @@ const FormNavire = () => {
                                 </Grid>
                             </Grid>
                         )}
+
+                        {/* S'IL S'AGIT D'UN NOUVEAU NAVIGATEUR */}
+
                         {isNewNavigator === 'oui' && (
+
                             <Grid item gap={2} sx={{ display: "flex", flexWrap: "wrap" }}>
                                 <Grid item xs={12} sm={5.75}>
                                     <Controller
                                         name="nomNavigateur"
                                         control={control}
                                         defaultValue=""
+                                        rules={{ required: "Ce champ est requis" }}
                                         render={({ field }) => (
                                             <TextField
                                                 {...field}
@@ -259,6 +341,8 @@ const FormNavire = () => {
                                                 autoFocus
                                                 id="nomNavigateur"
                                                 label="Nom du navigateur"
+                                                error={!!errors.nomNavigateur}
+                                                helperText={errors.nomNavigateur ? errors.nomNavigateur.message : ""}
                                             />
                                         )}
                                     />
@@ -268,6 +352,7 @@ const FormNavire = () => {
                                         name="prenomNavigateur"
                                         control={control}
                                         defaultValue=""
+                                        rules={{ required: "Ce champ est requis" }}
                                         render={({ field }) => (
                                             <TextField
                                                 {...field}
@@ -275,6 +360,8 @@ const FormNavire = () => {
                                                 fullWidth
                                                 id="prenomNavigateur"
                                                 label="Prénom du navigateur"
+                                                error={!!errors.prenomNavigateur}
+                                                helperText={errors.prenomNavigateur ? errors.prenomNavigateur.message : ""}
                                             />
                                         )}
                                     />
@@ -284,6 +371,13 @@ const FormNavire = () => {
                                         name="telNavigateur"
                                         control={control}
                                         defaultValue=""
+                                        rules={{ 
+                                                required: "Ce champ est requis",
+                                                pattern: {
+                                                    value: /^(\+\d{1,3}[- ]?)?\d{10}$/,
+                                                    message: "Format incorrect"
+                                                }
+                                            }}
                                         render={({ field }) => (
                                             <TextField
                                                 {...field}
@@ -291,6 +385,8 @@ const FormNavire = () => {
                                                 fullWidth
                                                 id="telNavigateur"
                                                 label="Téléphone du navigateur"
+                                                error={!!errors.telNavigateur}
+                                                helperText={errors.telNavigateur ? errors.telNavigateur.message : ""}
                                             />
                                         )}
                                     />
@@ -300,6 +396,7 @@ const FormNavire = () => {
                                         name="emailNavigateur"
                                         control={control}
                                         defaultValue=""
+                                        rules={{ required: "Ce champ est requis" }}
                                         render={({ field }) => (
                                             <TextField
                                                 {...field}
@@ -308,6 +405,8 @@ const FormNavire = () => {
                                                 id="emailNavigateur"
                                                 label="Adresse email du navigateur"
                                                 type="email"
+                                                error={!!errors.emailNavigateur}
+                                                helperText={errors.emailNavigateur ? errors.emailNavigateur.message : ""}
                                             />
                                         )}
                                     />
