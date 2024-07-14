@@ -15,6 +15,16 @@ const addQuai = asyncHandler(async (req, res) => {
         }
         res.status(201).send({message: "Quai ajouté"});
     })
+});
+
+// GET ALL QUAI
+const getAllQuai = asyncHandler(async (req, res) => {
+    const sql = "SELECT nomQuai, labelType AS type, emplacementQuai, profondeurQuai, longueurDispo FROM quais JOIN types ON quais.idTypeQuai = types.idType";
+
+    db.query(sql, (err, data) => {
+        if (err) res.status(500).send({error: err.message});
+        res.status(201).send(data);
+    })
 })
 
-module.exports = {addQuai};
+module.exports = {addQuai, getAllQuai};
