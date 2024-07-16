@@ -1,11 +1,13 @@
 const express = require("express");
-const {addNavire, addNavireSousRequete} = require("../controllers/navires.controller");
+const {addNavire, addNavireSousRequete, getAllNavires} = require("../controllers/navires.controller");
 
 const router = express.Router();
 
 // POST
-// Add Navire
 router.post("/add", addNavire);
 router.post("/addSousRequete", addNavireSousRequete);
+
+// GET
+router.post("/getAll", getAllNavires);
 
 module.exports = router;

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState } from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -11,27 +12,16 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import Button from '@mui/material/Button';
-import { useState } from 'react';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import FormQuai from '../pages/Formulaire/FormQuai';
 import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { DialogContentText } from '@mui/material';
 
-// variable
-const columns = [
-    { width: 150, label: 'Nom', dataKey: 'nom' },
-    { width: 150, label: 'Type', dataKey: 'type' },
-    { width: 150, label: 'Emplacement', dataKey: 'emplacementQuai' },
-    { width: 150, label: 'Profondeur (m)', dataKey: 'profondeurQuai', numeric: true },
-    { width: 200, label: 'Longueur Disponible (m)', dataKey: 'longueurDispo', numeric: true },
-    { width: 150, label: 'Actions', dataKey: 'action' }
-];
-
+// Components
 const VirtuosoTableComponents = {
     Scroller: React.forwardRef((props, ref) => (
         <TableContainer component={Paper} {...props} ref={ref} />
@@ -44,8 +34,7 @@ const VirtuosoTableComponents = {
     TableBody: React.forwardRef((props, ref) => <TableBody {...props} ref={ref} />),
 };
 
-function fixedHeaderContent() {
-
+function fixedHeaderContent(columns) {
     return (
         <TableRow>
             {columns.map((column) => (
@@ -63,7 +52,7 @@ function fixedHeaderContent() {
     );
 }
 
-function rowContent(_index, row, onEdit, onDelete) {
+function rowContent(_index, row, columns, onEdit, onDelete) {
     return (
         <React.Fragment>
         {columns.map((column) => {
@@ -90,7 +79,7 @@ function rowContent(_index, row, onEdit, onDelete) {
     );
 }
 
-const AfficheListeQuais = () => {
+const AfficheListe = ({ columns, apiUrl, FormComponent }) => {
     const [selectedRow, setSelectedRow] = useState(null);
     const [openEditDialog, setOpenEditDialog] = useState(false);
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
@@ -98,29 +87,33 @@ const AfficheListeQuais = () => {
     // Pour actualiser automatiquement la liste
     const queryClient = useQueryClient();
 
+    // Recuperer la liste depuis le serveur
     const fetchData = async () => {
-        const reponse = await axios.get("http://localhost:8081/quai/getAll");
-        return reponse.data;
+        const response = await axios.get(apiUrl);
+        return response.data;
     }
 
-    const {isPending, isError, data = [], error} = useQuery({
-        queryKey: ["quais"],
+    // Stocker la liste dans une variable, et utiliser isLoading etc...
+    const { isLoading, isError, data = [], error } = useQuery({
+        queryKey: [apiUrl],
         queryFn: fetchData
     });
 
+    // Gestion de la suppression
     const deleteMutation = useMutation({
         mutationFn: async (id) => {
-            await axios.delete(`http://localhost:8081/quai/${id}`);
+            await axios.delete(`${apiUrl}/${id}`);
         },
         onSuccess: () => {
             // Recharger la liste apres ajout ou modification
-            queryClient.invalidateQueries("quais");
+            queryClient.invalidateQueries([apiUrl]);
         },
         onError: (error) => {
             console.log(error);
         }
-    })
+    });
 
+    // Gestion de la modification
     const handleEdit = (row) => {
         setSelectedRow(row);
         setOpenEditDialog(true);
@@ -129,27 +122,27 @@ const AfficheListeQuais = () => {
     const handleDelete = (row) => {
         setSelectedRow(row);
         setOpenDeleteDialog(true);
-      };
-    
+    };
+
     const handleConfirmDelete = () => {
         toast.promise(
-            deleteMutation.mutateAsync(selectedRow.idQuai),
+            deleteMutation.mutateAsync(selectedRow.id),
             {
-                loading: "chargement...",
-                success: "quai supprimé",
-                error: "Erreur lors de la suppression du quai"
+                loading: "Chargement...",
+                success: "Item supprimé",
+                error: "Erreur lors de la suppression de l'item"
             }
-        )
+        );
         setOpenDeleteDialog(false);
     };
 
-    if (isPending) {
-        return <h3>chargement de la liste...</h3>
+    if (isLoading) {
+        return <h3>Chargement de la liste...</h3>
     }
 
     if (isError) {
         console.log(error);
-        return <h3>Une erreur s'est produit</h3>
+        return <h3>Une erreur s'est produite</h3>
     }
 
     return (
@@ -157,13 +150,13 @@ const AfficheListeQuais = () => {
             <TableVirtuoso
                 data={data}
                 components={VirtuosoTableComponents}
-                fixedHeaderContent={fixedHeaderContent}
-                itemContent={(index, row) => rowContent(index, row, handleEdit, handleDelete)}
+                fixedHeaderContent={() => fixedHeaderContent(columns)}
+                itemContent={(index, row) => rowContent(index, row, columns, handleEdit, handleDelete)}
             />
             <Dialog open={openEditDialog} onClose={() => setOpenEditDialog(false)}>
-                <DialogTitle>Modifier le Quai</DialogTitle>
+                <DialogTitle>Modifier</DialogTitle>
                 <DialogContent>
-                    <FormQuai initialValues={selectedRow} />
+                    <FormComponent initialValues={selectedRow}/>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={() => setOpenEditDialog(false)} color="primary">
@@ -172,19 +165,19 @@ const AfficheListeQuais = () => {
                 </DialogActions>
             </Dialog>
             <Dialog open={openDeleteDialog} onClose={() => setOpenDeleteDialog(false)}>
-                <DialogTitle>Supprimer Quai</DialogTitle>
+                <DialogTitle>Supprimer</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Êtes-vous sûr de vouloir supprimer ce quai ?
+                        Êtes-vous sûr de vouloir supprimer cet item ?
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                <Button onClick={() => setOpenDeleteDialog(false)}>Annuler</Button>
-                <Button onClick={handleConfirmDelete}>Supprimer</Button>
+                    <Button onClick={() => setOpenDeleteDialog(false)}>Annuler</Button>
+                    <Button onClick={handleConfirmDelete}>Supprimer</Button>
                 </DialogActions>
             </Dialog>
         </Paper>
     );
 }
 
-export default AfficheListeQuais;
+export default AfficheListe;

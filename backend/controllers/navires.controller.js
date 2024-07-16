@@ -33,6 +33,19 @@ const addNavireSousRequete = asyncHandler(async (req, res) => {
         }
         res.status(201).send({message: "Navire ajouté"});
     })
-})
+});
 
-module.exports = {addNavire, addNavireSousRequete};
+// GET ALL NAVIRES
+const getAllNavires = asyncHandler(async (req, res) => {
+    const sql = "SELECT idNav, navigateurs.idNavigateur, nomNavigateur,"
+            + " idTypeNav, labelType AS type, numNav AS num, nomNav AS nom,"
+            + "tirantEau, longueursNav FROM navires JOIN navigateurs ON navires.idNavigateur = navigateurs.idNavigateur"
+            + "JOIN types ON navires.idTypeNav = types.idType";
+
+    db.query(sql, (err, data) => {
+        if (err) res.status(500).send({error: err.message});
+        res.status(201).send(data);
+    })
+});
+
+module.exports = {addNavire, addNavireSousRequete, getAllNavires};

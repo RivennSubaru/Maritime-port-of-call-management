@@ -1,15 +1,16 @@
 const express = require("express");
-const {addQuai, getAllQuai, updateQuai} = require("../controllers/quais.controller");
+const {addQuai, getAllQuai, updateQuai, deleteQuai} = require("../controllers/quais.controller");
 
 const router = express.Router();
 
 // POST
-// Add quai
 router.post("/add", addQuai);
-//update quai
 router.post("/update", updateQuai);
 
-// Get quai
+// GET
 router.get("/getAll", getAllQuai);
+
+// DELETE
+router.delete("/:idQuai", deleteQuai);
 
 module.exports = router;
