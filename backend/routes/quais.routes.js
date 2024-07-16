@@ -11,6 +11,6 @@ router.post("/update", updateQuai);
 router.get("/getAll", getAllQuai);
 
 // DELETE
-router.delete("/:idQuai", deleteQuai);
+router.delete("/:id", deleteQuai);
 
 module.exports = router;

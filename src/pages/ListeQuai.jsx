@@ -1,4 +1,4 @@
-import AfficheListe from '../component/AfficheListeQuais';
+import AfficheListe from '../component/AfficheListe';
 import FormQuai from './Formulaire/FormQuai';
 
 const columnsQuai = [
@@ -16,7 +16,7 @@ const ListeQuai = () => {
         <section className='listeQuai'>
             <AfficheListe 
                 columns={columnsQuai}
-                apiUrl="http://localhost:8081/quai/getAll"
+                apiUrl="http://localhost:8081/quai"
                 FormComponent={FormQuai}
             />
         </section>

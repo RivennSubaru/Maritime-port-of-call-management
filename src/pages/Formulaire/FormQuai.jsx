@@ -56,6 +56,8 @@ const FormQuai = ({initialValues}) => {
         onSuccess: () => {
             // Recharger la liste apres ajout ou modification
             queryClient.invalidateQueries("quais");
+            reset([]);
+            setType("");
         }
     })
 

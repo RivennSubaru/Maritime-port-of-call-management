@@ -13,8 +13,9 @@ import { useForm, Controller } from 'react-hook-form';
 import axios from 'axios';
 import { useState } from 'react';
 import { toast } from 'react-hot-toast';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 
 
 // Recupération de la liste de type de navire
@@ -28,7 +29,7 @@ const fetchNavigator = async () => {
     return reponse.data;
 }
 
-const FormNavire = () => {
+const FormNavire = ({initialValues}) => {
 
     // Useform gestion du formulaire
     const { handleSubmit, control, setValue, reset, watch, formState: { errors } } = useForm();
@@ -36,6 +37,9 @@ const FormNavire = () => {
     const [type, setType] = useState(''); /* type */
     const [navigName, setNavigName] = useState(''); /* Nom navigateur */
     const [isNewNavigator, setIsNewNavigator] = useState('non'); /* formulaire navigateur */
+
+    // Pour actualiser automatiquement la liste
+    const queryClient = useQueryClient();
 
     const navigateTo = useNavigate();
 
@@ -110,7 +114,10 @@ const FormNavire = () => {
     // Envoie de donnée au serveur
     const mutation = useMutation({
         mutationFn: async (data) => {
-            if (data.idNavig) {
+            if (initialValues) {
+                await axios.post("http://localhost:8081/navire/update", data);
+                console.log(data);
+            } else if (data.idNavig) {
                 await axios.post("http://localhost:8081/navire/add", data);
                 /* console.log("navire fotsiny") */
 
@@ -133,6 +140,10 @@ const FormNavire = () => {
                 );
             }, 1000);
             console.log(error);
+        },
+        onSuccess: () => {
+            // Recharger la liste apres ajout ou modification
+            queryClient.invalidateQueries("navire");
         }
     })
 
@@ -143,14 +154,11 @@ const FormNavire = () => {
         try {
 
             if (data.idNavig != "") {
-                const {nomNav, numNav, idType, tirantEau, longueur, idNavig} = data;
-                const navire = {nomNav, numNav, idType, tirantEau, longueur, idNavig};
-    
                 toast.loading("Enregistrement du navire...", { id: toastId });
-    
+
                 await new Promise((resolve) => setTimeout(resolve, 2000));
     
-                await mutation.mutateAsync(navire);
+                await mutation.mutateAsync(data);
     
             } else {
 
@@ -168,20 +176,38 @@ const FormNavire = () => {
                 await mutation.mutateAsync(navire);
             }
             
-            toast.success("Ajouté", { id: toastId })
+            toast.success( initialValues ? "Navire modifié" : "Navire ajouté" , { id: toastId })
 
         } catch (error) {
             toast.error("Une erreur est survenu", { id: toastId });
 
         }
 
-        reset();
+        reset([]);
         setType('');
         setNavigName('');
         setIsNewNavigator('non');
         
-        navigateTo("/form/navire");
+        // Ne pas rediriger s'il s'agit d'une modification
+        if (!initialValues) navigateTo("/navire");
     };
+
+    // Preremplissage du formulaire
+    useEffect(() => {
+        if (initialValues) {
+            reset(initialValues);
+
+            // pour type
+            setType(initialValues.idType || '');
+            setValue('idType', initialValues.idType);
+            setValue('type', initialValues.type);
+
+            // pour navigateur
+            setNavigName(initialValues.idNavigateur || '');
+            setValue('navigName', initialValues.nomNavigateur);
+            setValue('idNavig', initialValues.idNavigateur);
+        }
+    }, [initialValues, reset]);
 
     return (
         <Container component="main" maxWidth="xs">
@@ -191,7 +217,7 @@ const FormNavire = () => {
                     <DirectionsBoatIcon />
                 </Avatar>
                 <Typography component="h1" variant="h5">
-                    Ajouter un navire
+                    {initialValues ? 'Modifier un navire' : 'Ajouter un navire'}
                 </Typography>
                 <Box component="form" noValidate sx={{ mt: 3 }} onSubmit={handleSubmit(onSubmit)}>
                     <Grid container spacing={2}>
@@ -329,27 +355,31 @@ const FormNavire = () => {
                                 )}
                             />
                         </Grid>
-                        <Grid item sx={{ paddingTop: "25px !important" }}>
-                            <Typography component="h1" variant="h5" width={"100%"}>
-                                Navigateur
-                            </Typography>
-                        </Grid>
-                        <Grid item gap={2} sx={{ display: "flex", alignItems: "center" }}>
-                            <FormLabel id="demo-row-radio-buttons-group-label">Nouveau navigateur ?</FormLabel>
-                            <RadioGroup
-                                row
-                                aria-labelledby="demo-row-radio-buttons-group-label"
-                                name="row-radio-buttons-group"
-                                value={isNewNavigator}
-                                onChange={handleRadioChange}
-                            >
-                                <FormControlLabel value="non" control={<Radio />} label="Non" />
-                                <FormControlLabel value="oui" control={<Radio />} label="Oui" />
-                            </RadioGroup>
-                        </Grid>
+                        {!initialValues && (
+                            <>
+                                <Grid item sx={{ paddingTop: "25px !important" }}>
+                                    <Typography component="h1" variant="h5" width={"100%"}>
+                                        Navigateur
+                                    </Typography>
+                                </Grid>
+                                <Grid item gap={2} sx={{ display: "flex", alignItems: "center" }}>
+                                    <FormLabel id="demo-row-radio-buttons-group-label">Nouveau navigateur ?</FormLabel>
+                                    <RadioGroup
+                                        row
+                                        aria-labelledby="demo-row-radio-buttons-group-label"
+                                        name="row-radio-buttons-group"
+                                        value={isNewNavigator}
+                                        onChange={handleRadioChange}
+                                    >
+                                        <FormControlLabel value="non" control={<Radio />} label="Non" />
+                                        <FormControlLabel value="oui" control={<Radio />} label="Oui" />
+                                    </RadioGroup>
+                                </Grid>
+                            </>
+                        )}
 
 
-                        {isNewNavigator === 'non' && (
+                        {(isNewNavigator === 'non' || initialValues) && (
                             <Grid item xs={12} gap={2} sx={{ display: "flex", alignItems: "flex-end", flexDirection: "row-reverse" }}>
                                 <Grid item xs={1.7} sm={1.7}>
                                     <Controller
@@ -405,7 +435,7 @@ const FormNavire = () => {
 
                         {/* S'IL S'AGIT D'UN NOUVEAU NAVIGATEUR */}
 
-                        {isNewNavigator === 'oui' && (
+                        {(isNewNavigator === 'oui' && !initialValues) && (
 
                             <Grid item gap={2} sx={{ display: "flex", flexWrap: "wrap" }}>
                                 <Grid item xs={12} sm={5.75}>
@@ -501,7 +531,7 @@ const FormNavire = () => {
                         variant="contained"
                         sx={{ mt: 3, mb: 2, bgcolor: "#3fc8ff" }}
                     >
-                        Ajouter
+                        {initialValues ? 'Modifier' : 'Ajouter'}
                     </Button>
                 </Box>
             </Box>

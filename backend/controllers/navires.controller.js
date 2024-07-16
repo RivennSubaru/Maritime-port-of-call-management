@@ -37,10 +37,7 @@ const addNavireSousRequete = asyncHandler(async (req, res) => {
 
 // GET ALL NAVIRES
 const getAllNavires = asyncHandler(async (req, res) => {
-    const sql = "SELECT idNav, navigateurs.idNavigateur, nomNavigateur,"
-            + " idTypeNav, labelType AS type, numNav AS num, nomNav AS nom,"
-            + "tirantEau, longueursNav FROM navires JOIN navigateurs ON navires.idNavigateur = navigateurs.idNavigateur"
-            + "JOIN types ON navires.idTypeNav = types.idType";
+    const sql = "SELECT idNav AS id, navigateurs.idNavigateur, nomNavigateur, idTypeNav AS idType, labelType AS type, numNav, nomNav, tirantEau, longueursNav AS longueur FROM navires JOIN navigateurs ON navires.idNavigateur = navigateurs.idNavigateur JOIN types ON navires.idTypeNav = types.idType";
 
     db.query(sql, (err, data) => {
         if (err) res.status(500).send({error: err.message});
@@ -48,4 +45,33 @@ const getAllNavires = asyncHandler(async (req, res) => {
     })
 });
 
-module.exports = {addNavire, addNavireSousRequete, getAllNavires};
+
+// UPDATE NAVIRE
+const updateNavire = asyncHandler(async (req, res) => {
+    const {nomNav, numNav, idType, tirantEau, longueur, idNavigateur, id} = req.body;
+
+    const sql = "UPDATE navires SET nomNav = ?, numNav = ?, idTypeNav = ?, tirantEau = ?, longueursNav = ?, idNavigateur = ? WHERE idNav = ?";
+    const values = [nomNav, numNav, idType, tirantEau, longueur, idNavigateur, id];
+
+    db.query(sql, values, (err, data) => {
+        if (err) {
+            res.status(500).send({error: err});
+            return;
+        }
+        res.status(201).send({message: "Quai modifié"});
+    })
+});
+
+// DELETE NAVIRE
+const deleteNavire = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+
+    const sql = "DELETE FROM navires WHERE idNav = ?";
+    
+    db.query(sql, [id], (err, data) => {
+        if (err) return res.status(500).send({error: err});
+        res.status(201).send({message: "Navire supprimé avec succès"})
+    })
+})
+
+module.exports = {addNavire, addNavireSousRequete, getAllNavires, updateNavire, deleteNavire};

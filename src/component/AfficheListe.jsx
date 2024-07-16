@@ -89,7 +89,7 @@ const AfficheListe = ({ columns, apiUrl, FormComponent }) => {
 
     // Recuperer la liste depuis le serveur
     const fetchData = async () => {
-        const response = await axios.get(apiUrl);
+        const response = await axios.get(apiUrl + "/getAll");
         return response.data;
     }
 
@@ -134,6 +134,7 @@ const AfficheListe = ({ columns, apiUrl, FormComponent }) => {
             }
         );
         setOpenDeleteDialog(false);
+        /* console.log(selectedRow.id); */
     };
 
     if (isLoading) {

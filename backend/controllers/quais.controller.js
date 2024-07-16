@@ -45,11 +45,11 @@ const updateQuai = asyncHandler(async (req, res) => {
 
 // DELETE QUAI
 const deleteQuai = asyncHandler(async (req, res) => {
-    const { idQuai } = req.params;
+    const { id } = req.params;
 
     const sql = "DELETE FROM quais WHERE idQuai = ?";
     
-    db.query(sql, [idQuai], (err, data) => {
+    db.query(sql, [id], (err, data) => {
         if (err) return res.status(500).send({error: err});
         res.status(201).send({message: "Quai supprimé avec succès"})
     })
