@@ -9,11 +9,12 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import AnchorIcon from '@mui/icons-material/Anchor';
 import { Controller, useForm } from 'react-hook-form';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { useState } from 'react';
 import { InputLabel, MenuItem, Select } from '@mui/material';
+import { useEffect } from 'react';
 
 // Recupération de la liste de type de navire
 const fetchTypes = async () => {
@@ -21,14 +22,25 @@ const fetchTypes = async () => {
     return reponse.data;
 }
 
-const FormQuai = () => {
+const FormQuai = ({initialValues}) => {
     const {handleSubmit, control, setValue, reset,  formState: {errors}} = useForm();
 
+    // Pour afficher le type de navire séléctioné
     const [type, setType] = useState('');
 
+    // Pour actualiser automatiquement la liste
+    const queryClient = useQueryClient();
+
+    // envoie de requete au serveur
     const mutation = useMutation({
+
+        // update ou add en fonction des cas
         mutationFn: async (quai) => {
-            await axios.post("http://localhost:8081/quai/add", quai);
+            if (initialValues)
+                await axios.post("http://localhost:8081/quai/update", quai);
+            else
+                await axios.post("http://localhost:8081/quai/add", quai);
+
         },
         onError: (error) => {
             setTimeout(() => {
@@ -40,26 +52,40 @@ const FormQuai = () => {
                 );
             }, 1000);
             console.log(error);
+        },
+        onSuccess: () => {
+            // Recharger la liste apres ajout ou modification
+            queryClient.invalidateQueries("quais");
         }
     })
 
+    // affichage du type choisi par / au select
     const handleQuaiChange = (event) => {
         setType(event.target.value);
         setValue('type', event.target.value);
         setValue('idType', event.target.value);
     }
 
+    // Soumission du formulaire
     const onSubmit = (data) => {
         toast.promise(
             mutation.mutateAsync(data),
             {
                 loading: "chargement...",
-                success: "Quai ajouté",
+                success: initialValues ?  "Quai modifié" : "Quai ajouté",
                 error: "Quai non ajouté"
             }
         )
     }
 
+    // Preremplissage du formulaire
+    useEffect(() => {
+        if (initialValues) {
+            reset(initialValues);
+            setType(initialValues.idTypeQuai || '');
+            setValue('idType', initialValues.idTypeQuai);
+        }
+    }, [initialValues, reset]);
 
     // Usequery pour fetch les listes
     const fetchQuery = (fetchData, key) => {
@@ -104,13 +130,13 @@ const FormQuai = () => {
                     <AnchorIcon />
                 </Avatar>
                 <Typography component="h1" variant="h5">
-                    Ajouter un quai
+                    {initialValues ? 'Modifier un quai' : 'Ajouter un quai'}
                 </Typography>
                 <Box onSubmit={handleSubmit(onSubmit)} component="form" noValidate sx={{ mt: 3 }}>
                     <Grid container spacing={2}>
                         <Grid item xs={12} sm={6}>
                             <Controller
-                                name='nomQuai'
+                                name='nom'
                                 control={control}
                                 defaultValue=""
                                 rules={{required: "Ce champ ne peut être vide"}}
@@ -179,23 +205,27 @@ const FormQuai = () => {
                                     defaultValue=""
                                     rules={{ required: "Ce champ est requis" }}
                                     render={({ field }) => (
-                                        <Select
-                                            {...field}
-                                            id="typeNav"
-                                            value={type}
-                                            label="Type navire"
-                                            onChange={handleQuaiChange}
-                                            fullWidth
-                                            error={!!errors.type}
-                                            helperText={errors.type ? errors.type.message : ""}
-                                        >
-                                            
-                                            {
-                                                /* Affichages de la liste des types */
-                                                afficheListeTypes() 
-                                            }
+                                        <>
+                                            <Select
+                                                {...field}
+                                                id="typeNav"
+                                                value={type}
+                                                label="Type navire"
+                                                onChange={handleQuaiChange}
+                                                fullWidth
+                                                error={!!errors.type}
+                                            >
+                                                
+                                                {
+                                                    /* Affichages de la liste des types */
+                                                    afficheListeTypes() 
+                                                }
 
-                                        </Select>
+                                            </Select>
+                                            {errors.type && (
+                                                <FormHelperText error>{errors.type.message}</FormHelperText>
+                                            )}
+                                        </>
                                     )}
                                 />
                             </Grid>
@@ -223,7 +253,7 @@ const FormQuai = () => {
                         </Grid>
                         <Grid item xs={12}>
                             <Controller
-                                name='longueurQuai'
+                                name='longueursQuai'
                                 control={control}
                                 defaultValue=""
                                 rules={{required: "Ce champ ne peut être vide"}}
@@ -250,7 +280,7 @@ const FormQuai = () => {
                         variant="contained"
                         sx={{ mt: 3, mb: 2, bgcolor: "#3fc8ff"}}
                     >
-                        Ajouter
+                        {initialValues ? 'Modifier' : 'Ajouter'}
                     </Button>
                 </Box>
             </Box>
