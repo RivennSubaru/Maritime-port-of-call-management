@@ -23,7 +23,7 @@ const fetchTypes = async () => {
 }
 
 const FormQuai = ({initialValues}) => {
-    const {handleSubmit, control, setValue, reset,  formState: {errors}} = useForm();
+    const {handleSubmit, control, setValue, reset, formState: {errors}} = useForm();
 
     // Pour afficher le type de navire séléctioné
     const [type, setType] = useState('');

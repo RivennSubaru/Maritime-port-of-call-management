@@ -13,8 +13,20 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { renderTimeViewClock } from '@mui/x-date-pickers';
+import { Controller, useForm } from 'react-hook-form';
+import { useState } from 'react';
+import { FormHelperText, InputLabel, MenuItem, Select } from '@mui/material';
+import dayjs from 'dayjs';
 
 const FormEscale = () => {
+    const {handleSubmit, control, setValue, reset, formState: {errors}} = useForm();
+
+    const onSubmit = (data) => {
+        data.dateDep = dayjs(data.dateDep).format('YYYY-MM-DD HH:mm:ss');
+        data.dateArriv = dayjs(data.dateArriv).format('YYYY-MM-DD HH:mm:ss');
+
+        console.log(data);
+    }
 
     return (
         <Container component="main" maxWidth="xs">
@@ -33,94 +45,164 @@ const FormEscale = () => {
                 <Typography component="h1" variant="h5">
                     Escale
                 </Typography>
-                <Box component="form" noValidate sx={{ mt: 3 }}>
+                <Box onSubmit={handleSubmit(onSubmit)} component="form" noValidate sx={{ mt: 3 }}>
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
-                            <TextField
-                                required
-                                fullWidth
-                                autoFocus
-                                id="numEscale"
-                                label="Numeros escale"
-                                disabled
+                            <Controller
+                                name='numEscale'
+                                control={control}
+                                defaultValue="1"
+                                rules={{required: "Ce champ ne peut être vide"}}
+
+                                render={({ field} ) => (
+                                    <TextField
+                                        {...field}
+                                        type='number'
+                                        required
+                                        fullWidth
+                                        autoFocus
+                                        id="numEscale"
+                                        label="Numeros escale"
+                                        disabled
+                                    />
+                                )}
                             />
                         </Grid>
                         <Grid item xs={12} sm={6}>
-                            <TextField
-                                required
-                                fullWidth
-                                autoFocus
-                                id="idNav"
-                                type='number'
-                                label="ID navire"
-                                disabled
+                            <Controller
+                                name='idQuai'
+                                control={control}
+                                defaultValue="1"
+                                rules={{required: "Ce champ ne peut être vide"}}
+
+                                render={({ field }) => (
+                                    <TextField
+                                        {...field}
+                                        type='number'
+                                        required
+                                        fullWidth
+                                        autoFocus
+                                        id="idQuai"
+                                        label="ID Quai"
+                                        disabled
+                                    />
+                                )}
                             />
                         </Grid>
                         <Grid item xs={12} sm={6}>
-                            <TextField
-                                required
-                                fullWidth
-                                autoFocus
-                                id="idQuai"
-                                type='number'
-                                label="ID Quai"
-                                disabled
+                            <Controller
+                                name='idNav'
+                                control={control}
+                                defaultValue="1"
+                                rules={{required: "Ce champ ne peut être vide"}}
+
+                                render={({ field }) => (
+                                    <TextField
+                                        {...field}
+                                        type='number'
+                                        required
+                                        fullWidth
+                                        autoFocus
+                                        id="idNav"
+                                        label="ID Navire"
+                                        disabled
+                                    />
+                                )}
                             />
                         </Grid>
                         <Grid item xs={12}>
-                            <TextField
-                                required
-                                fullWidth
-                                id="typeEscale"
-                                label="Type"
+                            <InputLabel id="demo-simple-select-label">Type d'escale</InputLabel>
+                            <Controller
+                                name="typeEscale"
+                                control={control}
+                                defaultValue=""
+                                rules={{ required: "Ce champ est requis" }}
+                                render={({ field }) => (
+                                    <>
+                                        <Select
+                                            {...field}
+                                            id="typeEscale"
+                                            fullWidth
+                                            error={!!errors.typeNav}
+                                        >
+                                            <MenuItem value="Entrant">Entrant</MenuItem>
+                                            <MenuItem value="Sortant">Sortant</MenuItem>
+                                        </Select>
+                                        {errors.typeEscale && (
+                                            <FormHelperText error>{errors.typeEscale.message}</FormHelperText>
+                                        )}
+                                    </>
+                                )}
                             />
                         </Grid>
                         <Grid item xs={12} sm={6}>
-                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                <DemoContainer components={['DateTimePicker']}>
-                                    <DateTimePicker
-                                        label="Date de départ"
-                                        viewRenderers={{
-                                            hours: renderTimeViewClock,
-                                            minutes: renderTimeViewClock,
-                                            seconds: renderTimeViewClock,
-                                        }}
-                                        sx={{minWidth: "189px !important"}}
-                                    />
-                                </DemoContainer>
-                            </LocalizationProvider>
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                <DemoContainer components={['DateTimePicker']}>
-                                    <DateTimePicker
-                                        label="Date d'arrivée"
-                                        viewRenderers={{
-                                            hours: renderTimeViewClock,
-                                            minutes: renderTimeViewClock,
-                                            seconds: renderTimeViewClock,
-                                        }}
-                                        sx={{minWidth: "189px !important"}}
-                                    />
-                                </DemoContainer>
-                            </LocalizationProvider>
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                            <TextField
-                                required
-                                fullWidth
-                                autoFocus
-                                id="provenance"
-                                label="Provenance"
+                            <Controller
+                                name='dateDep'
+                                control={control}
+                                defaultValue={null}
+                                render={({ field }) => (
+                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                        <DateTimePicker
+                                            {...field}
+                                            label="Date de départ"
+                                            textField={(params) => <TextField {...params} />}
+                                        />
+                                    </LocalizationProvider>
+                                )}
                             />
                         </Grid>
                         <Grid item xs={12} sm={6}>
-                            <TextField
-                                required
-                                fullWidth
-                                autoFocus
-                                id="destination"
-                                label="Déstination"
+                            <Controller
+                                name='dateArriv'
+                                control={control}
+                                defaultValue={null}
+                                render={({ field }) => (
+                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                        <DateTimePicker
+                                            {...field}
+                                            label="Date d'arrivée"
+                                            textField={(params) => <TextField {...params} />}
+                                        />
+                                    </LocalizationProvider>
+                                )}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <Controller
+                                name='provenance'
+                                control={control}
+                                defaultValue=''
+                                rules={{required: "Ce champ ne peut être vide"}}
+
+                                render={({ field }) => (
+                                    <TextField
+                                        {...field}
+                                        required
+                                        fullWidth
+                                        autoFocus
+                                        id="provenance"
+                                        label="Provenance"
+                                    />
+                                )}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <Controller
+                                name='destination'
+                                control={control}
+                                defaultValue=''
+                                rules={{required: "Ce champ ne peut être vide"}}
+
+                                render={({ field }) => (
+                                    <TextField
+                                        {...field}
+                                        required
+                                        fullWidth
+                                        autoFocus
+                                        id="destination"
+                                        label="Déstination"
+                                    />
+                                )}
                             />
                         </Grid>
 
