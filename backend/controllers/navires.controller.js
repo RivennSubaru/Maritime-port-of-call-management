@@ -5,7 +5,7 @@ const db = require('../config/db');
 const addNavire = asyncHandler(async (req, res) => {
     const {nomNav, numNav, idType, tirantEau, longueur, idNavig} = req.body;
 
-    const sql = "INSERT INTO navires(nomNav, numNav, idTypeNav, tirantEau, longueursNav, idNavigateur) VALUES(?, ?, ?, ?, ?, ?)";
+    const sql = "INSERT INTO navires(nomNav, numNav, idTypeNav, tirantEau, longueursNav, idNavigateur, situationNav) VALUES(?, ?, ?, ?, ?, ?, \"parti\")";
     const values = [nomNav, numNav, idType, tirantEau, longueur, idNavig];
 
     db.query(sql, values, (err, data) => {
@@ -21,8 +21,8 @@ const addNavire = asyncHandler(async (req, res) => {
 const addNavireSousRequete = asyncHandler(async (req, res) => {
     const {nomNav, numNav, idType, tirantEau, longueur, telNavigateur} = req.body;
 
-    const sql = "INSERT INTO navires(nomNav, numNav, idTypeNav, tirantEau, longueursNav, idNavigateur)"
-                +"VALUES(?, ?, ?, ?, ?, (SELECT idNavigateur FROM navigateurs WHERE telNavigateur = ?))";
+    const sql = "INSERT INTO navires(nomNav, numNav, idTypeNav, tirantEau, longueursNav, situationNav, idNavigateur)"
+            + "VALUES(?, ?, ?, ?, ?, \"parti\", (SELECT idNavigateur FROM navigateurs WHERE telNavigateur = ?))";
 
     const values = [nomNav, numNav, idType, tirantEau, longueur, telNavigateur];
 
@@ -37,7 +37,7 @@ const addNavireSousRequete = asyncHandler(async (req, res) => {
 
 // GET ALL NAVIRES
 const getAllNavires = asyncHandler(async (req, res) => {
-    const sql = "SELECT idNav AS id, navigateurs.idNavigateur, nomNavigateur, idTypeNav AS idType, labelType AS type, numNav, nomNav, tirantEau, longueursNav AS longueur FROM navires JOIN navigateurs ON navires.idNavigateur = navigateurs.idNavigateur JOIN types ON navires.idTypeNav = types.idType";
+    const sql = "SELECT idNav AS id, navigateurs.idNavigateur, nomNavigateur, idTypeNav AS idType, labelType AS type, numNav, nomNav, tirantEau, longueursNav AS longueur, situationNav FROM navires JOIN navigateurs ON navires.idNavigateur = navigateurs.idNavigateur JOIN types ON navires.idTypeNav = types.idType";
 
     db.query(sql, (err, data) => {
         if (err) res.status(500).send({error: err.message});

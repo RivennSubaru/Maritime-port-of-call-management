@@ -147,7 +147,7 @@ const AfficheListe = ({ columns, apiUrl, FormComponent }) => {
     }
 
     return (
-        <Paper style={{ height: "57vh", width: '75%' }}>
+        <Paper style={{ height: "57vh", width: '100%' }}>
             <TableVirtuoso
                 data={data}
                 components={VirtuosoTableComponents}

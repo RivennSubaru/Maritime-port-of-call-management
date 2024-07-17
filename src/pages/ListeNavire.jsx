@@ -8,7 +8,8 @@ const columnsNavire = [
     { width: 150, label: 'Navigateur', dataKey: 'nomNavigateur' },
     { width: 150, label: 'Type', dataKey: 'type' },
     { width: 150, label: 'Tirant d\'eau', dataKey: 'tirantEau' },
-    { width: 150, label: 'longueurs', dataKey: 'longueur' },
+    { width: 150, label: 'Longueurs', dataKey: 'longueur' },
+    { width: 150, label: 'Situation', dataKey: 'situationNav' },
     { width: 150, label: 'Actions', dataKey: 'action' }
 ];
 
