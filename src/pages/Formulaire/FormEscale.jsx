@@ -19,14 +19,15 @@ import { FormHelperText, InputLabel, MenuItem, Select } from '@mui/material';
 import dayjs from 'dayjs';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
+import { useEffect } from 'react';
 
 const fetchNavires = async () => {
     const reponse = await axios.get("http://localhost:8081/navire/getAll");
-    console.log(reponse.data);
+    /* console.log(reponse.data); */
     return reponse.data;
 }
 
-const FormEscale = () => {
+const FormEscale = ({ initialValues }) => {
     const {handleSubmit, control, setValue, reset, formState: {errors}} = useForm();
 
     const [idNav, setIdNav] = useState("");
@@ -66,6 +67,23 @@ const FormEscale = () => {
         ));
     }
 
+    // Preremplissage du formulaire
+    useEffect(() => {
+        if (initialValues) {
+            if(initialValues.idTypeQuai) {
+                const {emplacementQuai, id, idTypeQuai, longueurDispo, longueursQuai, nom, profondeurQuai, type, isFull} = initialValues;
+                const donneesQuai = {idQuai: id, nomQuai: nom, idTypeQuai, typeQuai: type, emplacementQuai,profondeurQuai, longueursQuai, longueurDispo};
+
+                console.log(donneesQuai);
+            } else {
+                const {id, idNavigateur, idType, longueur, nomNav, nomNavigateur, numNav, situationNav, tirantEau, type} = initialValues;
+                const donneesNavire = {idNav: id, nomNav, numNav, idNavigateur, nomNavigateur,  idTypeNav: idType, typeNav: type, situationNav, longueur, tirantEau}
+
+                console.log(donneesNavire);
+            }
+        }
+    }, [initialValues, reset]);
+
     return (
         <Container component="main" maxWidth="xs">
             <CssBaseline />
@@ -89,7 +107,7 @@ const FormEscale = () => {
                             <Controller
                                 name='numEscale'
                                 control={control}
-                                defaultValue="1"
+                                /* defaultValue="1" */
                                 rules={{required: "Ce champ ne peut être vide"}}
 
                                 render={({ field} ) => (
@@ -110,7 +128,7 @@ const FormEscale = () => {
                             <Controller
                                 name='idQuai'
                                 control={control}
-                                defaultValue="1"
+                                /* defaultValue="1" */
                                 rules={{required: "Ce champ ne peut être vide"}}
 
                                 render={({ field }) => (
@@ -150,40 +168,45 @@ const FormEscale = () => {
                             />
                         </Grid>
 
-                        {/* L'ELEMENT CI-DESOUS NE DEVRAIT APPARAITRE QUE SI LE FORMULAIRE EST OUVERT A PARTIR DE LA LISTE DES QUAIS */}
-                        <Grid item xs={12}>
-                            <InputLabel id="demo-simple-select-label">Navire</InputLabel>
-                            <Controller
-                                name="nomNavire"
-                                control={control}
-                                defaultValue=""
-                                rules={{ required: "Ce champ est requis" }}
-                                render={({ field }) => (
-                                    <>
-                                        <Select
-                                            {...field}
-                                            id="nomNavire"
-                                            label="Nom navire"
-                                            onChange={handleChange}
-                                            fullWidth
-                                            value={idNav}
-                                            error={!!errors.nomNavire}
-                                        >
-                                            
-                                            {
-                                                /* Affichages de la liste de navire */
-                                                afficheListeNavires() 
-                                            }
+                        { /* L'ELEMENT CI-DESOUS NE DEVRAIT APPARAITRE QUE SI LE FORMULAIRE EST OUVERT A PARTIR DE LA LISTE DES QUAIS */
 
-                                        </Select>
-                                        {errors.nomNavire && (
-                                            <FormHelperText error>{errors.nomNavire.message}</FormHelperText>
+                            initialValues.idTypeQuai &&(
+                                <Grid item xs={12}>
+                                    <InputLabel id="demo-simple-select-label">Navire</InputLabel>
+                                    <Controller
+                                        name="nomNavire"
+                                        control={control}
+                                        defaultValue=""
+                                        rules={{ required: "Ce champ est requis" }}
+                                        render={({ field }) => (
+                                            <>
+                                                <Select
+                                                    {...field}
+                                                    id="nomNavire"
+                                                    label="Nom navire"
+                                                    onChange={handleChange}
+                                                    fullWidth
+                                                    value={idNav}
+                                                    error={!!errors.nomNavire}
+                                                >
+                                                    
+                                                    {
+                                                        /* Affichages de la liste de navire */
+                                                        afficheListeNavires() 
+                                                    }
+
+                                                </Select>
+                                                {errors.nomNavire && (
+                                                    <FormHelperText error>{errors.nomNavire.message}</FormHelperText>
+                                                )}
+                                            </>
                                         )}
-                                    </>
-                                )}
-                            />
-                        </Grid>
-                        {/* L'ELEMENT CI-DESSUS NE DEVRAIT APPARAITRE QUE SI LE FORMULAIRE EST OUVERT A PARTIR DE LA LISTE DES QUAIS */}
+                                    />
+                                </Grid>
+                            )
+
+                         /* L'ELEMENT CI-DESSUS NE DEVRAIT APPARAITRE QUE SI LE FORMULAIRE EST OUVERT A PARTIR DE LA LISTE DES QUAIS */
+                        }
 
                         <Grid item xs={12}>
                             <InputLabel id="demo-simple-select-label">Type d'escale</InputLabel>

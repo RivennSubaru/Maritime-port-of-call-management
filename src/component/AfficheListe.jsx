@@ -175,6 +175,8 @@ const AfficheListe = ({ columns, apiUrl, FormComponent }) => {
 
     return (
         <Paper style={{ height: "57vh", width: '100%' }}>
+
+            {/* La liste */}
             <TableVirtuoso
                 data={data}
                 components={VirtuosoTableComponents}
@@ -222,6 +224,7 @@ const AfficheListe = ({ columns, apiUrl, FormComponent }) => {
                     <Button onClick={handleConfirmDelete}>Supprimer</Button>
                 </DialogActions>
             </Dialog>
+            
         </Paper>
     );
 }
