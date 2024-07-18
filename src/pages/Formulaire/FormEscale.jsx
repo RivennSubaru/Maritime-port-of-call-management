@@ -11,8 +11,6 @@ import SailingIcon from '@mui/icons-material/Sailing';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import { renderTimeViewClock } from '@mui/x-date-pickers';
 import { Controller, useForm } from 'react-hook-form';
 import { useState } from 'react';
 import { FormHelperText, InputLabel, MenuItem, Select } from '@mui/material';
@@ -30,13 +28,19 @@ const fetchNavires = async () => {
 const FormEscale = ({ initialValues }) => {
     const {handleSubmit, control, setValue, reset, formState: {errors}} = useForm();
 
+    // id du navire
     const [idNav, setIdNav] = useState("");
+    // numeros de l'escale
+    const [numEscale, setNumEscale] = useState("");
 
     
     const handleChange = (event) => {
-        setIdNav(event.target.value);
-        setValue("idNav", event.target.value);
-        setValue("nomNavire", event.target.value);
+        const selectedNavire = event.target.value;
+
+        setIdNav(selectedNavire.id);
+        setValue("idNav", selectedNavire.id);
+        setValue("nomNavire", selectedNavire.id);
+        setNumEscale(selectedNavire.numNav);
     }
     const onSubmit = (data) => {
         data.dateDep = dayjs(data.dateDep).format('YYYY-MM-DD HH:mm:ss');
@@ -63,7 +67,7 @@ const FormEscale = ({ initialValues }) => {
         }
     
         return navires.map((navire) => (
-            <MenuItem key={navire.id} value={navire.id}>{navire.nomNav}</MenuItem>
+            <MenuItem key={navire.id} value={navire}>{navire.nomNav}</MenuItem>
         ));
     }
 
@@ -75,6 +79,8 @@ const FormEscale = ({ initialValues }) => {
                 const donneesQuai = {idQuai: id, nomQuai: nom, idTypeQuai, typeQuai: type, emplacementQuai,profondeurQuai, longueursQuai, longueurDispo};
 
                 console.log(donneesQuai);
+
+                reset(donneesQuai);
             } else {
                 const {id, idNavigateur, idType, longueur, nomNav, nomNavigateur, numNav, situationNav, tirantEau, type} = initialValues;
                 const donneesNavire = {idNav: id, nomNav, numNav, idNavigateur, nomNavigateur,  idTypeNav: idType, typeNav: type, situationNav, longueur, tirantEau}
@@ -107,8 +113,7 @@ const FormEscale = ({ initialValues }) => {
                             <Controller
                                 name='numEscale'
                                 control={control}
-                                /* defaultValue="1" */
-                                rules={{required: "Ce champ ne peut être vide"}}
+                                defaultValue=""
 
                                 render={({ field} ) => (
                                     <TextField
@@ -119,6 +124,7 @@ const FormEscale = ({ initialValues }) => {
                                         autoFocus
                                         id="numEscale"
                                         label="Numeros escale"
+                                        value={numEscale}
                                         disabled
                                     />
                                 )}
@@ -128,8 +134,7 @@ const FormEscale = ({ initialValues }) => {
                             <Controller
                                 name='idQuai'
                                 control={control}
-                                /* defaultValue="1" */
-                                rules={{required: "Ce champ ne peut être vide"}}
+                                defaultValue=""
 
                                 render={({ field }) => (
                                     <TextField
@@ -149,8 +154,7 @@ const FormEscale = ({ initialValues }) => {
                             <Controller
                                 name='idNav'
                                 control={control}
-                                /* defaultValue="1" */
-                                rules={{required: "Ce champ ne peut être vide"}}
+                                defaultValue=""
 
                                 render={({ field }) => (
                                     <TextField
