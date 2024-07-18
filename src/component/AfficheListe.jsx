@@ -20,6 +20,8 @@ import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { DialogContentText } from '@mui/material';
+import { LoadingButton } from '@mui/lab';
+import FormEscale from '../pages/Formulaire/FormEscale';
 
 // Components
 const VirtuosoTableComponents = {
@@ -43,7 +45,7 @@ function fixedHeaderContent(columns) {
                     variant="head"
                     align={column.numeric || false ? 'right' : 'left'}
                     style={{ width: column.width }}
-                    sx={{ fontWeight: 'bold', textAlign: column.dataKey === 'action' && 'center', backgroundColor: 'background.paper' }}
+                    sx={{ fontWeight: 'bold', textAlign: (column.dataKey == ('action' || 'escaleNavire' || 'escaleQuai')) && 'center', backgroundColor: 'background.paper' }}
                 >
                     {column.label}
                 </TableCell>
@@ -52,7 +54,7 @@ function fixedHeaderContent(columns) {
     );
 }
 
-function rowContent(_index, row, columns, onEdit, onDelete) {
+function rowContent(_index, row, columns, onEdit, onDelete, onEscale) {
     return (
         <React.Fragment>
         {columns.map((column) => {
@@ -65,6 +67,22 @@ function rowContent(_index, row, columns, onEdit, onDelete) {
                         <IconButton variant='contained' color='error' onClick={() => onDelete(row)}>
                             <DeleteIcon/>
                         </IconButton>
+                    </TableCell>
+                )
+
+            // escale à partir de la liste des quais
+            } else if (column.dataKey === 'escaleQuai') {
+                return (
+                    <TableCell key={column.dataKey} align='center'>
+                        <Button onClick={() => onEscale(row)} size='small' variant="contained">+ navire</Button>
+                    </TableCell>
+                )
+
+            // escale à partir de la liste des navires
+            } else if (column.dataKey === 'escaleNavire') {
+                return(
+                    <TableCell key={column.dataKey} align='center'>
+                        <Button onClick={() => onEscale(row)} size='small' variant="contained">escale</Button>
                     </TableCell>
                 )
             } else {
@@ -81,8 +99,11 @@ function rowContent(_index, row, columns, onEdit, onDelete) {
 
 const AfficheListe = ({ columns, apiUrl, FormComponent }) => {
     const [selectedRow, setSelectedRow] = useState(null);
+
+    // Fenetre des formulaires
     const [openEditDialog, setOpenEditDialog] = useState(false);
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+    const [openEscaleDialog, setOpenEscaleDialog] = useState(false);
 
     // Pour actualiser automatiquement la liste
     const queryClient = useQueryClient();
@@ -119,6 +140,12 @@ const AfficheListe = ({ columns, apiUrl, FormComponent }) => {
         setOpenEditDialog(true);
     };
 
+    // Gestion de l'apparition de la formulaire d'escale
+    const handleEscale = (row) => {
+        setSelectedRow(row);
+        setOpenEscaleDialog(true);
+    }
+
     const handleDelete = (row) => {
         setSelectedRow(row);
         setOpenDeleteDialog(true);
@@ -152,8 +179,11 @@ const AfficheListe = ({ columns, apiUrl, FormComponent }) => {
                 data={data}
                 components={VirtuosoTableComponents}
                 fixedHeaderContent={() => fixedHeaderContent(columns)}
-                itemContent={(index, row) => rowContent(index, row, columns, handleEdit, handleDelete)}
+                itemContent={(index, row) => rowContent(index, row, columns, handleEdit, handleDelete, handleEscale)}
             />
+
+
+            {/* FORMULAIRE DE MODIFICATION (Soit Navire, Soit Quai) */}
             <Dialog open={openEditDialog} onClose={() => setOpenEditDialog(false)}>
                 <DialogTitle>Modifier</DialogTitle>
                 <DialogContent>
@@ -165,6 +195,21 @@ const AfficheListe = ({ columns, apiUrl, FormComponent }) => {
                     </Button>
                 </DialogActions>
             </Dialog>
+
+            {/* FORMULAIRE D'ESCALE */}
+            <Dialog open={openEscaleDialog} onClose={() => setOpenEscaleDialog(false)}>
+                <DialogTitle>Escale</DialogTitle>
+                <DialogContent>
+                    <FormEscale initialValues={selectedRow}/>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setOpenEscaleDialog(false)} color="primary">
+                        Annuler
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            {/* FENÊTRE DE SUPPRESSION */}
             <Dialog open={openDeleteDialog} onClose={() => setOpenDeleteDialog(false)}>
                 <DialogTitle>Supprimer</DialogTitle>
                 <DialogContent>

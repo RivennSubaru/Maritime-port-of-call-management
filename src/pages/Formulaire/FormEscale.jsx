@@ -17,15 +17,53 @@ import { Controller, useForm } from 'react-hook-form';
 import { useState } from 'react';
 import { FormHelperText, InputLabel, MenuItem, Select } from '@mui/material';
 import dayjs from 'dayjs';
+import axios from 'axios';
+import { useQuery } from '@tanstack/react-query';
+
+const fetchNavires = async () => {
+    const reponse = await axios.get("http://localhost:8081/navire/getAll");
+    console.log(reponse.data);
+    return reponse.data;
+}
 
 const FormEscale = () => {
     const {handleSubmit, control, setValue, reset, formState: {errors}} = useForm();
 
+    const [idNav, setIdNav] = useState("");
+
+    
+    const handleChange = (event) => {
+        setIdNav(event.target.value);
+        setValue("idNav", event.target.value);
+        setValue("nomNavire", event.target.value);
+    }
     const onSubmit = (data) => {
         data.dateDep = dayjs(data.dateDep).format('YYYY-MM-DD HH:mm:ss');
         data.dateArriv = dayjs(data.dateArriv).format('YYYY-MM-DD HH:mm:ss');
 
-        console.log(data);
+        const {numEscale, idQuai, idNav, typeEscale, dateDep, dateArriv, provenance, destination} = data;
+
+        const dataNavire = {numEscale, idQuai, idNav, typeEscale, dateDep, dateArriv, provenance, destination};
+        console.log(dataNavire);
+    }
+
+    const afficheListeNavires = () => {
+        const {isPending, isError, data: navires = [], error} = useQuery({
+            queryKey: ['navire'],
+            queryFn: fetchNavires,
+        });
+
+        if (isPending) {
+            return [<MenuItem key="loading" value="" disabled>Chargement...</MenuItem>];
+        }
+    
+        if (isError) {
+            return [<MenuItem key="error" value="" disabled>Erreur de chargement</MenuItem>];
+        }
+    
+        return navires.map((navire) => (
+            <MenuItem key={navire.id} value={navire.id}>{navire.nomNav}</MenuItem>
+        ));
     }
 
     return (
@@ -93,7 +131,7 @@ const FormEscale = () => {
                             <Controller
                                 name='idNav'
                                 control={control}
-                                defaultValue="1"
+                                /* defaultValue="1" */
                                 rules={{required: "Ce champ ne peut être vide"}}
 
                                 render={({ field }) => (
@@ -105,11 +143,48 @@ const FormEscale = () => {
                                         autoFocus
                                         id="idNav"
                                         label="ID Navire"
+                                        value={idNav}
                                         disabled
                                     />
                                 )}
                             />
                         </Grid>
+
+                        {/* L'ELEMENT CI-DESOUS NE DEVRAIT APPARAITRE QUE SI LE FORMULAIRE EST OUVERT A PARTIR DE LA LISTE DES QUAIS */}
+                        <Grid item xs={12}>
+                            <InputLabel id="demo-simple-select-label">Navire</InputLabel>
+                            <Controller
+                                name="nomNavire"
+                                control={control}
+                                defaultValue=""
+                                rules={{ required: "Ce champ est requis" }}
+                                render={({ field }) => (
+                                    <>
+                                        <Select
+                                            {...field}
+                                            id="nomNavire"
+                                            label="Nom navire"
+                                            onChange={handleChange}
+                                            fullWidth
+                                            value={idNav}
+                                            error={!!errors.nomNavire}
+                                        >
+                                            
+                                            {
+                                                /* Affichages de la liste de navire */
+                                                afficheListeNavires() 
+                                            }
+
+                                        </Select>
+                                        {errors.nomNavire && (
+                                            <FormHelperText error>{errors.nomNavire.message}</FormHelperText>
+                                        )}
+                                    </>
+                                )}
+                            />
+                        </Grid>
+                        {/* L'ELEMENT CI-DESSUS NE DEVRAIT APPARAITRE QUE SI LE FORMULAIRE EST OUVERT A PARTIR DE LA LISTE DES QUAIS */}
+
                         <Grid item xs={12}>
                             <InputLabel id="demo-simple-select-label">Type d'escale</InputLabel>
                             <Controller
