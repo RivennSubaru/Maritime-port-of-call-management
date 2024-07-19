@@ -142,6 +142,7 @@ const AfficheListe = ({ columns, apiUrl, FormComponent }) => {
 
     // Gestion de l'apparition de la formulaire d'escale
     const handleEscale = (row) => {
+        row.provenance = row.idTypeQuai ? 'quai' : 'navire';
         setSelectedRow(row);
         setOpenEscaleDialog(true);
     }

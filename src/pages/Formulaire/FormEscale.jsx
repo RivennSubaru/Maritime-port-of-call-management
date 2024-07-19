@@ -26,7 +26,7 @@ const fetchNavires = async () => {
 }
 
 const FormEscale = ({ initialValues }) => {
-    const {handleSubmit, control, setValue, reset, formState: {errors}} = useForm();
+    const {handleSubmit, control, watch, setValue, reset, formState: {errors}} = useForm();
 
     // id du navire
     const [idNav, setIdNav] = useState("");
@@ -40,7 +40,6 @@ const FormEscale = ({ initialValues }) => {
         setIdNav(selectedNavire.id);
         setValue("idNav", selectedNavire.id);
         setValue("nomNavire", selectedNavire.id);
-        setNumEscale(selectedNavire.numNav);
     }
     const onSubmit = (data) => {
         data.dateDep = dayjs(data.dateDep).format('YYYY-MM-DD HH:mm:ss');
@@ -74,14 +73,15 @@ const FormEscale = ({ initialValues }) => {
     // Preremplissage du formulaire
     useEffect(() => {
         if (initialValues) {
-            if(initialValues.idTypeQuai) {
+
+            if(initialValues.provenance === 'quai') {
                 const {emplacementQuai, id, idTypeQuai, longueurDispo, longueursQuai, nom, profondeurQuai, type, isFull} = initialValues;
                 const donneesQuai = {idQuai: id, nomQuai: nom, idTypeQuai, typeQuai: type, emplacementQuai,profondeurQuai, longueursQuai, longueurDispo};
 
                 console.log(donneesQuai);
 
                 reset(donneesQuai);
-            } else {
+            } else if (initialValues.provenance === 'navire') {
                 const {id, idNavigateur, idType, longueur, nomNav, nomNavigateur, numNav, situationNav, tirantEau, type} = initialValues;
                 const donneesNavire = {idNav: id, nomNav, numNav, idNavigateur, nomNavigateur,  idTypeNav: idType, typeNav: type, situationNav, longueur, tirantEau}
 
@@ -174,7 +174,7 @@ const FormEscale = ({ initialValues }) => {
 
                         { /* L'ELEMENT CI-DESOUS NE DEVRAIT APPARAITRE QUE SI LE FORMULAIRE EST OUVERT A PARTIR DE LA LISTE DES QUAIS */
 
-                            initialValues.idTypeQuai &&(
+                            (initialValues.provenance === 'quai') &&(
                                 <Grid item xs={12}>
                                     <InputLabel id="demo-simple-select-label">Navire</InputLabel>
                                     <Controller
