@@ -20,7 +20,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
 
 const fetchNavires = async () => {
-    const reponse = await axios.get("http://localhost:8081/navire/getAll");
+    const reponse = await axios.get("http://localhost:8081/navire/getAllParti");
     /* console.log(reponse.data); */
     return reponse.data;
 }
@@ -31,16 +31,44 @@ const FormEscale = ({ initialValues }) => {
     // id du navire
     const [idNav, setIdNav] = useState("");
     // numeros de l'escale
-    const [numEscale, setNumEscale] = useState("");
+    const [numEscale, setNumEscale] = useState("DateNumber");
 
+    const handleDateChange = (date) => {
+        if (date) {
+            const formattedDate = formatDate(date);
+            updateNumEscale("date", formattedDate);
+        }
+    };
+
+    const updateNumEscale = (type, value) => {
+        setNumEscale((prevNumEscale) => {
+            let newNumEscale = prevNumEscale;
+            if (type === "num") {
+                newNumEscale = newNumEscale.replace(/Number/, value);
+            } else if (type === "date") {
+                newNumEscale = newNumEscale.replace(/Date/, value);
+            }
+            setValue("numEscale", newNumEscale);
+            return newNumEscale;
+        });
+    };
     
-    const handleChange = (event) => {
+    const handleNavireChange = (event) => {
         const selectedNavire = event.target.value;
 
         setIdNav(selectedNavire.id);
         setValue("idNav", selectedNavire.id);
         setValue("nomNavire", selectedNavire.id);
+        updateNumEscale("num", selectedNavire.numNav);
     }
+
+    const formatDate = (date) => {
+        const year = date.year();
+        const month = date.month() + 1; // Months are 0-indexed in dayjs
+        const formattedDate = `${year.toString().slice(-2)}${year}${month.toString().padStart(2, '0')}00${month.toString().padStart(2, '0')}`;
+        return formattedDate;
+    };
+
     const onSubmit = (data) => {
         data.dateDep = dayjs(data.dateDep).format('YYYY-MM-DD HH:mm:ss');
         data.dateArriv = dayjs(data.dateArriv).format('YYYY-MM-DD HH:mm:ss');
@@ -118,7 +146,6 @@ const FormEscale = ({ initialValues }) => {
                                 render={({ field} ) => (
                                     <TextField
                                         {...field}
-                                        type='number'
                                         required
                                         fullWidth
                                         autoFocus
@@ -171,6 +198,32 @@ const FormEscale = ({ initialValues }) => {
                                 )}
                             />
                         </Grid>
+                        <Grid item xs={12}>
+                            <InputLabel id="demo-simple-select-label">Type d'escale</InputLabel>
+                            <Controller
+                                name="typeEscale"
+                                control={control}
+                                defaultValue={(initialValues.provenance === 'quai') ? 'Entrant' : 'Sortant'}
+                                rules={{ required: "Ce champ est requis" }}
+                                render={({ field }) => (
+                                    <>
+                                        <Select
+                                            {...field}
+                                            id="typeEscale"
+                                            fullWidth
+                                            disabled
+                                            error={!!errors.typeNav}
+                                        >
+                                            <MenuItem value="Entrant">Entrant</MenuItem>
+                                            <MenuItem value="Sortant">Sortant</MenuItem>
+                                        </Select>
+                                        {errors.typeEscale && (
+                                            <FormHelperText error>{errors.typeEscale.message}</FormHelperText>
+                                        )}
+                                    </>
+                                )}
+                            />
+                        </Grid>
 
                         { /* L'ELEMENT CI-DESOUS NE DEVRAIT APPARAITRE QUE SI LE FORMULAIRE EST OUVERT A PARTIR DE LA LISTE DES QUAIS */
 
@@ -188,7 +241,7 @@ const FormEscale = ({ initialValues }) => {
                                                     {...field}
                                                     id="nomNavire"
                                                     label="Nom navire"
-                                                    onChange={handleChange}
+                                                    onChange={handleNavireChange}
                                                     fullWidth
                                                     value={idNav}
                                                     error={!!errors.nomNavire}
@@ -212,31 +265,6 @@ const FormEscale = ({ initialValues }) => {
                          /* L'ELEMENT CI-DESSUS NE DEVRAIT APPARAITRE QUE SI LE FORMULAIRE EST OUVERT A PARTIR DE LA LISTE DES QUAIS */
                         }
 
-                        <Grid item xs={12}>
-                            <InputLabel id="demo-simple-select-label">Type d'escale</InputLabel>
-                            <Controller
-                                name="typeEscale"
-                                control={control}
-                                defaultValue=""
-                                rules={{ required: "Ce champ est requis" }}
-                                render={({ field }) => (
-                                    <>
-                                        <Select
-                                            {...field}
-                                            id="typeEscale"
-                                            fullWidth
-                                            error={!!errors.typeNav}
-                                        >
-                                            <MenuItem value="Entrant">Entrant</MenuItem>
-                                            <MenuItem value="Sortant">Sortant</MenuItem>
-                                        </Select>
-                                        {errors.typeEscale && (
-                                            <FormHelperText error>{errors.typeEscale.message}</FormHelperText>
-                                        )}
-                                    </>
-                                )}
-                            />
-                        </Grid>
                         <Grid item xs={12} sm={6}>
                             <Controller
                                 name='dateDep'
@@ -247,6 +275,10 @@ const FormEscale = ({ initialValues }) => {
                                         <DateTimePicker
                                             {...field}
                                             label="Date de départ"
+                                            onChange={(date) => {
+                                                field.onChange(date);
+                                                handleDateChange(date);
+                                            }}
                                             textField={(params) => <TextField {...params} />}
                                         />
                                     </LocalizationProvider>

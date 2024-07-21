@@ -44,6 +44,15 @@ const getAllNavires = asyncHandler(async (req, res) => {
         res.status(201).send(data);
     })
 });
+// GET ALL NAVIRES PARTI
+const getAllNaviresParti = asyncHandler(async (req, res) => {
+    const sql = "SELECT idNav AS id, navigateurs.idNavigateur, nomNavigateur, idTypeNav AS idType, labelType AS type, numNav, nomNav, tirantEau, longueursNav AS longueur, situationNav FROM navires JOIN navigateurs ON navires.idNavigateur = navigateurs.idNavigateur JOIN types ON navires.idTypeNav = types.idType WHERE navires.situationNav = \"parti\"";
+
+    db.query(sql, (err, data) => {
+        if (err) res.status(500).send({error: err.message});
+        res.status(201).send(data);
+    })
+});
 
 
 // UPDATE NAVIRE
@@ -74,4 +83,4 @@ const deleteNavire = asyncHandler(async (req, res) => {
     })
 })
 
-module.exports = {addNavire, addNavireSousRequete, getAllNavires, updateNavire, deleteNavire};
+module.exports = {addNavire, addNavireSousRequete, getAllNavires, updateNavire, deleteNavire, getAllNaviresParti};
