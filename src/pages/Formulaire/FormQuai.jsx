@@ -16,17 +16,8 @@ import { useState } from 'react';
 import { InputLabel, MenuItem, Select } from '@mui/material';
 import { useEffect } from 'react';
 
-// Recupération de la liste de type de navire
-const fetchTypes = async () => {
-    const reponse = await axios.get("http://localhost:8081/type/getAll");
-    return reponse.data;
-}
-
 const FormQuai = ({initialValues}) => {
     const {handleSubmit, control, setValue, reset, formState: {errors}} = useForm();
-
-    // Pour afficher le type de navire séléctioné
-    const [type, setType] = useState('');
 
     // Pour actualiser automatiquement la liste
     const queryClient = useQueryClient();
@@ -61,13 +52,6 @@ const FormQuai = ({initialValues}) => {
         }
     })
 
-    // affichage du type choisi par / au select
-    const handleQuaiChange = (event) => {
-        setType(event.target.value);
-        setValue('type', event.target.value);
-        setValue('idType', event.target.value);
-    }
-
     // Soumission du formulaire
     const onSubmit = (data) => {
         toast.promise(
@@ -84,38 +68,8 @@ const FormQuai = ({initialValues}) => {
     useEffect(() => {
         if (initialValues) {
             reset(initialValues);
-            setType(initialValues.idTypeQuai || '');
-            setValue('idType', initialValues.idTypeQuai);
         }
     }, [initialValues, reset]);
-
-    // Usequery pour fetch les listes
-    const fetchQuery = (fetchData, key) => {
-
-        const {isPending, isError, data = [], error} = useQuery({
-            queryKey: [key],
-            queryFn: fetchData,
-        });
-
-        return {isPending, isError, data, error}
-    }
-    // Afficher la liste des type dans la liste déroulante
-    const afficheListeTypes = () => {
-
-        const {isPending, isError, data: types} = fetchQuery(fetchTypes, "types")
-
-        if (isPending) {
-            return [<MenuItem key="loading" value="" disabled>Chargement...</MenuItem>];
-        }
-    
-        if (isError) {
-            return [<MenuItem key="error" value="" disabled>Erreur de chargement</MenuItem>];
-        }
-    
-        return types.map((type) => (
-            <MenuItem key={type.idType} value={type.idType}>{type.labelType}</MenuItem>
-        ));
-    };
 
     return (
         <Container component="main" maxWidth="xs">
@@ -176,61 +130,6 @@ const FormQuai = ({initialValues}) => {
                                     />
                                 )}
                             />
-                        </Grid>
-                        <Grid item xs={12} gap={2} sx={{ display: "flex", alignItems: "flex-end", flexDirection: "row-reverse" }}>
-                            <Grid item xs={1.7} sm={1.7}>
-                                <Controller
-                                    name="idType"
-                                    control={control}
-                                    defaultValue=""
-                                    rules={{ required: "Ce champ est requis" }}
-                                    render={({ field }) => (
-                                        <TextField
-                                            {...field}
-                                            required
-                                            fullWidth
-                                            autoFocus
-                                            id="idType"
-                                            label="ID"
-                                            value={type}
-                                            disabled
-                                            error={!!errors.idType}
-                                        />
-                                    )}
-                                />
-                            </Grid>
-                            <Grid item xs={10}>
-                                <InputLabel id="demo-simple-select-label">Type du quai</InputLabel>
-                                <Controller
-                                    name="type"
-                                    control={control}
-                                    defaultValue=""
-                                    rules={{ required: "Ce champ est requis" }}
-                                    render={({ field }) => (
-                                        <>
-                                            <Select
-                                                {...field}
-                                                id="typeNav"
-                                                value={type}
-                                                label="Type navire"
-                                                onChange={handleQuaiChange}
-                                                fullWidth
-                                                error={!!errors.type}
-                                            >
-                                                
-                                                {
-                                                    /* Affichages de la liste des types */
-                                                    afficheListeTypes() 
-                                                }
-
-                                            </Select>
-                                            {errors.type && (
-                                                <FormHelperText error>{errors.type.message}</FormHelperText>
-                                            )}
-                                        </>
-                                    )}
-                                />
-                            </Grid>
                         </Grid>
                         <Grid item xs={12}>
                             <Controller

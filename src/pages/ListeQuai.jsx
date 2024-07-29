@@ -3,7 +3,6 @@ import FormQuai from './Formulaire/FormQuai';
 
 const columnsQuai = [
     { width: 150, label: 'Nom', dataKey: 'nom' },
-    { width: 150, label: 'Type', dataKey: 'type' },
     { width: 150, label: 'Emplacement', dataKey: 'emplacementQuai' },
     { width: 150, label: 'Profondeur (m)', dataKey: 'profondeurQuai', numeric: true },
     { width: 200, label: 'Longueur Disponible (m)', dataKey: 'longueurDispo', numeric: true },
