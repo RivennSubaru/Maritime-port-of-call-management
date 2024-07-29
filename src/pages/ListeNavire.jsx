@@ -23,6 +23,7 @@ const ListeNavire = () => {
                     columns={columnsNavire}
                     apiUrl="http://localhost:8081/navire"
                     FormComponent={FormNavire}
+                    Item="navire"
                 />
             </section>
         </>
