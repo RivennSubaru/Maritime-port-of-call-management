@@ -12,7 +12,7 @@ const columnsNavire = [
     { width: 90, label: 'Situation', dataKey: 'situationNav' },
     { width: 90, label: 'Escale', dataKey: 'escaleNavire' },
     { width: 150, label: 'Actions', dataKey: 'action' }
-];
+];  
 
 const ListeNavire = () => {
     return (

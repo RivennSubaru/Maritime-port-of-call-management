@@ -21,6 +21,7 @@ const ListeQuai = () => {
                     columns={columnsQuai}
                     apiUrl="http://localhost:8081/quai"
                     FormComponent={FormQuai}
+                    Item="quai"
                 />
             </section>
         </>

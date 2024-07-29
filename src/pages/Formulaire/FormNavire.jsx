@@ -107,6 +107,7 @@ const FormNavire = ({initialValues}) => {
     // Gestion de l'affichage de la formulaire spéciale navigateur
     const handleRadioChange = (event) => {
         setIsNewNavigator(event.target.value);
+        reset("");
     };
 
 

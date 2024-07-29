@@ -97,7 +97,7 @@ function rowContent(_index, row, columns, onEdit, onDelete, onEscale) {
     );
 }
 
-const AfficheListe = ({ columns, apiUrl, FormComponent }) => {
+const AfficheListe = ({ columns, apiUrl, FormComponent, Item }) => {
     const [selectedRow, setSelectedRow] = useState(null);
 
     // Fenetre des formulaires
@@ -217,7 +217,7 @@ const AfficheListe = ({ columns, apiUrl, FormComponent }) => {
                 <DialogTitle>Supprimer</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Êtes-vous sûr de vouloir supprimer cet item ?
+                        Êtes-vous sûr de vouloir supprimer ce {Item} ?
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>

@@ -18,6 +18,7 @@ import dayjs from 'dayjs';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
+import { toast } from 'react-hot-toast';
 
 const fetchNavires = async () => {
     const reponse = await axios.get("http://localhost:8081/navire/getAllParti");
@@ -29,9 +30,18 @@ const FormEscale = ({ initialValues }) => {
     const {handleSubmit, control, watch, setValue, reset, formState: {errors}} = useForm();
 
     // id du navire
-    const [idNav, setIdNav] = useState("");
+    const [idNav, setIdNav] = useState();
+    const [nomNav, setNomNav] = useState("1");
     // numeros de l'escale
     const [numEscale, setNumEscale] = useState("DateNumber");
+
+    // longueur disponible quai et longueur du navire
+    const [longDispoQuai, setLongDispoQuai] = useState();
+    const [longNav, setLongNav] = useState();
+
+    // Situation navire
+    const [situationNav, setSituationNav] = useState("");
+
 
     const handleDateChange = (date) => {
         if (date) {
@@ -54,12 +64,18 @@ const FormEscale = ({ initialValues }) => {
     };
     
     const handleNavireChange = (event) => {
-        const selectedNavire = event.target.value;
+        const selectedNavire = event.target.value
 
+        // Remplire le champ id navire
         setIdNav(selectedNavire.id);
         setValue("idNav", selectedNavire.id);
-        setValue("nomNavire", selectedNavire.id);
+
+        // 
+        setNomNav(selectedNavire);
         updateNumEscale("num", selectedNavire.numNav);
+
+        setLongNav(selectedNavire.longueur);
+        setSituationNav(selectedNavire.situationNav);
     }
 
     const formatDate = (date) => {
@@ -70,15 +86,28 @@ const FormEscale = ({ initialValues }) => {
     };
 
     const onSubmit = (data) => {
-        data.dateDep = dayjs(data.dateDep).format('YYYY-MM-DD HH:mm:ss');
-        data.dateArriv = dayjs(data.dateArriv).format('YYYY-MM-DD HH:mm:ss');
+        if(situationNav !== 'parti'){
+            toast.error("Le navire doit être libre");
+            return;
+        }
 
-        const {numEscale, idQuai, idNav, typeEscale, dateDep, dateArriv, provenance, destination} = data;
+        if (longDispoQuai > longNav) {
+            // Reduire la longueur disponible du quai
+            const nouvLongDispoQuai = longDispoQuai - longNav;
 
-        const dataNavire = {numEscale, idQuai, idNav, typeEscale, dateDep, dateArriv, provenance, destination};
-        console.log(dataNavire);
+            data.dateDep = dayjs(data.dateDep).format('YYYY-MM-DD HH:mm:ss');
+            data.dateArriv = dayjs(data.dateArriv).format('YYYY-MM-DD HH:mm:ss');
+    
+            const {numEscale, idQuai, idNav, typeEscale, dateDep, dateArriv, provenance, destination} = data;
+    
+            const dataEscale = {numEscale, idQuai, idNav, typeEscale, dateDep, dateArriv, provenance, destination};
+            console.log(dataEscale);
+        } else {
+            toast.error("Longueur du quai insuffisante");
+        } 
     }
 
+    
     const afficheListeNavires = () => {
         const {isPending, isError, data: navires = [], error} = useQuery({
             queryKey: ['navire'],
@@ -106,6 +135,9 @@ const FormEscale = ({ initialValues }) => {
                 const {emplacementQuai, id, idTypeQuai, longueurDispo, longueursQuai, nom, profondeurQuai, type, isFull} = initialValues;
                 const donneesQuai = {idQuai: id, nomQuai: nom, idTypeQuai, typeQuai: type, emplacementQuai,profondeurQuai, longueursQuai, longueurDispo};
 
+                // stocker la longueur dispo du quai
+                setLongDispoQuai(longueurDispo);
+
                 console.log(donneesQuai);
 
                 reset(donneesQuai);
@@ -114,6 +146,9 @@ const FormEscale = ({ initialValues }) => {
                 const donneesNavire = {idNav: id, nomNav, numNav, idNavigateur, nomNavigateur,  idTypeNav: idType, typeNav: type, situationNav, longueur, tirantEau}
 
                 console.log(donneesNavire);
+
+                setIdNav(id); // Mise à jour de idNav
+                setValue("nomNavire", nomNav); // Préreemplissage de nomNavire
             }
         }
     }, [initialValues, reset]);
@@ -191,7 +226,6 @@ const FormEscale = ({ initialValues }) => {
                                         fullWidth
                                         autoFocus
                                         id="idNav"
-                                        label="ID Navire"
                                         value={idNav}
                                         disabled
                                     />
@@ -242,8 +276,8 @@ const FormEscale = ({ initialValues }) => {
                                                     id="nomNavire"
                                                     label="Nom navire"
                                                     onChange={handleNavireChange}
+                                                    value={nomNav}
                                                     fullWidth
-                                                    value={idNav}
                                                     error={!!errors.nomNavire}
                                                 >
                                                     
@@ -251,6 +285,7 @@ const FormEscale = ({ initialValues }) => {
                                                         /* Affichages de la liste de navire */
                                                         afficheListeNavires() 
                                                     }
+                                                    <MenuItem key="vide" value="1">vide</MenuItem>
 
                                                 </Select>
                                                 {errors.nomNavire && (
