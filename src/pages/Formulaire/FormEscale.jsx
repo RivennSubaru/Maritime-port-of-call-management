@@ -95,12 +95,12 @@ const FormEscale = ({ initialValues }) => {
             // Reduire la longueur disponible du quai
             const nouvLongDispoQuai = longDispoQuai - longNav;
 
-            data.dateDep = dayjs(data.dateDep).format('YYYY-MM-DD HH:mm:ss');
-            data.dateArriv = dayjs(data.dateArriv).format('YYYY-MM-DD HH:mm:ss');
+            data.ETD = dayjs(data.ETD).format('YYYY-MM-DD HH:mm:ss');
+            data.ETA = dayjs(data.ETA).format('YYYY-MM-DD HH:mm:ss');
     
-            const {numEscale, idQuai, idNav, typeEscale, dateDep, dateArriv, provenance, destination} = data;
+            const {numEscale, idQuai, idNav, typeEscale, ETD, ETA, provenance, destination} = data;
     
-            const dataEscale = {numEscale, idQuai, idNav, typeEscale, dateDep, dateArriv, provenance, destination};
+            const dataEscale = {numEscale, idQuai, idNav, typeEscale, ETD, ETA, provenance, destination};
             console.log(dataEscale);
         } else {
             toast.error("Longueur du quai insuffisante");
@@ -302,7 +302,7 @@ const FormEscale = ({ initialValues }) => {
 
                         <Grid item xs={12} sm={6}>
                             <Controller
-                                name='dateDep'
+                                name='ETD'
                                 control={control}
                                 defaultValue={null}
                                 render={({ field }) => (
@@ -322,7 +322,7 @@ const FormEscale = ({ initialValues }) => {
                         </Grid>
                         <Grid item xs={12} sm={6}>
                             <Controller
-                                name='dateArriv'
+                                name='ETA'
                                 control={control}
                                 defaultValue={null}
                                 render={({ field }) => (
