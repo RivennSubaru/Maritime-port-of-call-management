@@ -7,53 +7,20 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 
-const columns = [
-  { id: 'name', label: 'Name', minWidth: 170 },
-  { id: 'code', label: 'ISO\u00a0Code', minWidth: 100 },
-  {
-    id: 'population',
-    label: 'Population',
-    minWidth: 170,
-    align: 'right',
-    format: (value) => value.toLocaleString('en-US'),
-  },
-  {
-    id: 'size',
-    label: 'Size\u00a0(km\u00b2)',
-    minWidth: 170,
-    align: 'right',
-    format: (value) => value.toLocaleString('en-US'),
-  },
-  {
-    id: 'density',
-    label: 'Density',
-    minWidth: 170,
-    align: 'right',
-    format: (value) => value.toFixed(2),
-  },
-];
-
-const AfficheListeTest = () => {
+const AfficheListeTest = ({columns, apiUrl, Item}) => {
 
     const fetchData = async () => {
-        const reponse = await axios.get("http://localhost:8081/navire/getAll");
+        const reponse = await axios.get(apiUrl + "/getAll");
         return reponse.data;
     }
 
     const {isPending, isError, data = [], error} = useQuery({
-        queryKey: ["navires"],
+        queryKey: [apiUrl],
         queryFn: fetchData
     });
-
-    if (isPending) {
-        return <h3>chargement de la liste...</h3>
-    }
-
-    if (isError) {
-        console.log(error);
-        return <h3>Une erreur s'est produit</h3>
-    }
 
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
@@ -67,6 +34,15 @@ const AfficheListeTest = () => {
         setPage(0);
     };
 
+    if (isPending) {
+        return <h3>chargement de la liste...</h3>
+    }
+
+    if (isError) {
+        console.log(error);
+        return <h3>Une erreur s'est produit</h3>
+    }
+
     return (
         <Paper sx={{ width: '100%', overflow: 'hidden' }}>
         <TableContainer sx={{ maxHeight: 440 }}>
@@ -77,7 +53,7 @@ const AfficheListeTest = () => {
                     <TableCell
                     key={column.id}
                     align={column.align}
-                    style={{ minWidth: column.minWidth }}
+                    style={{ minWidth: column.minWidth, fontWeight: 'bold'  }}
                     >
                     {column.label}
                     </TableCell>
@@ -85,11 +61,11 @@ const AfficheListeTest = () => {
                 </TableRow>
             </TableHead>
             <TableBody>
-                {rows
+                {data
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => {
                     return (
-                    <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
+                    <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
                         {columns.map((column) => {
                         const value = row[column.id];
                         return (
@@ -109,7 +85,7 @@ const AfficheListeTest = () => {
         <TablePagination
             rowsPerPageOptions={[10, 25, 100]}
             component="div"
-            count={rows.length}
+            count={data.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}

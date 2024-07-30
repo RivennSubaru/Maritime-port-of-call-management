@@ -19,6 +19,7 @@ import FormQuai from './pages/Formulaire/FormQuai.jsx'
 import Quai from './component/Quai.jsx'
 import FormPilote from './pages/Formulaire/FormPilote.jsx'
 import AfficheListeQuais from './component/AfficheListeQuais.jsx'
+import AfficheListeTest from './component/AfficheListeTest.jsx'
 
 const queryClient = new QueryClient();
 
@@ -48,6 +49,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           
           <Route path='/test/quai' element={<Quai/>}/>
           <Route path='/test/affiche' element={<AfficheListeQuais/>}/>
+          <Route path='/test/afficheTest' element={<AfficheListeTest/>}/>
         </Routes>
       </BrowserRouter>
     </QueryClientProvider>
