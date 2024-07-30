@@ -135,7 +135,7 @@ export default function Dashboard({outLet}) {
         <Divider />
         <List>
           {['Tableau de bord', 'Liste des escales', 'Liste des quais', 'Liste des navires'].map((text, index) => (
-            <Link href={["/tableauBord", "/escale", "/quai", "/navire"].find((n, i) => i == index)} key={text} disablePadding sx={{ display: 'block', textDecoration: "none", color: "rgba(0, 0, 0, 0.54)" }}>
+            <Link href={["/tableauBord", "/escale", "/quai", "/navire"].find((n, i) => i == index)} key={text} sx={{ display: 'block', textDecoration: "none", color: "rgba(0, 0, 0, 0.54)" }}>
               <ListItemButton
                 sx={{
                   minHeight: 48,
@@ -160,7 +160,7 @@ export default function Dashboard({outLet}) {
         <Divider />
         <List>
           {['Statistique', 'A propos'].map((text, index) => (
-            <Link href={["/stat", "/about"].find((n, i) => i == index)} key={text} disablePadding sx={{ display: 'block', textDecoration: "none", color: "rgba(0, 0, 0, 0.54)" }}>
+            <Link href={["/stat", "/about"].find((n, i) => i == index)} key={text} sx={{ display: 'block', textDecoration: "none", color: "rgba(0, 0, 0, 0.54)" }}>
               <ListItemButton
                 sx={{
                   minHeight: 48,
