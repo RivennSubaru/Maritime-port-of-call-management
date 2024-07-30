@@ -45,9 +45,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <Route path='/form/navire' element={<FormNavire/>}/>
           <Route path='/form/quai' element={<FormQuai/>}/>
           <Route path='/form/pilote' element={<FormPilote/>}/>
-          
-          <Route path='/test/quai' element={<Quai/>}/>
-          <Route path='/test/affiche' element={<AfficheListeQuais/>}/>
         </Routes>
       </BrowserRouter>
     </QueryClientProvider>
