@@ -16,9 +16,8 @@ import About from './pages/About.jsx'
 import FormEscale from './pages/Formulaire/FormEscale.jsx'
 import FormNavire from './pages/Formulaire/FormNavire.jsx'
 import FormQuai from './pages/Formulaire/FormQuai.jsx'
-import Quai from './component/Quai.jsx'
 import FormPilote from './pages/Formulaire/FormPilote.jsx'
-import AfficheListeQuais from './component/AfficheListeQuais.jsx'
+import FormSearch from './pages/Formulaire/FormSearch.jsx'
 
 const queryClient = new QueryClient();
 
@@ -45,6 +44,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <Route path='/form/navire' element={<FormNavire/>}/>
           <Route path='/form/quai' element={<FormQuai/>}/>
           <Route path='/form/pilote' element={<FormPilote/>}/>
+
+          <Route path='/test/form/search' element={<FormSearch/>}/>
         </Routes>
       </BrowserRouter>
     </QueryClientProvider>
