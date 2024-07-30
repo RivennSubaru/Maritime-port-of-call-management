@@ -1,5 +1,5 @@
 import React from 'react';
-import AfficheListeTest from '../component/AfficheListeTest';
+import TableListe from '../component/TableListe';
 
 const columns = [
     { id: 'numNav', label: 'Numéro Navire', minWidth: 170 },
@@ -38,7 +38,7 @@ const ListeNavire = () => {
         <>
             <h2>Liste de navires</h2>
             <section className='listeNavire'>
-                <AfficheListeTest
+                <TableListe
                     columns={columns}
                     apiUrl="http://localhost:8081/navire"
                     Item="navire"

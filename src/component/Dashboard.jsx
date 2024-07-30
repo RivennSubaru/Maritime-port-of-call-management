@@ -96,8 +96,6 @@ export default function Dashboard({outLet}) {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
 
-  console.log(outLet);
-
   const handleDrawerOpen = () => {
     setOpen(true);
   };

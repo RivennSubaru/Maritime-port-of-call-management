@@ -10,7 +10,7 @@ import TableRow from '@mui/material/TableRow';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 
-const AfficheListeTest = ({columns, apiUrl, Item}) => {
+const TableListe = ({columns, apiUrl, Item}) => {
 
     const fetchData = async () => {
         const reponse = await axios.get(apiUrl + "/getAll");
@@ -95,4 +95,4 @@ const AfficheListeTest = ({columns, apiUrl, Item}) => {
     );
 }
 
-export default AfficheListeTest;
+export default TableListe;
