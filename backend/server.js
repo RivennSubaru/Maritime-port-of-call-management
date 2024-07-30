@@ -5,7 +5,7 @@ const db = require('./config/db');
 
 const userRoutes = require('./routes/users.routes');
 const quaiRoutes = require("./routes/quais.routes");
-const navigateurRoutes = require("./routes/navigateurs.routes");
+const piloteRoutes = require("./routes/pilotes.routes");
 const navireRoutes = require("./routes/navires.routes");
 const typesRoutes = require("./routes/types.routes");
 
@@ -21,7 +21,7 @@ app.use(express.json());
 // ROUTES
 app.use("/user", userRoutes);
 app.use("/quai", quaiRoutes);
-app.use("/navigateur", navigateurRoutes);
+app.use("/pilote", piloteRoutes);
 app.use("/navire", navireRoutes);
 app.use("/type", typesRoutes);
 

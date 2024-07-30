@@ -142,8 +142,8 @@ const FormEscale = ({ initialValues }) => {
 
                 reset(donneesQuai);
             } else if (initialValues.provenance === 'navire') {
-                const {id, idNavigateur, idType, longueur, nomNav, nomNavigateur, numNav, situationNav, tirantEau, type} = initialValues;
-                const donneesNavire = {idNav: id, nomNav, numNav, idNavigateur, nomNavigateur,  idTypeNav: idType, typeNav: type, situationNav, longueur, tirantEau}
+                const {id, idPilote, idType, longueur, nomNav, nomPilote, numNav, situationNav, tirantEau, type} = initialValues;
+                const donneesNavire = {idNav: id, nomNav, numNav, idPilote, nomPilote,  idTypeNav: idType, typeNav: type, situationNav, longueur, tirantEau}
 
                 console.log(donneesNavire);
 

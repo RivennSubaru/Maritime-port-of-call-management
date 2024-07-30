@@ -5,7 +5,7 @@ import FormNavire from './Formulaire/FormNavire';
 const columnsNavire = [
     { width: 150, label: 'Numeros', dataKey: 'numNav' },
     { width: 150, label: 'Nom', dataKey: 'nomNav' },
-    { width: 150, label: 'Navigateur', dataKey: 'nomNavigateur' },
+    { width: 150, label: 'Pilote', dataKey: 'nomPilote' },
     { width: 150, label: 'Type', dataKey: 'type' },
     { width: 100, label: 'Tirant d\'eau', dataKey: 'tirantEau' },
     { width: 100, label: 'Longueurs', dataKey: 'longueur' },

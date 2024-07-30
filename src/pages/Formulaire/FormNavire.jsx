@@ -23,9 +23,9 @@ const fetchTypes = async () => {
     const reponse = await axios.get("http://localhost:8081/type/getAll");
     return reponse.data;
 }
-// Recupération de la liste des navigateurs
-const fetchNavigator = async () => {
-    const reponse = await axios.get("http://localhost:8081/navigateur/getAll");
+// Recupération de la liste des pilotes
+const fetchPilote = async () => {
+    const reponse = await axios.get("http://localhost:8081/pilote/getAll");
     return reponse.data;
 }
 
@@ -35,8 +35,8 @@ const FormNavire = ({initialValues}) => {
     const { handleSubmit, control, setValue, reset, watch, formState: { errors } } = useForm();
 
     const [type, setType] = useState(''); /* type */
-    const [navigName, setNavigName] = useState(''); /* Nom navigateur */
-    const [isNewNavigator, setIsNewNavigator] = useState('non'); /* formulaire navigateur */
+    const [piloteName, setPiloteName] = useState(''); /* Nom pilote */
+    const [isNewPilote, setIsNewPilote] = useState('non'); /* formulaire pilote */
 
     // Pour actualiser automatiquement la liste
     const queryClient = useQueryClient();
@@ -71,10 +71,10 @@ const FormNavire = ({initialValues}) => {
             <MenuItem key={type.idType} value={type.idType}>{type.labelType}</MenuItem>
         ));
     };
-    // Afficher la liste des navigateurs
-    const afficheListeNavigateurs = () => {
+    // Afficher la liste des pilotes
+    const afficheListePilotes = () => {
 
-        const {isPending, isError, data: navigateurs} = fetchQuery(fetchNavigator, "navigateurs")
+        const {isPending, isError, data: pilotes} = fetchQuery(fetchPilote, "pilotes")
 
         if (isPending) {
             return [<MenuItem key="loading" value="" disabled>Chargement...</MenuItem>];
@@ -84,8 +84,8 @@ const FormNavire = ({initialValues}) => {
             return [<MenuItem key="error" value="" disabled>Erreur de chargement</MenuItem>];
         }
     
-        return navigateurs.map((navigateur) => (
-            <MenuItem key={navigateur.idNavigateur} value={navigateur.idNavigateur}>{navigateur.nomNavigateur + ' ' + navigateur.prenomNavigateur}</MenuItem>
+        return pilotes.map((pilote) => (
+            <MenuItem key={pilote.idPilote} value={pilote.idPilote}>{pilote.nomPilote + ' ' + pilote.prenomPilote}</MenuItem>
         ));
     };
 
@@ -97,16 +97,16 @@ const FormNavire = ({initialValues}) => {
         setValue('idType', event.target.value);
     };
 
-    // Changement dynamique de l'idNavigateur en fonction du nom du navigateur
-    const handleNavigateurChange = (event) => {
-        setNavigName(event.target.value);
-        setValue('navigName', event.target.value);
-        setValue('idNavig', event.target.value);
+    // Changement dynamique de l'idPilote en fonction du nom du pilote
+    const handlePiloteChange = (event) => {
+        setPiloteName(event.target.value);
+        setValue('piloteName', event.target.value);
+        setValue('idPilote', event.target.value);
     };
 
-    // Gestion de l'affichage de la formulaire spéciale navigateur
+    // Gestion de l'affichage de la formulaire spéciale pilote
     const handleRadioChange = (event) => {
-        setIsNewNavigator(event.target.value);
+        setIsNewPilote(event.target.value);
         reset("");
     };
 
@@ -118,13 +118,13 @@ const FormNavire = ({initialValues}) => {
             if (initialValues) {
                 await axios.post("http://localhost:8081/navire/update", data);
                 console.log(data);
-            } else if (data.idNavig) {
+            } else if (data.idPilote) {
                 await axios.post("http://localhost:8081/navire/add", data);
                 /* console.log("navire fotsiny") */
 
-            } else if (data.nomNavigateur){
-                await axios.post("http://localhost:8081/navigateur/add", data);
-                /* console.log("navigateur puis...") */
+            } else if (data.nomPilote){
+                await axios.post("http://localhost:8081/pilote/add", data);
+                /* console.log("pilote puis...") */
 
             } else {
                 await axios.post("http://localhost:8081/navire/addSousRequete", data);
@@ -154,7 +154,7 @@ const FormNavire = ({initialValues}) => {
 
         try {
 
-            if (data.idNavig != "") {
+            if (data.idPilote != "") {
                 toast.loading("Enregistrement du navire...", { id: toastId });
 
                 await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -163,14 +163,14 @@ const FormNavire = ({initialValues}) => {
     
             } else {
 
-                const {nomNav, numNav, idType, tirantEau, longueur, nomNavigateur, prenomNavigateur, telNavigateur, emailNavigateur} = await data;
+                const {nomNav, numNav, idType, tirantEau, longueur, nomPilote, prenomPilote, telPilote, emailPilote} = await data;
     
-                const navigateur = {nomNavigateur, prenomNavigateur, telNavigateur, emailNavigateur};
-                const navire = {nomNav, numNav, idType, tirantEau, longueur, telNavigateur};
+                const pilote = {nomPilote, prenomPilote, telPilote, emailPilote};
+                const navire = {nomNav, numNav, idType, tirantEau, longueur, telPilote};
     
-                toast.loading("Enregistrement du navigateur...", { id: toastId });
+                toast.loading("Enregistrement du pilote...", { id: toastId });
                 /* await new Promise((resolve) => setTimeout(resolve, 2000)); */
-                await mutation.mutateAsync(navigateur);
+                await mutation.mutateAsync(pilote);
 
                 toast.loading("Enregistrement du navire...", { id: toastId });
                 /* await new Promise((resolve) => setTimeout(resolve, 2000)); */
@@ -186,8 +186,8 @@ const FormNavire = ({initialValues}) => {
 
         reset([]);
         setType('');
-        setNavigName('');
-        setIsNewNavigator('non');
+        setPiloteName('');
+        setIsNewPilote('non');
         
         // Ne pas rediriger s'il s'agit d'une modification
         if (!initialValues) navigateTo("/navire");
@@ -203,10 +203,10 @@ const FormNavire = ({initialValues}) => {
             setValue('idType', initialValues.idType);
             setValue('type', initialValues.type);
 
-            // pour navigateur
-            setNavigName(initialValues.idNavigateur || '');
-            setValue('navigName', initialValues.nomNavigateur);
-            setValue('idNavig', initialValues.idNavigateur);
+            // pour pilote
+            setPiloteName(initialValues.idPilote || '');
+            setValue('piloteName', initialValues.nomPilote);
+            setValue('idPilote', initialValues.idPilote);
         }
     }, [initialValues, reset]);
 
@@ -360,16 +360,16 @@ const FormNavire = ({initialValues}) => {
                             <>
                                 <Grid item sx={{ paddingTop: "25px !important" }}>
                                     <Typography component="h1" variant="h5" width={"100%"}>
-                                        Navigateur
+                                        Pilote
                                     </Typography>
                                 </Grid>
                                 <Grid item gap={2} sx={{ display: "flex", alignItems: "center" }}>
-                                    <FormLabel id="demo-row-radio-buttons-group-label">Nouveau navigateur ?</FormLabel>
+                                    <FormLabel id="demo-row-radio-buttons-group-label">Nouveau pilote ?</FormLabel>
                                     <RadioGroup
                                         row
                                         aria-labelledby="demo-row-radio-buttons-group-label"
                                         name="row-radio-buttons-group"
-                                        value={isNewNavigator}
+                                        value={isNewPilote}
                                         onChange={handleRadioChange}
                                     >
                                         <FormControlLabel value="non" control={<Radio />} label="Non" />
@@ -380,11 +380,11 @@ const FormNavire = ({initialValues}) => {
                         )}
 
 
-                        {(isNewNavigator === 'non' || initialValues) && (
+                        {(isNewPilote === 'non' || initialValues) && (
                             <Grid item xs={12} gap={2} sx={{ display: "flex", alignItems: "flex-end", flexDirection: "row-reverse" }}>
                                 <Grid item xs={1.7} sm={1.7}>
                                     <Controller
-                                        name="idNavig"
+                                        name="idPilote"
                                         control={control}
                                         defaultValue=""
                                         rules={{ required: "Ce champ est requis" }}
@@ -394,37 +394,37 @@ const FormNavire = ({initialValues}) => {
                                                 required
                                                 fullWidth
                                                 autoFocus
-                                                id="idNavig"
+                                                id="idPilote"
                                                 label="ID"
-                                                value={navigName}
+                                                value={piloteName}
                                                 disabled
-                                                error={!!errors.idNavig}
+                                                error={!!errors.idPilote}
                                             />
                                         )}
                                     />
                                 </Grid>
                                 <Grid item xs={10}>
-                                    <InputLabel id="demo-simple-select-label">Nom du navigateur</InputLabel>
+                                    <InputLabel id="demo-simple-select-label">Nom du pilote</InputLabel>
                                     <Controller
-                                        name="navigName"
+                                        name="piloteName"
                                         control={control}
                                         defaultValue=""
                                         rules={{ required: "Ce champ est requis" }}
                                         render={({ field }) => (
                                             <Select
                                                 {...field}
-                                                id="nomNavig"
-                                                value={navigName}
-                                                label="Nom navigateur"
-                                                onChange={handleNavigateurChange}
+                                                id="nomPilote"
+                                                value={piloteName}
+                                                label="Nom pilote"
+                                                onChange={handlePiloteChange}
                                                 fullWidth
-                                                error={!!errors.navigName}
-                                                helperText={errors.navigName ? errors.navigName.message : ""}
+                                                error={!!errors.piloteName}
+                                                helperText={errors.piloteName ? errors.piloteName.message : ""}
                                             >
                                                 
                                                 {
-                                                    // Affichage de la liste des navigateurs
-                                                    afficheListeNavigateurs()
+                                                    // Affichage de la liste des pilotes
+                                                    afficheListePilotes()
                                                 }
 
                                             </Select>
@@ -434,14 +434,14 @@ const FormNavire = ({initialValues}) => {
                             </Grid>
                         )}
 
-                        {/* S'IL S'AGIT D'UN NOUVEAU NAVIGATEUR */}
+                        {/* S'IL S'AGIT D'UN NOUVEAU PILOTE */}
 
-                        {(isNewNavigator === 'oui' && !initialValues) && (
+                        {(isNewPilote === 'oui' && !initialValues) && (
 
                             <Grid item gap={2} sx={{ display: "flex", flexWrap: "wrap" }}>
                                 <Grid item xs={12} sm={5.75}>
                                     <Controller
-                                        name="nomNavigateur"
+                                        name="nomPilote"
                                         control={control}
                                         defaultValue=""
                                         rules={{ required: "Ce champ est requis" }}
@@ -451,17 +451,17 @@ const FormNavire = ({initialValues}) => {
                                                 required
                                                 fullWidth
                                                 autoFocus
-                                                id="nomNavigateur"
-                                                label="Nom du navigateur"
-                                                error={!!errors.nomNavigateur}
-                                                helperText={errors.nomNavigateur ? errors.nomNavigateur.message : ""}
+                                                id="nomPilote"
+                                                label="Nom du pilote"
+                                                error={!!errors.nomPilote}
+                                                helperText={errors.nomPilote ? errors.nomPilote.message : ""}
                                             />
                                         )}
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={5.75}>
                                     <Controller
-                                        name="prenomNavigateur"
+                                        name="prenomPilote"
                                         control={control}
                                         defaultValue=""
                                         rules={{ required: "Ce champ est requis" }}
@@ -470,17 +470,17 @@ const FormNavire = ({initialValues}) => {
                                                 {...field}
                                                 required
                                                 fullWidth
-                                                id="prenomNavigateur"
-                                                label="Prénom du navigateur"
-                                                error={!!errors.prenomNavigateur}
-                                                helperText={errors.prenomNavigateur ? errors.prenomNavigateur.message : ""}
+                                                id="prenomPilote"
+                                                label="Prénom du pilote"
+                                                error={!!errors.prenomPilote}
+                                                helperText={errors.prenomPilote ? errors.prenomPilote.message : ""}
                                             />
                                         )}
                                     />
                                 </Grid>
                                 <Grid item xs={12}>
                                     <Controller
-                                        name="telNavigateur"
+                                        name="telPilote"
                                         control={control}
                                         defaultValue=""
                                         rules={{ 
@@ -495,17 +495,17 @@ const FormNavire = ({initialValues}) => {
                                                 {...field}
                                                 required
                                                 fullWidth
-                                                id="telNavigateur"
-                                                label="Téléphone du navigateur"
-                                                error={!!errors.telNavigateur}
-                                                helperText={errors.telNavigateur ? errors.telNavigateur.message : ""}
+                                                id="telPilote"
+                                                label="Téléphone du pilote"
+                                                error={!!errors.telPilote}
+                                                helperText={errors.telPilote ? errors.telPilote.message : ""}
                                             />
                                         )}
                                     />
                                 </Grid>
                                 <Grid item xs={12}>
                                     <Controller
-                                        name="emailNavigateur"
+                                        name="emailPilote"
                                         control={control}
                                         defaultValue=""
                                         rules={{ required: "Ce champ est requis" }}
@@ -514,11 +514,11 @@ const FormNavire = ({initialValues}) => {
                                                 {...field}
                                                 required
                                                 fullWidth
-                                                id="emailNavigateur"
-                                                label="Adresse email du navigateur"
+                                                id="emailPilote"
+                                                label="Adresse email du pilote"
                                                 type="email"
-                                                error={!!errors.emailNavigateur}
-                                                helperText={errors.emailNavigateur ? errors.emailNavigateur.message : ""}
+                                                error={!!errors.emailPilote}
+                                                helperText={errors.emailPilote ? errors.emailPilote.message : ""}
                                             />
                                         )}
                                     />

@@ -12,12 +12,12 @@ import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 
-const FormNavigateur = () => {
+const FormPilote = () => {
     const {handleSubmit, control, reset, formState:{errors}} = useForm();
 
     const mutation = useMutation({
         mutationFn: async (data) => {
-            await axios.post("http://localhost:8081/navigateur/add", data);
+            await axios.post("http://localhost:8081/pilote/add", data);
         },
         onError: (error) => {
             setTimeout(() => {
@@ -37,8 +37,8 @@ const FormNavigateur = () => {
             mutation.mutateAsync(data),
             {
                 loading: "chargement...",
-                success: "Navigateur ajouté",
-                error: "Navigateur non ajouté"
+                success: "Pilote ajouté",
+                error: "Pilote non ajouté"
             }
         )
     }
@@ -56,14 +56,14 @@ const FormNavigateur = () => {
             >
                 <Avatar sx={{ m: 1, bgcolor: '#3fc8ff' }}/>
                 <Typography component="h1" variant="h5">
-                    Navigateur
+                    Pilote
                 </Typography>
                 <Box onSubmit={handleSubmit(onSubmit)} component="form" noValidate sx={{ mt: 3 }}>
                     <Grid container spacing={2}>
                         <Grid item gap={2} sx={{ display: "flex", flexWrap: "wrap" }}>
                             <Grid item xs={12} sm={5.75}>
                                 <Controller
-                                    name="nomNavigateur"
+                                    name="nomPilote"
                                     control={control}
                                     defaultValue=""
                                     rules={{ required: "Ce champ est requis" }}
@@ -73,17 +73,17 @@ const FormNavigateur = () => {
                                             required
                                             fullWidth
                                             autoFocus
-                                            id="nomNavigateur"
-                                            label="Nom du navigateur"
-                                            error={!!errors.nomNavigateur}
-                                            helperText={errors.nomNavigateur ? errors.nomNavigateur.message : ""}
+                                            id="nomPilote"
+                                            label="Nom du pilote"
+                                            error={!!errors.nomPiloter}
+                                            helperText={errors.nomPilote ? errors.nomPilote.message : ""}
                                         />
                                     )}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={5.75}>
                                 <Controller
-                                    name="prenomNavigateur"
+                                    name="prenomPilote"
                                     control={control}
                                     defaultValue=""
                                     rules={{ required: "Ce champ est requis" }}
@@ -92,17 +92,17 @@ const FormNavigateur = () => {
                                             {...field}
                                             required
                                             fullWidth
-                                            id="prenomNavigateur"
-                                            label="Prénom du navigateur"
-                                            error={!!errors.prenomNavigateur}
-                                            helperText={errors.prenomNavigateur ? errors.prenomNavigateur.message : ""}
+                                            id="prenomPilote"
+                                            label="Prénom du pilote"
+                                            error={!!errors.prenomPilote}
+                                            helperText={errors.prenomPilote ? errors.prenomPilote.message : ""}
                                         />
                                     )}
                                 />
                             </Grid>
                             <Grid item xs={12}>
                                 <Controller
-                                    name="telNavigateur"
+                                    name="telPilote"
                                     control={control}
                                     defaultValue=""
                                     rules={{ 
@@ -117,17 +117,17 @@ const FormNavigateur = () => {
                                             {...field}
                                             required
                                             fullWidth
-                                            id="telNavigateur"
-                                            label="Téléphone du navigateur"
-                                            error={!!errors.telNavigateur}
-                                            helperText={errors.telNavigateur ? errors.telNavigateur.message : ""}
+                                            id="telPilote"
+                                            label="Téléphone du pilote"
+                                            error={!!errors.telPilote}
+                                            helperText={errors.telPilote ? errors.telPilote.message : ""}
                                         />
                                     )}
                                 />
                             </Grid>
                             <Grid item xs={12}>
                                 <Controller
-                                    name="emailNavigateur"
+                                    name="emailPilote"
                                     control={control}
                                     defaultValue=""
                                     rules={{ required: "Ce champ est requis" }}
@@ -136,11 +136,11 @@ const FormNavigateur = () => {
                                             {...field}
                                             required
                                             fullWidth
-                                            id="emailNavigateur"
-                                            label="Adresse email du navigateur"
+                                            id="emailPilote"
+                                            label="Adresse email du pilote"
                                             type="email"
-                                            error={!!errors.emailNavigateur}
-                                            helperText={errors.emailNavigateur ? errors.emailNavigateur.message : ""}
+                                            error={!!errors.emailPilote}
+                                            helperText={errors.emailPilote ? errors.emailPilote.message : ""}
                                         />
                                     )}
                                 />
@@ -161,4 +161,4 @@ const FormNavigateur = () => {
     );
 }
 
-export default FormNavigateur;
+export default FormPilote;

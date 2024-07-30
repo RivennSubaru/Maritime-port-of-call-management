@@ -5,7 +5,7 @@ const db = require('../config/db');
 const addNavire = asyncHandler(async (req, res) => {
     const {nomNav, numNav, idType, tirantEau, longueur, idNavig} = req.body;
 
-    const sql = "INSERT INTO navires(nomNav, numNav, idTypeNav, tirantEau, longueursNav, idNavigateur, situationNav) VALUES(?, ?, ?, ?, ?, ?, \"parti\")";
+    const sql = "INSERT INTO navires(nomNav, numNav, idTypeNav, tirantEau, longueursNav, idPilote, situationNav) VALUES(?, ?, ?, ?, ?, ?, \"parti\")";
     const values = [nomNav, numNav, idType, tirantEau, longueur, idNavig];
 
     db.query(sql, values, (err, data) => {
@@ -17,14 +17,14 @@ const addNavire = asyncHandler(async (req, res) => {
     })
 })
 
-// ADD NAVIRE WITH TEL NAVIGATEUR
+// ADD NAVIRE WITH TEL PILOTE
 const addNavireSousRequete = asyncHandler(async (req, res) => {
-    const {nomNav, numNav, idType, tirantEau, longueur, telNavigateur} = req.body;
+    const {nomNav, numNav, idType, tirantEau, longueur, telPilote} = req.body;
 
-    const sql = "INSERT INTO navires(nomNav, numNav, idTypeNav, tirantEau, longueursNav, situationNav, idNavigateur)"
-            + "VALUES(?, ?, ?, ?, ?, \"parti\", (SELECT idNavigateur FROM navigateurs WHERE telNavigateur = ?))";
+    const sql = "INSERT INTO navires(nomNav, numNav, idTypeNav, tirantEau, longueursNav, situationNav, idPilote)"
+            + "VALUES(?, ?, ?, ?, ?, \"parti\", (SELECT idPilote FROM pilotes WHERE telPilote = ?))";
 
-    const values = [nomNav, numNav, idType, tirantEau, longueur, telNavigateur];
+    const values = [nomNav, numNav, idType, tirantEau, longueur, telPilote];
 
     db.query(sql, values, (err, data) => {
         if (err) {
@@ -37,7 +37,7 @@ const addNavireSousRequete = asyncHandler(async (req, res) => {
 
 // GET ALL NAVIRES
 const getAllNavires = asyncHandler(async (req, res) => {
-    const sql = "SELECT idNav AS id, navigateurs.idNavigateur, nomNavigateur, idTypeNav AS idType, labelType AS type, numNav, nomNav, tirantEau, longueursNav AS longueur, situationNav FROM navires JOIN navigateurs ON navires.idNavigateur = navigateurs.idNavigateur JOIN types ON navires.idTypeNav = types.idType";
+    const sql = "SELECT idNav AS id, pilotes.idPilote, nomPilote, idTypeNav AS idType, labelType AS type, numNav, nomNav, tirantEau, longueursNav AS longueur, situationNav FROM navires JOIN pilotes ON navires.idPilote = pilotes.idPilote JOIN types ON navires.idTypeNav = types.idType";
 
     db.query(sql, (err, data) => {
         if (err) res.status(500).send({error: err.message});
@@ -46,7 +46,7 @@ const getAllNavires = asyncHandler(async (req, res) => {
 });
 // GET ALL NAVIRES PARTI
 const getAllNaviresParti = asyncHandler(async (req, res) => {
-    const sql = "SELECT idNav AS id, navigateurs.idNavigateur, nomNavigateur, idTypeNav AS idType, labelType AS type, numNav, nomNav, tirantEau, longueursNav AS longueur, situationNav FROM navires JOIN navigateurs ON navires.idNavigateur = navigateurs.idNavigateur JOIN types ON navires.idTypeNav = types.idType WHERE navires.situationNav = \"parti\"";
+    const sql = "SELECT idNav AS id, pilotes.idPilote, nomPilote, idTypeNav AS idType, labelType AS type, numNav, nomNav, tirantEau, longueursNav AS longueur, situationNav FROM navires JOIN pilotes ON navires.idPilote = pilotes.idPilote JOIN types ON navires.idTypeNav = types.idType WHERE navires.situationNav = \"parti\"";
 
     db.query(sql, (err, data) => {
         if (err) res.status(500).send({error: err.message});
@@ -57,10 +57,10 @@ const getAllNaviresParti = asyncHandler(async (req, res) => {
 
 // UPDATE NAVIRE
 const updateNavire = asyncHandler(async (req, res) => {
-    const {nomNav, numNav, idType, tirantEau, longueur, idNavigateur, id} = req.body;
+    const {nomNav, numNav, idType, tirantEau, longueur, idPilote, id} = req.body;
 
-    const sql = "UPDATE navires SET nomNav = ?, numNav = ?, idTypeNav = ?, tirantEau = ?, longueursNav = ?, idNavigateur = ? WHERE idNav = ?";
-    const values = [nomNav, numNav, idType, tirantEau, longueur, idNavigateur, id];
+    const sql = "UPDATE navires SET nomNav = ?, numNav = ?, idTypeNav = ?, tirantEau = ?, longueursNav = ?, idPilote = ? WHERE idNav = ?";
+    const values = [nomNav, numNav, idType, tirantEau, longueur, idPilote, id];
 
     db.query(sql, values, (err, data) => {
         if (err) {
