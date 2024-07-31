@@ -9,6 +9,7 @@ import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import { TextField } from '@mui/material';
 
 const TableListe = ({columns, apiUrl, Item}) => {
 
@@ -24,6 +25,23 @@ const TableListe = ({columns, apiUrl, Item}) => {
 
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
+    const [search, setSearch] = React.useState(''); // Etat pour la barre de recherche
+
+    /* Gestion de recherche */
+    const handleSearchChange = (event) => {
+        setSearch(event.target.value);
+    };
+
+    /* Filtrer les données */
+    const filteredData = data.filter((row) => {
+        return columns.some((column) => {
+            const value = row[column.id];
+            if (value != null) {
+                return value.toString().toLowerCase().includes(search.toLowerCase());
+            }
+            return false;
+        });
+    });
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -45,6 +63,15 @@ const TableListe = ({columns, apiUrl, Item}) => {
 
     return (
         <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+        {/* Barre de recherche */}
+        <TextField
+            label="Rechercher" 
+            variant="outlined" 
+            value={search} 
+            onChange={handleSearchChange} 
+            fullWidth 
+            margin="normal"
+        />
         <TableContainer sx={{ maxHeight: 440 }}>
             <Table stickyHeader aria-label="sticky table">
             <TableHead>
@@ -61,7 +88,7 @@ const TableListe = ({columns, apiUrl, Item}) => {
                 </TableRow>
             </TableHead>
             <TableBody>
-                {data
+                {filteredData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => {
                     return (
@@ -85,7 +112,7 @@ const TableListe = ({columns, apiUrl, Item}) => {
         <TablePagination
             rowsPerPageOptions={[10, 25, 100]}
             component="div"
-            count={data.length}
+            count={filteredData.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
