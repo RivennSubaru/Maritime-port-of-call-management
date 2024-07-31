@@ -35,7 +35,7 @@ const TableListe = ({columns, apiUrl, Item}) => {
     };
 
     if (isPending) {
-        return <h3>chargement de la liste...</h3>
+        return <h3>chargement de la liste...</h3>  
     }
 
     if (isError) {
