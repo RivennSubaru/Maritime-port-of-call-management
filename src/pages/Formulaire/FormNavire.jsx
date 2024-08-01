@@ -8,7 +8,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import DirectionsBoatIcon from '@mui/icons-material/DirectionsBoat';
-import { FormControlLabel, FormLabel, MenuItem, Radio, RadioGroup, Select, InputLabel } from '@mui/material';
+import { FormControlLabel, FormLabel, MenuItem, Radio, RadioGroup, Select, InputLabel, FormHelperText } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import axios from 'axios';
 import { useState } from 'react';
@@ -41,7 +41,7 @@ const FormNavire = ({initialValues}) => {
     // Pour actualiser automatiquement la liste
     const queryClient = useQueryClient();
 
-    const navigateTo = useNavigate();
+    /* const navigateTo = useNavigate(); */
 
     // Usequery pour fetch les listes
     const fetchQuery = (fetchData, key) => {
@@ -119,20 +119,20 @@ const FormNavire = ({initialValues}) => {
     const mutation = useMutation({
         mutationFn: async (data) => {
             if (initialValues) {
-                /* await axios.post("http://localhost:8081/navire/update", data); */
-                console.log(data);
+                await axios.post("http://localhost:8081/navire/update", data);
+                /* console.log(data); */
 
             } else if (data.idPilote) {
-                /* await axios.post("http://localhost:8081/navire/add", data); */
-                console.log("navire fotsiny")
+                await axios.post("http://localhost:8081/navire/add", data);
+                /* console.log("navire fotsiny") */
 
             } else if (data.nomPilote){
-                /* await axios.post("http://localhost:8081/pilote/add", data); */
-                console.log("pilote puis...")
+                await axios.post("http://localhost:8081/pilote/add", data);
+                /* console.log("pilote puis...") */
 
             } else {
-                /* await axios.post("http://localhost:8081/navire/addSousRequete", data); */
-                console.log("enfin navire");
+                await axios.post("http://localhost:8081/navire/addSousRequete", data);
+                /* console.log("enfin navire"); */
             }
         },
         onError: (error) => {
@@ -161,7 +161,7 @@ const FormNavire = ({initialValues}) => {
             if (data.idPilote != "") {
                 toast.loading("Enregistrement du navire...", { id: toastId });
 
-                await new Promise((resolve) => setTimeout(resolve, 2000));
+                /* await new Promise((resolve) => setTimeout(resolve, 2000)); */
     
                 await mutation.mutateAsync(data);
     
@@ -300,24 +300,28 @@ const FormNavire = ({initialValues}) => {
                                     defaultValue=""
                                     rules={{ required: "Ce champ est requis" }}
                                     render={({ field }) => (
-                                        <Select
-                                            {...field}
-                                            id="typeNav"
-                                            value={type}
-                                            label="Type navire"
-                                            onChange={handleNavireChange}
-                                            fullWidth
-                                            size='small'
-                                            error={!!errors.type}
-                                            helperText={errors.type ? errors.type.message : ""}
-                                        >
-                                            
-                                            {
-                                                /* Affichages de la liste des types */
-                                                afficheListeTypes() 
-                                            }
+                                        <>
+                                            <Select
+                                                {...field}
+                                                id="typeNav"
+                                                value={type}
+                                                label="Type navire"
+                                                onChange={handleNavireChange}
+                                                fullWidth
+                                                size='small'
+                                                error={!!errors.type}
+                                            >
+                                                
+                                                {
+                                                    /* Affichages de la liste des types */
+                                                    afficheListeTypes() 
+                                                }
 
-                                        </Select>
+                                            </Select>
+                                            {errors.type && (
+                                                <FormHelperText error>{errors.type.message}</FormHelperText>
+                                            )}
+                                        </>
                                     )}
                                 />
                             </Grid>
@@ -422,24 +426,28 @@ const FormNavire = ({initialValues}) => {
                                         defaultValue=""
                                         rules={{ required: "Ce champ est requis" }}
                                         render={({ field }) => (
-                                            <Select
-                                                {...field}
-                                                id="nomPilote"
-                                                value={piloteName}
-                                                label="Nom pilote"
-                                                onChange={handlePiloteChange}
-                                                fullWidth
-                                                size='small'
-                                                error={!!errors.piloteName}
-                                                helperText={errors.piloteName ? errors.piloteName.message : ""}
-                                            >
-                                                
-                                                {
-                                                    // Affichage de la liste des pilotes
-                                                    afficheListePilotes()
-                                                }
+                                            <>
+                                                <Select
+                                                    {...field}
+                                                    id="nomPilote"
+                                                    value={piloteName}
+                                                    label="Nom pilote"
+                                                    onChange={handlePiloteChange}
+                                                    fullWidth
+                                                    size='small'
+                                                    error={!!errors.piloteName}
+                                                >
+                                                    
+                                                    {
+                                                        // Affichage de la liste des pilotes
+                                                        afficheListePilotes()
+                                                    }
 
-                                            </Select>
+                                                </Select>
+                                                {errors.piloteName && (
+                                                    <FormHelperText error>{errors.piloteName.message}</FormHelperText>
+                                                )}
+                                            </>
                                         )}
                                     />
                                 </Grid>

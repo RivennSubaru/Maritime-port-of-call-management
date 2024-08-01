@@ -71,39 +71,55 @@ const TableListe = ({columns, apiUrl, Item}) => {
         console.log('Ajouter action clicked');
     };
 
+
+    /* IMPRESSION PDF */
     const handlePrintPDF = () => {
+
+        // init du document pdf
         const doc = new jsPDF();
+        // En-tete de la table dans pdf (extraction des labels)
         const tableColumn = columns.map(col => col.label);
+
+        // Création des lignes du tableau || on extrait les valeurs correspondant aux colonnes définies et on les ajoute à tableRows
         const tableRows = [];
-    
         filteredData.forEach(row => {
           const rowData = columns.map(col => row[col.id]);
           tableRows.push(rowData);
         });
     
+        // Génération du tableau dans le PDF
         doc.autoTable({
-          head: [tableColumn],
-          body: tableRows,
-          startY: 20,
+          head: [tableColumn],  // en-tête
+          body: tableRows,      // lignes
+          startY: 20,           // position de départ du tableau sur l'axe Y (20 unités à partir du haut).
         });
+
+        // Enregistrement du document PDF
         doc.save('table_data.pdf');
     };
 
+
+    /* IMPORTATION EXCEL */
     const handlePrintExcel = async () => {
-        const workbook = new ExcelJS.Workbook();
-        const worksheet = workbook.addWorksheet('Sheet1');
+
+        /* Initialisation du classeur Excel */
+        const workbook = new ExcelJS.Workbook();            // créer un nouveau classeur Excel.
+        const worksheet = workbook.addWorksheet('Sheet1');  // ajoute une nouvelle feuille de calcul nommée Sheet1.
     
-        // Add header row
+        // Ajout de la ligne d'en-tête
+        // Les étiquettes des colonnes (label) sont ajoutées comme en-tête de la première ligne de la feuille.
         const headerRow = worksheet.addRow(columns.map(col => col.label));
     
-        // Add data rows
+        // Ajout des lignes de données
         filteredData.forEach(row => {
             const rowData = columns.map(col => row[col.id]);
             worksheet.addRow(rowData);
         });
     
-        // Write to buffer and save
+        // Écriture des données dans un buffer
         const buffer = await workbook.xlsx.writeBuffer();
+
+        //Création d'un blob et enregistrement du fichier
         const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
         saveAs(blob, 'table_data.xlsx');
     };
