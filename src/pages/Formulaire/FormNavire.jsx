@@ -217,7 +217,7 @@ const FormNavire = ({initialValues}) => {
     return (
         <Container component="main" maxWidth="xs">
             <CssBaseline />
-            <Box sx={{ marginTop: 8, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <Box sx={{ marginTop: 8, display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '45px !important' }}>
                 <Avatar sx={{ m: 1, bgcolor: '#3fc8ff' }}>
                     <DirectionsBoatIcon />
                 </Avatar>

@@ -1,5 +1,6 @@
 import React from 'react';
 import TableListe from '../component/TableListe';
+import FormNavire from './Formulaire/FormNavire'
 
 const columns = [
     { id: 'numNav', label: 'Numéro Navire', minWidth: 170 },
@@ -42,6 +43,7 @@ const ListeNavire = () => {
                     columns={columns}
                     apiUrl="http://localhost:8081/navire"
                     Item="navire"
+                    FormComponent={FormNavire}
                 />
             </section>
         </>

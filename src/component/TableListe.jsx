@@ -9,7 +9,7 @@ import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { Box, InputAdornment, SpeedDial, SpeedDialAction, SpeedDialIcon, TextField } from '@mui/material';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, InputAdornment, SpeedDial, SpeedDialAction, SpeedDialIcon, TextField } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search'; // Import SearchIcon
 import PrintIcon from '@mui/icons-material/Print';
 import CreateIcon from '@mui/icons-material/Create';
@@ -19,27 +19,56 @@ import jsPDF from 'jspdf';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 
-const TableListe = ({columns, apiUrl, Item}) => {
+// Fonction pour surligner le texte recherché
+const highlightSearchTerm = (text, searchTerm) => {
+    if (!searchTerm) return text;
+    const parts = text.split(new RegExp(`(${searchTerm})`, 'gi'));
+    return parts.map((part, index) =>
+        part.toLowerCase() === searchTerm.toLowerCase() ? (
+            <span key={index} className="highlight">
+                {part}
+            </span>
+        ) : (
+            part
+        )
+    );
+};
 
+const TableListe = ({columns, apiUrl, Item, FormComponent}) => {
+
+    // Icone et label des menus rapides
     const actions = [
         { icon: <CreateIcon />, name: 'Ajouter' },
         { icon: <PrintIcon />, name: 'Imprimer PDF' },
-        { icon: <FileDownloadIcon />, name: 'Imprimer Excel' },
-      ];
+        { icon: <FileDownloadIcon />, name: 'Exporter Excel' },
+    ];
 
+    // Recuperation des donnée à afficher
     const fetchData = async () => {
         const reponse = await axios.get(apiUrl + "/getAll");
         return reponse.data;
     }
-
     const {isPending, isError, data = [], error} = useQuery({
         queryKey: [apiUrl],
         queryFn: fetchData
     });
 
+    /* STATES */
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
+
     const [search, setSearch] = React.useState(''); // Etat pour la barre de recherche
+    const [open, setOpen] = React.useState(false);  // Etat pour l'ouverture de la fenetre du formulaire
+
+    
+    // Fonction pour fermer la fenetre
+    const handleClose = () => {
+        setOpen(false);
+    };
+    // Fonction pour ouvrir la fenetre
+    const handleAdd = () => {
+        setOpen(true);
+    };
 
     /* Gestion de recherche */
     const handleSearchChange = (event) => {
@@ -66,11 +95,6 @@ const TableListe = ({columns, apiUrl, Item}) => {
         setPage(0);
     };
 
-    const handleAdd = () => {
-        // Logique pour ajouter un élément
-        console.log('Ajouter action clicked');
-    };
-
 
     /* IMPRESSION PDF */
     const handlePrintPDF = () => {
@@ -80,7 +104,8 @@ const TableListe = ({columns, apiUrl, Item}) => {
         // En-tete de la table dans pdf (extraction des labels)
         const tableColumn = columns.map(col => col.label);
 
-        // Création des lignes du tableau || on extrait les valeurs correspondant aux colonnes définies et on les ajoute à tableRows
+        // Création des lignes du tableau
+        // On extrait les valeurs correspondant aux colonnes définies et on les ajoute à tableRows
         const tableRows = [];
         filteredData.forEach(row => {
           const rowData = columns.map(col => row[col.id]);
@@ -99,7 +124,7 @@ const TableListe = ({columns, apiUrl, Item}) => {
     };
 
 
-    /* IMPORTATION EXCEL */
+    /* EXPORTATION EXCEL */
     const handlePrintExcel = async () => {
 
         /* Initialisation du classeur Excel */
@@ -123,6 +148,16 @@ const TableListe = ({columns, apiUrl, Item}) => {
         const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
         saveAs(blob, 'table_data.xlsx');
     };
+
+    const descriptionElementRef = React.useRef(null);
+    React.useEffect(() => {
+        if (open) {
+        const { current: descriptionElement } = descriptionElementRef;
+        if (descriptionElement !== null) {
+            descriptionElement.focus();
+        }
+        }
+    }, [open]);
 
     if (isPending) {
         return <h3>chargement de la liste...</h3>  
@@ -195,8 +230,8 @@ const TableListe = ({columns, apiUrl, Item}) => {
                                 const value = row[column.id];
                                 return (
                                     <TableCell key={column.id} align={column.align}>
-                                    {column.format && typeof value === 'number'
-                                        ? column.format(value)
+                                    {value != null
+                                        ? highlightSearchTerm(value.toString(), search)
                                         : value}
                                     </TableCell>
                                 );
@@ -233,7 +268,7 @@ const TableListe = ({columns, apiUrl, Item}) => {
                                     handleAdd();
                                 } else if (action.name === 'Imprimer PDF') {
                                     handlePrintPDF();
-                                } else if (action.name === 'Imprimer Excel') {
+                                } else if (action.name === 'Exporter Excel') {
                                     handlePrintExcel();
                                 }
                             }}
@@ -241,8 +276,37 @@ const TableListe = ({columns, apiUrl, Item}) => {
                     ))}
                 </SpeedDial>
             </Box>
+            <Dialog
+                open={open}
+                onClose={handleClose}
+                scroll='paper'
+                aria-labelledby="scroll-dialog-title"
+                aria-describedby="scroll-dialog-description"
+            >
+                <DialogContent dividers>
+                    <DialogContentText
+                        id="scroll-dialog-description"
+                        ref={descriptionElementRef}
+                        tabIndex={-1}
+                    >
+                        <FormComponent/>
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose}>Annuler</Button>
+                </DialogActions>
+            </Dialog>
         </>
     );
 }
+
+// Style CSS pour le surlignage
+const style = document.createElement('style');
+style.innerHTML = `
+  .highlight {
+    background-color: yellow;
+  }
+`;
+document.head.appendChild(style);
 
 export default TableListe;
