@@ -57,6 +57,7 @@ const FormNavire = ({initialValues}) => {
     // Afficher la liste des type dans la liste déroulante
     const afficheListeTypes = () => {
 
+        // Recuperation des données des types
         const {isPending, isError, data: types} = fetchQuery(fetchTypes, "types")
 
         if (isPending) {
@@ -107,7 +108,9 @@ const FormNavire = ({initialValues}) => {
     // Gestion de l'affichage de la formulaire spéciale pilote
     const handleRadioChange = (event) => {
         setIsNewPilote(event.target.value);
-        reset("");
+        setPiloteName("");
+        setValue('piloteName', "");
+        setValue('idPilote', "");
     };
 
 
@@ -116,19 +119,20 @@ const FormNavire = ({initialValues}) => {
     const mutation = useMutation({
         mutationFn: async (data) => {
             if (initialValues) {
-                await axios.post("http://localhost:8081/navire/update", data);
+                /* await axios.post("http://localhost:8081/navire/update", data); */
                 console.log(data);
+
             } else if (data.idPilote) {
-                await axios.post("http://localhost:8081/navire/add", data);
-                /* console.log("navire fotsiny") */
+                /* await axios.post("http://localhost:8081/navire/add", data); */
+                console.log("navire fotsiny")
 
             } else if (data.nomPilote){
-                await axios.post("http://localhost:8081/pilote/add", data);
-                /* console.log("pilote puis...") */
+                /* await axios.post("http://localhost:8081/pilote/add", data); */
+                console.log("pilote puis...")
 
             } else {
-                await axios.post("http://localhost:8081/navire/addSousRequete", data);
-                /* console.log("enfin navire"); */
+                /* await axios.post("http://localhost:8081/navire/addSousRequete", data); */
+                console.log("enfin navire");
             }
         },
         onError: (error) => {
@@ -190,7 +194,7 @@ const FormNavire = ({initialValues}) => {
         setIsNewPilote('non');
         
         // Ne pas rediriger s'il s'agit d'une modification
-        if (!initialValues) navigateTo("/navire");
+        /* if (!initialValues) navigateTo("/navire"); */
     };
 
     // Preremplissage du formulaire
@@ -238,6 +242,7 @@ const FormNavire = ({initialValues}) => {
                                         autoFocus
                                         id="nomNav"
                                         label="Nom du navire"
+                                        size='small'
                                         error={!!errors.nomNav}
                                         helperText={errors.nomNav ? errors.nomNav.message : ""}
                                     />
@@ -257,6 +262,7 @@ const FormNavire = ({initialValues}) => {
                                         fullWidth
                                         id="numNav"
                                         label="Numéros du navire"
+                                        size='small'
                                         error={!!errors.numNav}
                                         helperText={errors.numNav ? errors.numNav.message : ""}
                                     />
@@ -278,6 +284,7 @@ const FormNavire = ({initialValues}) => {
                                             autoFocus
                                             id="idType"
                                             label="ID"
+                                            size='small'
                                             value={type}
                                             disabled
                                             error={!!errors.idType}
@@ -300,6 +307,7 @@ const FormNavire = ({initialValues}) => {
                                             label="Type navire"
                                             onChange={handleNavireChange}
                                             fullWidth
+                                            size='small'
                                             error={!!errors.type}
                                             helperText={errors.type ? errors.type.message : ""}
                                         >
@@ -329,6 +337,7 @@ const FormNavire = ({initialValues}) => {
                                         id="tirantEau"
                                         type='number'
                                         label="Tirant d'eau (m)"
+                                        size='small'
                                         error={!!errors.tirantEau}
                                         helperText={errors.tirantEau ? errors.tirantEau.message : ""}
                                     />
@@ -350,6 +359,7 @@ const FormNavire = ({initialValues}) => {
                                         id="longueur"
                                         type="number"
                                         label="Longueur du navire (m)"
+                                        size='small'
                                         error={!!errors.longueur}
                                         helperText={errors.longueur ? errors.longueur.message : ""}
                                     />
@@ -358,12 +368,12 @@ const FormNavire = ({initialValues}) => {
                         </Grid>
                         {!initialValues && (
                             <>
-                                <Grid item sx={{ paddingTop: "25px !important" }}>
+                                <Grid item sx={{ paddingTop: "25px !important", width: "100%" }}>
                                     <Typography component="h1" variant="h5" width={"100%"}>
                                         Pilote
                                     </Typography>
                                 </Grid>
-                                <Grid item gap={2} sx={{ display: "flex", alignItems: "center" }}>
+                                <Grid item gap={2} sx={{ display: "flex", alignItems: "center", paddingTop: "1px !important" }}>
                                     <FormLabel id="demo-row-radio-buttons-group-label">Nouveau pilote ?</FormLabel>
                                     <RadioGroup
                                         row
@@ -396,6 +406,7 @@ const FormNavire = ({initialValues}) => {
                                                 autoFocus
                                                 id="idPilote"
                                                 label="ID"
+                                                size='small'
                                                 value={piloteName}
                                                 disabled
                                                 error={!!errors.idPilote}
@@ -418,6 +429,7 @@ const FormNavire = ({initialValues}) => {
                                                 label="Nom pilote"
                                                 onChange={handlePiloteChange}
                                                 fullWidth
+                                                size='small'
                                                 error={!!errors.piloteName}
                                                 helperText={errors.piloteName ? errors.piloteName.message : ""}
                                             >
@@ -453,6 +465,7 @@ const FormNavire = ({initialValues}) => {
                                                 autoFocus
                                                 id="nomPilote"
                                                 label="Nom du pilote"
+                                                size='small'
                                                 error={!!errors.nomPilote}
                                                 helperText={errors.nomPilote ? errors.nomPilote.message : ""}
                                             />
@@ -472,6 +485,7 @@ const FormNavire = ({initialValues}) => {
                                                 fullWidth
                                                 id="prenomPilote"
                                                 label="Prénom du pilote"
+                                                size='small'
                                                 error={!!errors.prenomPilote}
                                                 helperText={errors.prenomPilote ? errors.prenomPilote.message : ""}
                                             />
@@ -497,6 +511,7 @@ const FormNavire = ({initialValues}) => {
                                                 fullWidth
                                                 id="telPilote"
                                                 label="Téléphone du pilote"
+                                                size='small'
                                                 error={!!errors.telPilote}
                                                 helperText={errors.telPilote ? errors.telPilote.message : ""}
                                             />
@@ -517,6 +532,7 @@ const FormNavire = ({initialValues}) => {
                                                 id="emailPilote"
                                                 label="Adresse email du pilote"
                                                 type="email"
+                                                size='small'
                                                 error={!!errors.emailPilote}
                                                 helperText={errors.emailPilote ? errors.emailPilote.message : ""}
                                             />
