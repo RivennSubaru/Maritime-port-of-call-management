@@ -46,7 +46,6 @@ const FormQuai = ({initialValues}) => {
             // Recharger la liste apres ajout ou modification
             queryClient.invalidateQueries("quais");
             reset([]);
-            setType("");
         }
     })
 

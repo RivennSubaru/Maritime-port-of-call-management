@@ -1,6 +1,6 @@
 import { Avatar, Box, Button, Chip, Container, CssBaseline, FormHelperText, Grid, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
 import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import React, { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -59,6 +59,35 @@ const FormEscaleClone = () => {
     /**************** USEFORM *****************/
     const {handleSubmit, control, watch, setValue, reset, formState: {errors}} = useForm();
 
+    /**** QUERYCLIENT (actualisation de la liste) ****/
+    const queryClient = useQueryClient();
+
+    // envoie de requete au serveur
+    const mutation = useMutation({
+
+        // update ou add en fonction des cas
+        mutationFn: async (escale) => {
+            await axios.post("http://localhost:8081/escale/add", escale);
+            /* console.log(escale); */
+        },
+        onError: (error) => {
+            setTimeout(() => {
+                toast(
+                    "Il semble que vous rencontriez un probleme.\n\n Le probleme peut venir soit de la connexion au serveur soit de la base de donnée ou une mauvaise connexion.\nVeuillez réessayer plus tard.",
+                    {
+                      duration: 12000,
+                    }
+                );
+            }, 1000);
+            console.log(error);
+        },
+        onSuccess: () => {
+            // Recharger la liste apres ajout ou modification
+            /* queryClient.invalidateQueries("escale"); */
+            reset([]);
+        }
+    })
+
     
     /*************** SOUMISSION ***************/
     const onSubmit = (data) => {
@@ -66,10 +95,6 @@ const FormEscaleClone = () => {
         // OBJET NAVIRE ET QUAI selectionné
         const selectedNavire = listeNav.find(navire => navire.id === data.idNav);
         const selectedQuai = listeQuais.find(quai => quai.id === data.idQuai);
-
-        const longDispoQuai = selectedQuai.longueurDispo;
-        const longNav = selectedNavire.longueur;
-        const mouvement = data.typeMouvement;
 
         // FORMATAGE NUMEROS D'ESCALE
             // Code Date de départ
@@ -89,7 +114,14 @@ const FormEscaleClone = () => {
         data.ETA = dayjs(data.ETA).format('YYYY-MM-DD HH:mm:ss');
 
         // logique pour soumettre au serveur les données
-        console.log(data);
+        toast.promise(
+            mutation.mutateAsync(data),
+            {
+                loading: "chargement...",
+                success: "Escale créé",
+                error: "Création d'escale échoué"
+            }
+        )
     }
 
 

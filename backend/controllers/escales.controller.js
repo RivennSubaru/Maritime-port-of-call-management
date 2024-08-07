@@ -17,4 +17,14 @@ const addEscale = asyncHandler(async (req, res) => {
     })
 });
 
-module.exports = {addEscale}
+// GET ALL ESCALE (with nomQuai & nomNavire)
+const getAllEscale = asyncHandler(async (req, res) => {
+    const sql = "SELECT `idEscale`, `escale`.`idNav`, `nomNav`, `escale`.`idQuai`, `nomQuai`, `numEscale`, `ETD`, `ETA`, `provenance`, `destination`, `ATA`, `ATD`, `typeMouvement` FROM `escale` JOIN `navires` ON `escale`.`idNav` = `navires`.`idNav` JOIN `quais` ON `escale`.`idQuai` = `quais`.`idQuai`";
+
+    db.query(sql, (err, data) => {
+        if (err) res.status(500).send({error: err.message});
+        res.status(201).send(data);
+    })
+})
+
+module.exports = {addEscale, getAllEscale}
