@@ -282,10 +282,11 @@ const TableListe = ({columns, apiUrl, Item, FormComponent}) => {
                             <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
                                 {columns.map((column) => {
                                 const value = row[column.id];
+                                const formattedValue = column.format ? column.format(value) : value;
                                 return (
                                     <TableCell key={column.id} align={column.align}>
                                     {value != null
-                                        ? highlightSearchTerm(value.toString(), search)
+                                        ? highlightSearchTerm(formattedValue.toString(), search)
                                         : value}
                                     </TableCell>
                                 );

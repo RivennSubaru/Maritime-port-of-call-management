@@ -1,6 +1,7 @@
 import React from 'react';
 import FormEscale from './Formulaire/FormEscale';
 import TableListe from '../component/TableListe';
+import { formatDate } from '../_utils/dateFormatter';
 
 const columns = [
     { id: 'numEscale', label: 'Numéro d\'Escale', minWidth: 100 },
@@ -21,14 +22,16 @@ const columns = [
     {
       id: 'ETD',
       label: 'ETD',
-      minWidth: 100,
+      minWidth: 50,
       align: 'left',
+      format: formatDate,
     },
     {
       id: 'ETA',
       label: 'ETA',
-      minWidth: 100,
+      minWidth: 50,
       align: 'left',
+      format: formatDate,
     },
     {
       id: 'typeMouvement',
@@ -39,8 +42,9 @@ const columns = [
     {
       id: 'ATA',
       label: 'ATA',
-      minWidth: 100,
+      minWidth: 170,
       align: 'left',
+      format: formatDate,
     },
 ];
 

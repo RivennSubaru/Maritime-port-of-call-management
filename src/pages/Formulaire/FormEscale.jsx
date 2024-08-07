@@ -167,7 +167,15 @@ const FormEscale = ({initialValues, handleClose}) => {
     // Preremplissage du formulaire
     useEffect(() => {
         if (initialValues) {
-            reset(initialValues);
+            // Convertir les dates en objets dayjs
+            const formattedValues = {
+                ...initialValues,
+                ETD: initialValues.ETD ? dayjs(initialValues.ETD) : null,
+                ETA: initialValues.ETA ? dayjs(initialValues.ETA) : null,
+                ATD: initialValues.ATD ? dayjs(initialValues.ATD) : null,
+                ATA: initialValues.ATA ? dayjs(initialValues.ATA) : null
+            };
+            reset(formattedValues);
         }
     }, [initialValues, reset]);
     
@@ -186,7 +194,7 @@ const FormEscale = ({initialValues, handleClose}) => {
                     <SailingIcon />
                 </Avatar>
                 <Typography component="h1" variant="h5">
-                    {initialValues ? 'Modifier un escale' : 'Ajouter un escale'}
+                    {initialValues ? 'Modifier une escale' : 'Ajouter une escale'}
                 </Typography>
                 <Box onSubmit={handleSubmit(onSubmit)} component="form" noValidate sx={{ mt: 3 }}>
                     <Grid container spacing={2}>
