@@ -7,9 +7,9 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, InputAdornment, SpeedDial, SpeedDialAction, SpeedDialIcon, TextField } from '@mui/material';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, InputAdornment, SpeedDial, SpeedDialAction, SpeedDialIcon, TextField } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search'; // Import SearchIcon
 import PrintIcon from '@mui/icons-material/Print';
 import CreateIcon from '@mui/icons-material/Create';
@@ -18,6 +18,11 @@ import 'jspdf-autotable';
 import jsPDF from 'jspdf';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
+import EditIcon from '@mui/icons-material/Edit'; // Import EditIcon
+import DeleteIcon from '@mui/icons-material/Delete'; // Import DeleteIcon
+import { useState } from 'react';
+import Draggable from 'react-draggable';
+import ErrorIcon from '@mui/icons-material/Error';
 
 // Fonction pour surligner le texte recherché
 const highlightSearchTerm = (text, searchTerm) => {
@@ -33,6 +38,17 @@ const highlightSearchTerm = (text, searchTerm) => {
         )
     );
 };
+
+function PaperComponent(props) {
+    return (
+      <Draggable
+        handle="#draggable-dialog-title"
+        cancel={'[class*="MuiDialogContent-root"]'}
+      >
+        <Paper {...props} />
+      </Draggable>
+    );
+}
 
 const TableListe = ({columns, apiUrl, Item, FormComponent}) => {
 
@@ -54,21 +70,14 @@ const TableListe = ({columns, apiUrl, Item, FormComponent}) => {
     });
 
     /* STATES */
-    const [page, setPage] = React.useState(0);
+    const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
-    const [search, setSearch] = React.useState(''); // Etat pour la barre de recherche
-    const [open, setOpen] = React.useState(false);  // Etat pour l'ouverture de la fenetre du formulaire
+    const [search, setSearch] = useState(''); // Etat pour la barre de recherche
+    const [openFormDialog, setOpenFormDialog] = useState(false);  // Etat pour l'ouverture de la fenetre du formulaire
+    const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 
-    
-    // Fonction pour fermer la fenetre
-    const handleClose = () => {
-        setOpen(false);
-    };
-    // Fonction pour ouvrir la fenetre
-    const handleAdd = () => {
-        setOpen(true);
-    };
+    const [selectedRow, setSelectedRow] = useState(null);
 
     /* Gestion de recherche */
     const handleSearchChange = (event) => {
@@ -149,15 +158,58 @@ const TableListe = ({columns, apiUrl, Item, FormComponent}) => {
         saveAs(blob, 'table_data.xlsx');
     };
 
-    const descriptionElementRef = React.useRef(null);
-    React.useEffect(() => {
-        if (open) {
-        const { current: descriptionElement } = descriptionElementRef;
-        if (descriptionElement !== null) {
-            descriptionElement.focus();
+    // Fonction pour ouvrir la fenetre
+    const handleAdd = () => {
+        setOpenFormDialog(true);
+    };
+
+    const handleEdit = (row) => {
+        setSelectedRow(row);
+        setOpenFormDialog(true);
+        console.log(row);
+    }
+
+    const handleDelete = (row) => {
+        setSelectedRow(row);
+        setOpenDeleteDialog(true);
+        console.log(row);
+    }
+
+    // Fonction pour fermer le formulaire et 
+    const handleCloseForm = () => {
+        setOpenFormDialog(false); 
+        setSelectedRow(null);   // Rendre null apres fermeture du formulaire de modification
+    }
+
+    // Pour actualiser automatiquement la liste
+    const queryClient = useQueryClient();
+
+    // Gestion de la suppression
+    const deleteMutation = useMutation({
+        mutationFn: async (id) => {
+            await axios.delete(`${apiUrl}/${id}`);
+        },
+        onSuccess: () => {
+            // Recharger la liste apres ajout ou modification
+            queryClient.invalidateQueries([apiUrl]);
+        },
+        onError: (error) => {
+            console.log(error);
         }
-        }
-    }, [open]);
+    });
+
+    const handleConfirmDelete = () => {
+        toast.promise(
+            deleteMutation.mutateAsync(selectedRow.id),
+            {
+                loading: "Chargement...",
+                success: "Item supprimé",
+                error: "Erreur lors de la suppression de l'item"
+            }
+        );
+        setOpenDeleteDialog(false);
+        /* console.log(selectedRow.id); */
+    };
 
     if (isPending) {
         return <h3>chargement de la liste...</h3>  
@@ -204,7 +256,6 @@ const TableListe = ({columns, apiUrl, Item, FormComponent}) => {
                 />
             </div>
             <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-                {/* Barre de recherche */}
                 <TableContainer sx={{ maxHeight: 440 }}>
                     <Table stickyHeader aria-label="sticky table">
                     <TableHead>
@@ -218,6 +269,9 @@ const TableListe = ({columns, apiUrl, Item, FormComponent}) => {
                             {column.label}
                             </TableCell>
                         ))}
+                            <TableCell key="action" align="center" style={{ fontWeight: 'bold' }}>
+                                Action
+                            </TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -236,6 +290,32 @@ const TableListe = ({columns, apiUrl, Item, FormComponent}) => {
                                     </TableCell>
                                 );
                                 })}
+                                <TableCell align="center" sx={{padding: '0 !important'}}>
+                                    <IconButton
+                                        sx={{
+                                            color: 'gray', // Couleur de base
+                                            '&:hover': {
+                                                color: 'primary.main', // Couleur au survol (par défaut la couleur primaire de MUI)
+                                                backgroundColor: 'rgba(25, 118, 210, 0.04)'
+                                            }
+                                        }}
+                                        onClick={() => handleEdit(row)}
+                                    >
+                                        <EditIcon fontSize='small' />
+                                    </IconButton>
+                                    <IconButton
+                                        sx={{
+                                            color: 'gray', // Couleur de base
+                                            '&:hover': {
+                                                color: 'error.main', // Couleur au survol (par défaut la couleur d'erreur de MUI)
+                                                backgroundColor: 'rgba(211, 47, 47, 0.04)'
+                                            }
+                                        }}
+                                        onClick={() => handleDelete(row)}
+                                    >
+                                        <DeleteIcon fontSize='small' />
+                                    </IconButton>
+                                </TableCell>
                             </TableRow>
                             );
                         })}
@@ -252,7 +332,7 @@ const TableListe = ({columns, apiUrl, Item, FormComponent}) => {
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />
             </Paper>
-            <Box sx={{ position: 'relative', height: 320 }}>
+            <Box sx={{ position: 'fixed', right: 0, bottom: 0, zIndex: 999999 }}>
                 <SpeedDial
                     ariaLabel="SpeedDial example"
                     sx={{ position: 'absolute', bottom: 16, right: 16 }}
@@ -277,25 +357,43 @@ const TableListe = ({columns, apiUrl, Item, FormComponent}) => {
                 </SpeedDial>
             </Box>
             <Dialog
-                open={open}
-                onClose={handleClose}
+                open={openFormDialog}
+                onClose={() => setOpenFormDialog(false)}
                 scroll='paper'
                 aria-labelledby="scroll-dialog-title"
                 aria-describedby="scroll-dialog-description"
             >
                 <DialogContent dividers>
-                    <DialogContentText
-                        id="scroll-dialog-description"
-                        ref={descriptionElementRef}
-                        tabIndex={-1}
-                    >
-                        <FormComponent/>
+                    <FormComponent initialValues={selectedRow} handleClose={handleCloseForm}/>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseForm}>Annuler</Button>
+                </DialogActions>
+            </Dialog>
+
+            <Dialog
+                open={openDeleteDialog}
+                onClose={() => setOpenDeleteDialog(false)}
+                PaperComponent={PaperComponent}
+                aria-labelledby="draggable-dialog-title"
+            >
+                <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title" display= 'flex' alignItems='center' gap='15px'>
+                    <ErrorIcon color='error' sx={{ fontSize: '2.5rem !important' }}/>
+                    Supprimer {Item}
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Cette action effacera toutes les données de la ligne selectionnée. 
+                        Êtes-vous sûr de vouloir supprimer cet item ?
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose}>Annuler</Button>
+                    <Button autoFocus onClick={() => setOpenDeleteDialog(false)}>
+                        Annuler
+                    </Button>
+                    <Button onClick={handleConfirmDelete} variant="contained" color='error'>Supprimer</Button>
                 </DialogActions>
-            </Dialog>
+            </Dialog> 
         </>
     );
 }

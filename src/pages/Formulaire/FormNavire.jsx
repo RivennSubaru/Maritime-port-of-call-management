@@ -29,7 +29,7 @@ const fetchPilote = async () => {
     return reponse.data;
 }
 
-const FormNavire = ({initialValues}) => {
+const FormNavire = ({initialValues, handleClose}) => {
 
     // Useform gestion du formulaire
     const { handleSubmit, control, setValue, reset, watch, formState: { errors } } = useForm();
@@ -114,7 +114,6 @@ const FormNavire = ({initialValues}) => {
     };
 
 
-
     // Envoie de donnée au serveur
     const mutation = useMutation({
         mutationFn: async (data) => {
@@ -193,8 +192,8 @@ const FormNavire = ({initialValues}) => {
         setPiloteName('');
         setIsNewPilote('non');
         
-        // Ne pas rediriger s'il s'agit d'une modification
-        /* if (!initialValues) navigateTo("/navire"); */
+        // Fermer la fenetre s'il s'agit d'une modification
+        if (initialValues) handleClose();;
     };
 
     // Preremplissage du formulaire
@@ -217,7 +216,7 @@ const FormNavire = ({initialValues}) => {
     return (
         <Container component="main" maxWidth="xs">
             <CssBaseline />
-            <Box sx={{ marginTop: 8, display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '45px !important' }}>
+            <Box sx={{ marginTop: '45px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <Avatar sx={{ m: 1, bgcolor: '#3fc8ff' }}>
                     <DirectionsBoatIcon />
                 </Avatar>
@@ -261,7 +260,7 @@ const FormNavire = ({initialValues}) => {
                                         required
                                         fullWidth
                                         id="numNav"
-                                        label="Numéros du navire"
+                                        label="Code du navire"
                                         size='small'
                                         error={!!errors.numNav}
                                         helperText={errors.numNav ? errors.numNav.message : ""}
@@ -293,7 +292,7 @@ const FormNavire = ({initialValues}) => {
                                 />
                             </Grid>
                             <Grid item xs={10}>
-                                <InputLabel id="demo-simple-select-label">Type du bateau</InputLabel>
+                                <InputLabel id="demo-simple-select-label">Type du navire</InputLabel>
                                 <Controller
                                     name="type"
                                     control={control}
@@ -362,7 +361,7 @@ const FormNavire = ({initialValues}) => {
                                         autoFocus
                                         id="longueur"
                                         type="number"
-                                        label="Longueur du navire (m)"
+                                        label="Longueur (m)"
                                         size='small'
                                         error={!!errors.longueur}
                                         helperText={errors.longueur ? errors.longueur.message : ""}

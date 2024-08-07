@@ -1,5 +1,5 @@
 Code pour la situation d'un navire
 
 En mouvement (escale entrant)
-Partie (escale sortant)
+Partie (escale sortant ou nouveau navire)
 Amarré (pas d'escale mais amarré au port)
