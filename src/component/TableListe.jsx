@@ -303,6 +303,7 @@ const TableListe = ({columns, apiUrl, Item, FormComponent}) => {
                                     >
                                         <EditIcon fontSize='small' />
                                     </IconButton>
+                                    {Item != 'escale' &&
                                     <IconButton
                                         sx={{
                                             color: 'gray', // Couleur de base
@@ -315,6 +316,7 @@ const TableListe = ({columns, apiUrl, Item, FormComponent}) => {
                                     >
                                         <DeleteIcon fontSize='small' />
                                     </IconButton>
+                                    }
                                 </TableCell>
                             </TableRow>
                             );

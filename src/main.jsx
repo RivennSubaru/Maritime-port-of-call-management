@@ -18,7 +18,7 @@ import FormNavire from './pages/Formulaire/FormNavire.jsx'
 import FormQuai from './pages/Formulaire/FormQuai.jsx'
 import FormPilote from './pages/Formulaire/FormPilote.jsx'
 import FormSearch from './pages/Formulaire/FormSearch.jsx'
-import FormEscaleClone from './pages/Formulaire/FormEscaleClone.jsx'
+import FormEscaleTest from './pages/Formulaire/FormEscaleTest.jsx'
 
 const queryClient = new QueryClient();
 
@@ -47,7 +47,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <Route path='/form/pilote' element={<FormPilote/>}/>
 
           <Route path='/test/form/search' element={<FormSearch/>}/>
-          <Route path='/test/form/escale' element={<FormEscaleClone/>}/>
+          <Route path='/test/form/escale' element={<FormEscaleTest/>}/>
         </Routes>
       </BrowserRouter>
     </QueryClientProvider>

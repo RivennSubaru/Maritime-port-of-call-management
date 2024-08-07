@@ -193,7 +193,7 @@ const FormNavire = ({initialValues, handleClose}) => {
         setIsNewPilote('non');
         
         // Fermer la fenetre s'il s'agit d'une modification
-        if (initialValues) handleClose();;
+        if (initialValues) handleClose();
     };
 
     // Preremplissage du formulaire

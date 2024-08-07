@@ -1,158 +1,176 @@
-import * as React from 'react';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import SailingIcon from '@mui/icons-material/Sailing';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
-import { Controller, useForm } from 'react-hook-form';
-import { useState } from 'react';
-import { FormHelperText, InputLabel, MenuItem, Select } from '@mui/material';
-import dayjs from 'dayjs';
+import { Avatar, Box, Button, Chip, Container, CssBaseline, FormHelperText, Grid, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
+import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import { useQuery } from '@tanstack/react-query';
+import React, { useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import SailingIcon from '@mui/icons-material/Sailing';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useEffect } from 'react';
+import Divider from '@mui/material/Divider';
+import dayjs from 'dayjs';
 import { toast } from 'react-hot-toast';
 
+/************** FETCH LIST ***************/
 const fetchNavires = async () => {
     const reponse = await axios.get("http://localhost:8081/navire/getAllParti");
     /* console.log(reponse.data); */
     return reponse.data;
 }
+const fetchQuai = async () => {
+    
+    const reponse = await axios.get("http://localhost:8081/quai/getAll");
+    /* console.log(reponse.data); */
+    return reponse.data;
+}
 
-const FormEscale = ({ initialValues }) => {
+
+/************ RENDER DROP OPTION *************/
+const renderOptions = (data, isLoading, isError, ITEM) => {
+    if (isLoading) {
+        return [<MenuItem key="loading" value="" disabled>Chargement...</MenuItem>];
+    }
+
+    if (isError) {
+        return [<MenuItem key="error" value="" disabled>Erreur de chargement</MenuItem>];
+    }
+
+    return data.map((item) => (
+        <MenuItem key={item.id} value={item.id}>{ITEM == 'navire' ? item.nomNav : item.nom}</MenuItem>
+    ));
+}
+
+/************** FORMATAGE DATE **************/
+const formatDate = (date) => {
+    const year = date.year();
+    const month = date.month() + 1; // Months are 0-indexed in dayjs
+    const formattedDate = `${year.toString().slice(-2)}${year}${month.toString().padStart(2, '0')}00${month.toString().padStart(2, '0')}`;
+    return formattedDate;
+};
+
+const FormEscale = ({initialValues, handleClose}) => {
+
+    /***************  STATES *****************/
+    // Liste de tous les navires et Quais
+    const [listeNav, setListeNav] = useState([]);
+    const [listeQuais, setListeQuais] = useState([]);
+
+    
+    /**************** USEFORM *****************/
     const {handleSubmit, control, watch, setValue, reset, formState: {errors}} = useForm();
 
-    // id du navire
-    const [idNav, setIdNav] = useState();
-    const [nomNav, setNomNav] = useState("1");
-    // numeros de l'escale
-    const [numEscale, setNumEscale] = useState("DateNumber");
+    /**** QUERYCLIENT (actualisation de la liste) ****/
+    const queryClient = useQueryClient();
 
-    // longueur disponible quai et longueur du navire
-    const [longDispoQuai, setLongDispoQuai] = useState();
-    const [longNav, setLongNav] = useState();
+    // envoie de requete au serveur
+    const mutation = useMutation({
 
-    // Situation navire
-    const [situationNav, setSituationNav] = useState("");
+        // update ou add en fonction des cas
+        mutationFn: async (escale) => {
 
-
-    const handleDateChange = (date) => {
-        if (date) {
-            const formattedDate = formatDate(date);
-            updateNumEscale("date", formattedDate);
-        }
-    };
-
-    const updateNumEscale = (type, value) => {
-        setNumEscale((prevNumEscale) => {
-            let newNumEscale = prevNumEscale;
-            if (type === "num") {
-                newNumEscale = newNumEscale.replace(/Number/, value);
-            } else if (type === "date") {
-                newNumEscale = newNumEscale.replace(/Date/, value);
+            if (initialValues) {
+                await axios.post("http://localhost:8081/escale/update", escale);
+                /* console.log(escale); */
+            } else {
+                await axios.post("http://localhost:8081/escale/add", escale);
+                /* console.log(escale); */
             }
-            setValue("numEscale", newNumEscale);
-            return newNumEscale;
-        });
-    };
+        },
+        onError: (error) => {
+            setTimeout(() => {
+                toast(
+                    "Il semble que vous rencontriez un probleme.\n\n Le probleme peut venir soit de la connexion au serveur soit de la base de donnée ou une mauvaise connexion.\nVeuillez réessayer plus tard.",
+                    {
+                      duration: 12000,
+                    }
+                );
+            }, 1000);
+            console.log(error);
+        },
+        onSuccess: () => {
+            // Recharger la liste apres ajout ou modification
+            queryClient.invalidateQueries("escale");
+            reset([]);
+        }
+    })
+
     
-    const handleNavireChange = (event) => {
-        const selectedNavire = event.target.value
-
-        // Remplire le champ id navire
-        setIdNav(selectedNavire.id);
-        setValue("idNav", selectedNavire.id);
-
-        // 
-        setNomNav(selectedNavire);
-        updateNumEscale("num", selectedNavire.numNav);
-
-        setLongNav(selectedNavire.longueur);
-        setSituationNav(selectedNavire.situationNav);
-    }
-
-    const formatDate = (date) => {
-        const year = date.year();
-        const month = date.month() + 1; // Months are 0-indexed in dayjs
-        const formattedDate = `${year.toString().slice(-2)}${year}${month.toString().padStart(2, '0')}00${month.toString().padStart(2, '0')}`;
-        return formattedDate;
-    };
-
+    /*************** SOUMISSION ***************/
     const onSubmit = (data) => {
-        if(situationNav !== 'parti'){
-            toast.error("Le navire doit être libre");
-            return;
-        }
 
-        if (longDispoQuai > longNav) {
-            // Reduire la longueur disponible du quai
-            const nouvLongDispoQuai = longDispoQuai - longNav;
+        // OBJET NAVIRE ET QUAI selectionné
+        const selectedNavire = listeNav.find(navire => navire.id === data.idNav);
+        const selectedQuai = listeQuais.find(quai => quai.id === data.idQuai);
 
-            data.ETD = dayjs(data.ETD).format('YYYY-MM-DD HH:mm:ss');
-            data.ETA = dayjs(data.ETA).format('YYYY-MM-DD HH:mm:ss');
-    
-            const {numEscale, idQuai, idNav, typeEscale, ETD, ETA, provenance, destination} = data;
-    
-            const dataEscale = {numEscale, idQuai, idNav, typeEscale, ETD, ETA, provenance, destination};
-            console.log(dataEscale);
-        } else {
-            toast.error("Longueur du quai insuffisante");
-        } 
+        // FORMATAGE NUMEROS D'ESCALE
+            // Code Date de départ
+            const codeDate = formatDate(data.ETD);
+
+            // Code du navire
+            const numNavire = selectedNavire ? selectedNavire.numNav : '';
+
+            // Code numeros escale
+            const numEscale = codeDate + '' + numNavire;
+            
+        // INSERTION DU NUM ESCALE DANS LE DATA
+        data = {...data, numEscale};
+        
+        // MAJ DES DATES AVEC LE BON FORMAT
+        data.ETD = dayjs(data.ETD).format('YYYY-MM-DD HH:mm:ss');
+        data.ETA = dayjs(data.ETA).format('YYYY-MM-DD HH:mm:ss');
+
+        // logique pour soumettre au serveur les données
+        toast.promise(
+            mutation.mutateAsync(data),
+            {
+                loading: "chargement...",
+                success: initialValues ? "Escale modifiée" : "Escale créée",
+                error: "Création d'escale échoué"
+            }
+        )
+
+        // Fermer la fenetre s'il s'agit d'une modification
+        if (initialValues) handleClose();
     }
 
-    
-    const afficheListeNavires = () => {
-        const {isPending, isError, data: navires = [], error} = useQuery({
-            queryKey: ['navire'],
-            queryFn: fetchNavires,
-        });
 
-        if (isPending) {
-            return [<MenuItem key="loading" value="" disabled>Chargement...</MenuItem>];
+    /**************** QUERIES ***************/
+    // Liste navires
+    const naviresQuery = useQuery({
+        queryKey: ['navires'],
+        queryFn: fetchNavires
+    });
+
+    // Liste quai
+    const quaisQuery = useQuery({
+        queryKey: ['quais'],
+        queryFn: fetchQuai
+    });
+
+
+
+    /************** USE EFFECT **************/
+    // navire
+    useEffect(() => {
+        if (naviresQuery.data) {
+            setListeNav(naviresQuery.data);
         }
-    
-        if (isError) {
-            return [<MenuItem key="error" value="" disabled>Erreur de chargement</MenuItem>];
+    }, [naviresQuery.data]);
+
+    // quai
+    useEffect(() => {
+        if (quaisQuery.data) {
+            setListeQuais(quaisQuery.data);
         }
-    
-        return navires.map((navire) => (
-            <MenuItem key={navire.id} value={navire}>{navire.nomNav}</MenuItem>
-        ));
-    }
+    }, [quaisQuery.data]);
 
     // Preremplissage du formulaire
     useEffect(() => {
         if (initialValues) {
-
-            if(initialValues.provenance === 'quai') {
-                const {emplacementQuai, id, idTypeQuai, longueurDispo, longueursQuai, nom, profondeurQuai, type, isFull} = initialValues;
-                const donneesQuai = {idQuai: id, nomQuai: nom, idTypeQuai, typeQuai: type, emplacementQuai,profondeurQuai, longueursQuai, longueurDispo};
-
-                // stocker la longueur dispo du quai
-                setLongDispoQuai(longueurDispo);
-
-                console.log(donneesQuai);
-
-                reset(donneesQuai);
-            } else if (initialValues.provenance === 'navire') {
-                const {id, idPilote, idType, longueur, nomNav, nomPilote, numNav, situationNav, tirantEau, type} = initialValues;
-                const donneesNavire = {idNav: id, nomNav, numNav, idPilote, nomPilote,  idTypeNav: idType, typeNav: type, situationNav, longueur, tirantEau}
-
-                console.log(donneesNavire);
-
-                setIdNav(id); // Mise à jour de idNav
-                setValue("nomNavire", nomNav); // Préreemplissage de nomNavire
-            }
+            reset(initialValues);
         }
     }, [initialValues, reset]);
-
+    
     return (
         <Container component="main" maxWidth="xs">
             <CssBaseline />
@@ -168,138 +186,98 @@ const FormEscale = ({ initialValues }) => {
                     <SailingIcon />
                 </Avatar>
                 <Typography component="h1" variant="h5">
-                    Escale
+                    {initialValues ? 'Modifier un escale' : 'Ajouter un escale'}
                 </Typography>
                 <Box onSubmit={handleSubmit(onSubmit)} component="form" noValidate sx={{ mt: 3 }}>
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
+                            <InputLabel id="demo-simple-select-label">Quai</InputLabel>
                             <Controller
-                                name='numEscale'
+                                name="idQuai"
                                 control={control}
                                 defaultValue=""
-
-                                render={({ field} ) => (
-                                    <TextField
-                                        {...field}
-                                        required
-                                        fullWidth
-                                        autoFocus
-                                        id="numEscale"
-                                        label="Numeros escale"
-                                        value={numEscale}
-                                        disabled
-                                    />
-                                )}
-                            />
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                            <Controller
-                                name='idQuai'
-                                control={control}
-                                defaultValue=""
-
-                                render={({ field }) => (
-                                    <TextField
-                                        {...field}
-                                        type='number'
-                                        required
-                                        fullWidth
-                                        autoFocus
-                                        id="idQuai"
-                                        label="ID Quai"
-                                        disabled
-                                    />
-                                )}
-                            />
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                            <Controller
-                                name='idNav'
-                                control={control}
-                                defaultValue=""
-
-                                render={({ field }) => (
-                                    <TextField
-                                        {...field}
-                                        type='number'
-                                        required
-                                        fullWidth
-                                        autoFocus
-                                        id="idNav"
-                                        value={idNav}
-                                        disabled
-                                    />
-                                )}
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <InputLabel id="demo-simple-select-label">Type d'escale</InputLabel>
-                            <Controller
-                                name="typeEscale"
-                                control={control}
-                                defaultValue={(initialValues.provenance === 'quai') ? 'Entrant' : 'Sortant'}
                                 rules={{ required: "Ce champ est requis" }}
                                 render={({ field }) => (
                                     <>
                                         <Select
                                             {...field}
-                                            id="typeEscale"
+                                            id="idQuai"
+                                            label="Quai"
                                             fullWidth
-                                            disabled
-                                            error={!!errors.typeNav}
+                                            size='small'
+                                            error={!!errors.idQuai}
                                         >
-                                            <MenuItem value="Entrant">Entrant</MenuItem>
-                                            <MenuItem value="Sortant">Sortant</MenuItem>
+                                            
+                                            {
+                                                /* Affichages de la liste des quais */
+                                                renderOptions(listeQuais, quaisQuery.isLoading, quaisQuery.isError, 'quai')
+                                            }
+
                                         </Select>
-                                        {errors.typeEscale && (
-                                            <FormHelperText error>{errors.typeEscale.message}</FormHelperText>
+                                        {errors.idQuai && (
+                                            <FormHelperText error>{errors.idQuai.message}</FormHelperText>
                                         )}
                                     </>
                                 )}
                             />
                         </Grid>
+                        <Grid item xs={12}>
+                            <InputLabel id="demo-simple-select-label">Navire</InputLabel>
+                            <Controller
+                                name="idNav"
+                                control={control}
+                                defaultValue=""
+                                rules={{ required: "Ce champ est requis" }}
+                                render={({ field }) => (
+                                    <>
+                                        <Select
+                                            {...field}
+                                            id="idNav"
+                                            label="Navire"
+                                            fullWidth
+                                            size='small'
+                                            error={!!errors.idNav}
+                                        >
+                                            
+                                            {
+                                                /* Affichages de la liste des navires */
+                                                renderOptions(listeNav, naviresQuery.isLoading, naviresQuery.isError, 'navire')
+                                            }
 
-                        { /* L'ELEMENT CI-DESOUS NE DEVRAIT APPARAITRE QUE SI LE FORMULAIRE EST OUVERT A PARTIR DE LA LISTE DES QUAIS */
-
-                            (initialValues.provenance === 'quai') &&(
-                                <Grid item xs={12}>
-                                    <InputLabel id="demo-simple-select-label">Navire</InputLabel>
-                                    <Controller
-                                        name="nomNavire"
-                                        control={control}
-                                        defaultValue=""
-                                        rules={{ required: "Ce champ est requis" }}
-                                        render={({ field }) => (
-                                            <>
-                                                <Select
-                                                    {...field}
-                                                    id="nomNavire"
-                                                    label="Nom navire"
-                                                    onChange={handleNavireChange}
-                                                    value={nomNav}
-                                                    fullWidth
-                                                    error={!!errors.nomNavire}
-                                                >
-                                                    
-                                                    {
-                                                        /* Affichages de la liste de navire */
-                                                        afficheListeNavires() 
-                                                    }
-                                                    <MenuItem key="vide" value="1">vide</MenuItem>
-
-                                                </Select>
-                                                {errors.nomNavire && (
-                                                    <FormHelperText error>{errors.nomNavire.message}</FormHelperText>
-                                                )}
-                                            </>
+                                        </Select>
+                                        {errors.idNav && (
+                                            <FormHelperText error>{errors.idNav.message}</FormHelperText>
                                         )}
-                                    />
-                                </Grid>
-                            )
-
-                         /* L'ELEMENT CI-DESSUS NE DEVRAIT APPARAITRE QUE SI LE FORMULAIRE EST OUVERT A PARTIR DE LA LISTE DES QUAIS */
-                        }
-
+                                    </>
+                                )}
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <InputLabel id="demo-simple-select-label">type de Mouvement</InputLabel>
+                            <Controller
+                                name="typeMouvement"
+                                defaultValue=''
+                                control={control}
+                                rules={{ required: "Ce champ est requis" }}
+                                render={({ field }) => (
+                                    <>
+                                        <Select
+                                            {...field}
+                                            id="typeMouvement"
+                                            fullWidth
+                                            size='small'
+                                            error={!!errors.typeMouvement}
+                                        >
+                                            <MenuItem value="Entrant">Entrant</MenuItem>
+                                            <MenuItem value="Sortant">Sortant</MenuItem>
+                                        </Select>
+                                        {errors.typeMouvement && (
+                                            <FormHelperText error>{errors.typeMouvement.message}</FormHelperText>
+                                        )}
+                                    </>
+                                )}
+                            />
+                        </Grid>
                         <Grid item xs={12} sm={6}>
                             <Controller
                                 name='ETD'
@@ -309,12 +287,8 @@ const FormEscale = ({ initialValues }) => {
                                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                                         <DateTimePicker
                                             {...field}
-                                            label="Date de départ"
-                                            onChange={(date) => {
-                                                field.onChange(date);
-                                                handleDateChange(date);
-                                            }}
-                                            textField={(params) => <TextField {...params} />}
+                                            label="Départ estimé(ETD)"
+                                            textField={(params) => <TextField {...params}/>}
                                         />
                                     </LocalizationProvider>
                                 )}
@@ -329,7 +303,7 @@ const FormEscale = ({ initialValues }) => {
                                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                                         <DateTimePicker
                                             {...field}
-                                            label="Date d'arrivée"
+                                            label="Arrivé estimé(ETA)"
                                             textField={(params) => <TextField {...params} />}
                                         />
                                     </LocalizationProvider>
@@ -351,6 +325,7 @@ const FormEscale = ({ initialValues }) => {
                                         autoFocus
                                         id="provenance"
                                         label="Provenance"
+                                        size='small'
                                     />
                                 )}
                             />
@@ -370,11 +345,48 @@ const FormEscale = ({ initialValues }) => {
                                         autoFocus
                                         id="destination"
                                         label="Déstination"
+                                        size='small'
                                     />
                                 )}
                             />
                         </Grid>
-
+                        <Divider variant="middle" sx={{ width: '96%', my: 3 }}>
+                            <Chip label="A l'arrivée" size="small" />
+                        </Divider>
+                        <Grid item xs={12} sm={6}>
+                            <Controller
+                                name='ATD'
+                                control={control}
+                                defaultValue={null}
+                                disabled
+                                render={({ field }) => (
+                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                        <DateTimePicker
+                                            {...field}
+                                            label="Départ effectif(ATD)"
+                                            textField={(params) => <TextField {...params}/>}
+                                        />
+                                    </LocalizationProvider>
+                                )}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <Controller
+                                name='ATA'
+                                control={control}
+                                defaultValue={null}
+                                disabled
+                                render={({ field }) => (
+                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                        <DateTimePicker
+                                            {...field}
+                                            label="Arrivé effectif(ATA)"
+                                            textField={(params) => <TextField {...params} />}
+                                        />
+                                    </LocalizationProvider>
+                                )}
+                            />
+                        </Grid>
                     </Grid>
                     <Button
                         type="submit"
@@ -382,12 +394,12 @@ const FormEscale = ({ initialValues }) => {
                         variant="contained"
                         sx={{ mt: 3, mb: 2, bgcolor: "#3fc8ff"}}
                     >
-                        Ajouter
+                        {initialValues ? 'Modifier' : 'Ajouter'}
                     </Button>
                 </Box>
             </Box>
         </Container>
     );
-}
+};
 
 export default FormEscale;
