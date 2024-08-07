@@ -3,6 +3,7 @@ const cors = require("cors");
 const dotenv = require('dotenv');
 const db = require('./config/db');
 
+const escaleRoutes = require('./routes/escales.routes');
 const userRoutes = require('./routes/users.routes');
 const quaiRoutes = require("./routes/quais.routes");
 const piloteRoutes = require("./routes/pilotes.routes");
@@ -20,6 +21,7 @@ app.use(express.json());
 
 // ROUTES
 app.use("/user", userRoutes);
+app.use("/escale", escaleRoutes);
 app.use("/quai", quaiRoutes);
 app.use("/pilote", piloteRoutes);
 app.use("/navire", navireRoutes);
