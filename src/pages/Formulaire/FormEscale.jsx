@@ -68,11 +68,13 @@ const FormEscale = ({initialValues, handleClose}) => {
         // update ou add en fonction des cas
         mutationFn: async (escale) => {
 
-            if (initialValues) {
+            if (initialValues && Object.keys(initialValues).length > 0) {
                 await axios.post("http://localhost:8081/escale/update", escale);
+                /* console.log("Update"); */
                 /* console.log(escale); */
             } else {
                 await axios.post("http://localhost:8081/escale/add", escale);
+                /* console.log("Add"); */
                 /* console.log(escale); */
             }
         },
@@ -96,7 +98,8 @@ const FormEscale = ({initialValues, handleClose}) => {
 
     
     /*************** SOUMISSION ***************/
-    const onSubmit = (data) => {
+    const onSubmit = async (data) => {
+        console.log("Initial Values: ", initialValues);
 
         // OBJET NAVIRE ET QUAI selectionné
         const selectedNavire = listeNav.find(navire => navire.id === data.idNav);
@@ -120,12 +123,12 @@ const FormEscale = ({initialValues, handleClose}) => {
         data.ETA = dayjs(data.ETA).format('YYYY-MM-DD HH:mm:ss');
 
         // logique pour soumettre au serveur les données
-        toast.promise(
+        await toast.promise(
             mutation.mutateAsync(data),
             {
                 loading: "chargement...",
-                success: initialValues ? "Escale modifiée" : "Escale créée",
-                error: "Création d'escale échoué"
+                success: initialValues && Object.keys(initialValues).length > 0 ? "Escale modifiée" : "Escale créée",
+                error: initialValues && Object.keys(initialValues).length > 0 ? "Modification échouée" : "Création d'escale échouée"
             }
         )
 
