@@ -55,6 +55,9 @@ const FormEscale = ({initialValues, handleClose}) => {
     const [listeNav, setListeNav] = useState([]);
     const [listeQuais, setListeQuais] = useState([]);
 
+    // disabled
+    const [isDisabled, setIsDisabled] = useState(true);
+
     
     /**************** USEFORM *****************/
     const {handleSubmit, control, watch, setValue, reset, formState: {errors}} = useForm();
@@ -181,6 +184,14 @@ const FormEscale = ({initialValues, handleClose}) => {
             reset(formattedValues);
         }
     }, [initialValues, reset]);
+
+    /******** HANDLE FUNCTION *******/
+    const handleStateChange = (event) => {
+        const etat = event.target.value;
+        setValue('etatEscale', etat);
+
+        etat == 'terminé' ? setIsDisabled(false) : setIsDisabled(true);
+    }
     
     return (
         <Container component="main" maxWidth="xs">
@@ -289,6 +300,34 @@ const FormEscale = ({initialValues, handleClose}) => {
                                 )}
                             />
                         </Grid>
+                        <Grid item xs={12}>
+                            <InputLabel id="demo-simple-select-label">État</InputLabel>
+                            <Controller
+                                name="etatEscale"
+                                defaultValue='prévu'
+                                control={control}
+                                rules={{ required: "Ce champ est requis" }}
+                                render={({ field }) => (
+                                    <>
+                                        <Select
+                                            {...field}
+                                            id="etat"
+                                            fullWidth
+                                            size='small'
+                                            onChange={handleStateChange}
+                                            error={!!errors.etat}
+                                        >
+                                            <MenuItem value="prévu">Prévu</MenuItem>
+                                            <MenuItem value="actif">Actif</MenuItem>
+                                            <MenuItem value="terminé">Terminé</MenuItem>
+                                        </Select>
+                                        {errors.etat && (
+                                            <FormHelperText error>{errors.etatEscale.message}</FormHelperText>
+                                        )}
+                                    </>
+                                )}
+                            />
+                        </Grid>
                         <Grid item xs={12} sm={6}>
                             <Controller
                                 name='ETD'
@@ -369,7 +408,7 @@ const FormEscale = ({initialValues, handleClose}) => {
                                 name='ATD'
                                 control={control}
                                 defaultValue={null}
-                                disabled
+                                disabled={isDisabled}
                                 render={({ field }) => (
                                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                                         <DateTimePicker
@@ -386,7 +425,7 @@ const FormEscale = ({initialValues, handleClose}) => {
                                 name='ATA'
                                 control={control}
                                 defaultValue={null}
-                                disabled
+                                disabled={isDisabled}
                                 render={({ field }) => (
                                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                                         <DateTimePicker

@@ -40,6 +40,12 @@ const columns = [
       align: 'left',
     },
     {
+      id: 'etatEscale',
+      label: 'Etat',
+      minWidth: 30,
+      align: 'left',
+    },
+    {
       id: 'ATA',
       label: 'ATA',
       minWidth: 170,
