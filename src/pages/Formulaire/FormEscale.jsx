@@ -187,10 +187,13 @@ const FormEscale = ({initialValues, handleClose}) => {
 
     /******** HANDLE FUNCTION *******/
     const handleStateChange = (event) => {
+
+        // Selection de l'état de l'escale
         const etat = event.target.value;
         setValue('etatEscale', etat);
 
-        etat == 'terminé' ? setIsDisabled(false) : setIsDisabled(true);
+        // Activer les champs des dates effectifs si l'escale est déja terminé
+        setIsDisabled(etat == 'terminé' ? false : true);
     }
     
     return (

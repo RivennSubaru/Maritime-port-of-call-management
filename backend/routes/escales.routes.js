@@ -1,5 +1,5 @@
 const express = require("express");
-const {addEscale, getAllEscale, updateEscale} = require('../controllers/escales.controller');
+const {addEscale, getAllEscale, getCurrEscaleEntrant, updateEscale} = require('../controllers/escales.controller');
 
 const router = express.Router();
 
@@ -9,5 +9,6 @@ router.post('/update', updateEscale);
 
 // GET
 router.get('/getAll', getAllEscale);
+router.get('/getCurrEntrant', getCurrEscaleEntrant)
 
 module.exports = router;

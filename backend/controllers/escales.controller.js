@@ -27,6 +27,16 @@ const getAllEscale = asyncHandler(async (req, res) => {
     })
 })
 
+// GET ALL CURRENT INCOMING ESCALE
+const getCurrEscaleEntrant = asyncHandler(async (req, res) => {
+    const sql = "SELECT `idEscale`, `numEscale`, navires.numNav, navires.nomNav, quais.nomQuai, DATE(`ETA`) AS dateArrivEst, TIME(`ETA`) AS heureArrivEst, `provenance`, DATE(`ATD`) AS dateDepartEst, TIME(`ATD`) AS heureDepartEst FROM `escales` JOIN navires ON escales.idNav = navires.idNav JOIN quais ON escales.idQuai = quais.idQuai WHERE DATE(`ETA`) = CURRENT_DATE AND etatEscale = \"Actif\" AND typeMouvement = \"Entrant\"";
+
+    db.query(sql, (err, data) => {
+        if (err) res.status(500).send({error: err.message});
+        res.status(201).send(data);
+    })
+})
+
 // UPDATE ESCALE
 const updateEscale = asyncHandler(async (req, res) => {
     const {idNav, idQuai, numEscale, ETD, ETA, provenance, destination, typeMouvement, etatEscale, id} = req.body;
@@ -43,4 +53,4 @@ const updateEscale = asyncHandler(async (req, res) => {
     })
 });
 
-module.exports = {addEscale, getAllEscale, updateEscale}
+module.exports = {addEscale, getAllEscale, getCurrEscaleEntrant, updateEscale}

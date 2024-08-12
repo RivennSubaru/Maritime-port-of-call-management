@@ -270,7 +270,7 @@ const TableListe = ({columns, apiUrl, Item, FormComponent}) => {
                             </TableCell>
                         ))}
                             <TableCell key="action" align="center" style={{ fontWeight: 'bold' }}>
-                                Action
+                                {Item != 'escale' ? "Action" : "Modifier"}
                             </TableCell>
                         </TableRow>
                     </TableHead>
