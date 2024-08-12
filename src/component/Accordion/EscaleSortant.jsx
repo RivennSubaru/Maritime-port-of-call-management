@@ -55,14 +55,45 @@ const ButtonContainer = styled('div')(({ theme }) => ({
 }));
 
 const ScrollableContainer = styled('div')({
-  maxHeight: '400px', // Ajustez cette valeur en fonction de la taille de votre conteneur parent
+  maxHeight: '260px', 
   overflowY: 'auto',
 });
 
 const EscaleSortant = () => {
 
+  const escales = [
+    {
+      nomNav: "VOLAZARA",
+      numEscale: "2420241200123008",
+      numNav: "3008",
+      nomQuai: "MOLE B",
+      heureDepartEst: "13h00",
+    },
+    {
+      nomNav: "Mercy Ships",
+      numEscale: "2420241200123009",
+      numNav: "3009",
+      nomQuai: "MOLE A",
+      heureDepartEst: "14h00",
+    },
+    {
+      nomNav: "Logos Hope",
+      numEscale: "2420241200123010",
+      numNav: "3010",
+      nomQuai: "MOLE C",
+      heureDepartEst: "15h00",
+    },
+    {
+      nomNav: "Lorem ipsum",
+      numEscale: "2420241200123011",
+      numNav: "3011",
+      nomQuai: "MOLE D",
+      heureDepartEst: "16h00",
+    },
+  ];
+
   // Recuperation des donnée à afficher
-  const fetchData = async () => {
+  /* const fetchData = async () => {
     const reponse = await axios.get("http://localhost:8081/escale/getCurrSortant");
     return reponse.data;
   }
@@ -92,85 +123,56 @@ const EscaleSortant = () => {
             <p>Une erreur s'est produit</p>
         </>
     )
-  }
+  } */
 
   if (escales.length == 0) {
     return (
         <>
-            <Typography variant="h6" gutterBottom>
-                Navires se préparant à sortir
+            <Typography variant="h6" gutterBottom color="rgba(255, 159, 67, 1)">
+              Navires se préparant à sortir
             </Typography>
-            <p> Aucune escale sortant aujourd'hui </p>
+            <p> Aucun navire sortant aujourd'hui </p>
         </>
     )
   }
 
-  /* const escales = [
-    {
-      nomNav: "VOLAZARA",
-      numEscale: "2420241200123008",
-      numNav: "3008",
-      nomQuai: "MOLE B",
-      heureDepartEst: "13h00",
-    },
-    {
-      nomNav: "Mercy Ships",
-      numEscale: "2420241200123009",
-      numNav: "3009",
-      nomQuai: "MOLE A",
-      heureDepartEst: "14h00",
-    },
-    {
-      nomNav: "Logos Hope",
-      numEscale: "2420241200123010",
-      numNav: "3010",
-      nomQuai: "MOLE C",
-      heureDepartEst: "15h00",
-    },
-    {
-      nomNav: "Lorem ipsum",
-      numEscale: "2420241200123011",
-      numNav: "3011",
-      nomQuai: "MOLE D",
-      heureDepartEst: "16h00",
-    },
-  ]; */
-
-  return ( 
-    <ScrollableContainer>
-      <Typography variant="h6" gutterBottom color="rgba(255, 159, 67, 1)">
+  return (
+    <>
+      <Typography variant="h6" gutterBottom color="rgba(255, 159, 67, 1)" paddingBottom={2}>
         Navires se préparant à sortir
       </Typography>
-      {escales.map((escale, index) => (
-        <Accordion key={index}>
-          <AccordionSummary aria-controls={`panel${index}-content`} id={`panel${index}-header`}>
-            <Typography>{escale.nomNav}</Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <Typography>N° Escale : {escale.numEscale}</Typography>
-            <Typography>Code navire : {escale.numNav}</Typography>
-            <Typography>Quai attribué : {escale.nomQuai}</Typography>
-            <Typography>Départ estimé : {escale.heureDepartEst}</Typography>
-            <ButtonContainer>
-            <Button 
-                variant="contained" 
-                color="primary" 
-                size="small"
-                sx={{
-                    backgroundColor: 'rgba(255, 159, 67, 1)', // Couleur de fond personnalisée
-                    '&:hover': {
-                    backgroundColor: 'rgba(219, 139, 62, 1)', // Couleur de fond au survol
-                    },
-                    textTransform: 'none', // Garde le texte tel qu'il est, sans le transformer en majuscules
-                }}
-            >
-                Partir
-            </Button>
-            </ButtonContainer>
-          </AccordionDetails>
-        </Accordion>
-      ))}
-    </ScrollableContainer>
+      <ScrollableContainer>
+        {escales.map((escale, index) => (
+          <Accordion key={index}>
+            <AccordionSummary aria-controls={`panel${index}-content`} id={`panel${index}-header`}>
+              <Typography>{escale.nomNav}</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Typography>N° Escale : {escale.numEscale}</Typography>
+              <Typography>Code navire : {escale.numNav}</Typography>
+              <Typography>Quai attribué : {escale.nomQuai}</Typography>
+              <Typography>Départ estimé : {escale.heureDepartEst}</Typography>
+              <ButtonContainer>
+              <Button 
+                  variant="contained" 
+                  color="primary" 
+                  size="small"
+                  sx={{
+                      backgroundColor: 'rgba(255, 159, 67, 1)', // Couleur de fond personnalisée
+                      '&:hover': {
+                      backgroundColor: 'rgba(219, 139, 62, 1)', // Couleur de fond au survol
+                      },
+                      textTransform: 'none', // Garde le texte tel qu'il est, sans le transformer en majuscules
+                  }}
+              >
+                  Partir
+              </Button>
+              </ButtonContainer>
+            </AccordionDetails>
+          </Accordion>
+        ))}
+      </ScrollableContainer>
+    </>
   );
 }
 
