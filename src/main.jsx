@@ -22,6 +22,7 @@ import FormEscaleTest from './pages/Formulaire/FormEscaleTest.jsx'
 import EscaleEntrant from './component/Accordion/EscaleEntrant.jsx'
 import EscaleSortant from './component/Accordion/EscaleSortant.jsx'
 import EscaleManager from './component/EscaleManager.jsx'
+import EscaleCountCard from './component/EscaleCountCard.jsx'
 
 const queryClient = new QueryClient();
 
@@ -54,6 +55,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <Route path='/test/accordion/entrant' element={<EscaleEntrant/>}/>
           <Route path='/test/accordion/sortant' element={<EscaleSortant/>}/>
           <Route path='/test/accordion/manager' element={<EscaleManager/>}/>
+          <Route path='/test/count' element={<EscaleCountCard/>}/>
         </Routes>
       </BrowserRouter>
     </QueryClientProvider>
