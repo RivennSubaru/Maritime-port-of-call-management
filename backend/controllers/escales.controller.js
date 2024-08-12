@@ -77,6 +77,17 @@ const getMonthEscaleFin = asyncHandler(async (req, res) => {
     })
 });
 
+// GET SUM OF ALL, PREV, ACTIF, FIN ESCALE IN CURRENT MONTH
+const getCountEscales = asyncHandler(async (req, res) => {
+    const sql = "SELECT COUNT(*) AS total, SUM(etatEscale = 'Prévu') AS nombrePrevu, SUM(etatEscale = 'Actif') AS nombreActif, SUM(etatEscale = 'Terminé') AS nombreTermine FROM escales WHERE MONTH(ETD) = MONTH(CURDATE()) AND YEAR(ETD) = YEAR(CURDATE());";
+
+    db.query(sql, (err, data) => {
+        if (err) res.status(500).send({error: err.message});
+        res.status(201).send(data);
+    })
+});
+
+
 
 // UPDATE ESCALE
 const updateEscale = asyncHandler(async (req, res) => {
@@ -94,4 +105,4 @@ const updateEscale = asyncHandler(async (req, res) => {
     })
 });
 
-module.exports = {addEscale, getAllEscale, getCurrEscaleEntrant, getCurrEscaleSortant, getAllMonthEscale, getMonthEscalePrev, getMonthEscaleFin, updateEscale}
+module.exports = {addEscale, getAllEscale, getCurrEscaleEntrant, getCurrEscaleSortant, getAllMonthEscale, getMonthEscalePrev, getMonthEscaleFin, getCountEscales, updateEscale}
