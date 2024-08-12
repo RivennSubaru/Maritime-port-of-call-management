@@ -82,7 +82,7 @@ const EscaleEntrant = () => {
 
   return ( 
     <ScrollableContainer>
-      <Typography variant="h6" gutterBottom>
+      <Typography variant="h6" gutterBottom color="rgba(74, 136, 255, 1)">
         Navires en approche
       </Typography>
       {escales.map((escale, index) => (

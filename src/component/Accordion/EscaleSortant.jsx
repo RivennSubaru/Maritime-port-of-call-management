@@ -28,7 +28,7 @@ const AccordionSummary = styled((props) => (
   />
 ))(({ theme }) => ({
   color: 'rgba(65, 65, 65, 1)',
-  backgroundColor: 'rgba(196, 255, 251, 1)',
+  backgroundColor: 'rgba(255, 225, 196, 1)',
   '& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': {
     transform: 'rotate(90deg)',
   },
@@ -39,7 +39,7 @@ const AccordionSummary = styled((props) => (
 
 const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
   color: 'rgba(85, 85, 85, 1)',
-  backgroundColor: 'rgba(241, 255, 254, 1)',
+  backgroundColor: 'rgba(255, 246, 237, 1)',
   padding: theme.spacing(2),
   borderTop: 'none',
   display: 'flex',
@@ -105,9 +105,40 @@ const EscaleSortant = () => {
     )
   }
 
+  /* const escales = [
+    {
+      nomNav: "VOLAZARA",
+      numEscale: "2420241200123008",
+      numNav: "3008",
+      nomQuai: "MOLE B",
+      heureDepartEst: "13h00",
+    },
+    {
+      nomNav: "Mercy Ships",
+      numEscale: "2420241200123009",
+      numNav: "3009",
+      nomQuai: "MOLE A",
+      heureDepartEst: "14h00",
+    },
+    {
+      nomNav: "Logos Hope",
+      numEscale: "2420241200123010",
+      numNav: "3010",
+      nomQuai: "MOLE C",
+      heureDepartEst: "15h00",
+    },
+    {
+      nomNav: "Lorem ipsum",
+      numEscale: "2420241200123011",
+      numNav: "3011",
+      nomQuai: "MOLE D",
+      heureDepartEst: "16h00",
+    },
+  ]; */
+
   return ( 
     <ScrollableContainer>
-      <Typography variant="h6" gutterBottom>
+      <Typography variant="h6" gutterBottom color="rgba(255, 159, 67, 1)">
         Navires se préparant à sortir
       </Typography>
       {escales.map((escale, index) => (
@@ -126,9 +157,9 @@ const EscaleSortant = () => {
                 color="primary" 
                 size="small"
                 sx={{
-                    backgroundColor: 'rgba(74, 136, 255, 1)', // Couleur de fond personnalisée
+                    backgroundColor: 'rgba(255, 159, 67, 1)', // Couleur de fond personnalisée
                     '&:hover': {
-                    backgroundColor: 'rgba(56, 104, 195, 1)', // Couleur de fond au survol
+                    backgroundColor: 'rgba(219, 139, 62, 1)', // Couleur de fond au survol
                     },
                     textTransform: 'none', // Garde le texte tel qu'il est, sans le transformer en majuscules
                 }}
