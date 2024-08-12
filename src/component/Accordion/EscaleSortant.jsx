@@ -63,7 +63,7 @@ const EscaleSortant = () => {
 
   // Recuperation des donnée à afficher
   const fetchData = async () => {
-    const reponse = await axios.get("http://localhost:8081/escale/getCurrEntrant");
+    const reponse = await axios.get("http://localhost:8081/escale/getCurrSortant");
     return reponse.data;
   }
   const {isPending, isError, data:escales = [], error} = useQuery({
@@ -72,12 +72,37 @@ const EscaleSortant = () => {
   });
 
   if (isPending) {
-    return <h3>chargement de la liste...</h3>  
+    return (
+        <>
+            <Typography variant="h6" gutterBottom>
+                Navires se préparant à sortir
+            </Typography>
+            <p>chargement de la liste...</p>
+        </>
+    )
   }
 
   if (isError) {
-      console.log(error);
-      return <h3>Une erreur s'est produit</h3>
+    console.log(error);
+    return (
+        <>
+            <Typography variant="h6" gutterBottom>
+                Navires se préparant à sortir
+            </Typography>
+            <p>Une erreur s'est produit</p>
+        </>
+    )
+  }
+
+  if (escales.length == 0) {
+    return (
+        <>
+            <Typography variant="h6" gutterBottom>
+                Navires se préparant à sortir
+            </Typography>
+            <p> Aucune escale sortant aujourd'hui </p>
+        </>
+    )
   }
 
   return ( 
@@ -94,7 +119,7 @@ const EscaleSortant = () => {
             <Typography>N° Escale : {escale.numEscale}</Typography>
             <Typography>Code navire : {escale.numNav}</Typography>
             <Typography>Quai attribué : {escale.nomQuai}</Typography>
-            <Typography>Départ estimé : {escale.heureArrivEst}</Typography>
+            <Typography>Départ estimé : {escale.heureDepartEst}</Typography>
             <ButtonContainer>
             <Button 
                 variant="contained" 

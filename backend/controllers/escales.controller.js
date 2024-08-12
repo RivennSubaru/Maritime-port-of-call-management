@@ -29,7 +29,17 @@ const getAllEscale = asyncHandler(async (req, res) => {
 
 // GET ALL CURRENT INCOMING ESCALE
 const getCurrEscaleEntrant = asyncHandler(async (req, res) => {
-    const sql = "SELECT `idEscale`, `numEscale`, navires.numNav, navires.nomNav, quais.nomQuai, DATE(`ETA`) AS dateArrivEst, TIME(`ETA`) AS heureArrivEst, `provenance`, DATE(`ATD`) AS dateDepartEst, TIME(`ATD`) AS heureDepartEst FROM `escales` JOIN navires ON escales.idNav = navires.idNav JOIN quais ON escales.idQuai = quais.idQuai WHERE DATE(`ETA`) = CURRENT_DATE AND etatEscale = \"Actif\" AND typeMouvement = \"Entrant\"";
+    const sql = "SELECT `idEscale`, `numEscale`, escales.idNav, navires.numNav, navires.nomNav, escales.idQuai, quais.nomQuai, DATE(`ETA`) AS dateArrivEst, TIME(`ETA`) AS heureArrivEst, `provenance`, DATE(`ATD`) AS dateDepartEff, TIME(`ATD`) AS heureDepartEff FROM `escales` JOIN navires ON escales.idNav = navires.idNav JOIN quais ON escales.idQuai = quais.idQuai WHERE DATE(`ETA`) = CURRENT_DATE AND etatEscale = \"Actif\" AND typeMouvement = \"Entrant\"";
+
+    db.query(sql, (err, data) => {
+        if (err) res.status(500).send({error: err.message});
+        res.status(201).send(data);
+    })
+})
+
+// GET ALL CURRENT INCOMING ESCALE
+const getCurrEscaleSortant = asyncHandler(async (req, res) => {
+    const sql = "SELECT `idEscale`, `numEscale`, escales.idNav, navires.numNav, navires.nomNav, escales.idQuai, quais.nomQuai, DATE(`ETD`) AS dateDepartEst, TIME(`ETA`) AS heureDepartEst, `provenance` FROM `escales` JOIN navires ON escales.idNav = navires.idNav JOIN quais ON escales.idQuai = quais.idQuai WHERE DATE(`ETD`) = CURRENT_DATE AND etatEscale = \"Prévu\" AND typeMouvement = \"Sortant\"";
 
     db.query(sql, (err, data) => {
         if (err) res.status(500).send({error: err.message});
@@ -53,4 +63,4 @@ const updateEscale = asyncHandler(async (req, res) => {
     })
 });
 
-module.exports = {addEscale, getAllEscale, getCurrEscaleEntrant, updateEscale}
+module.exports = {addEscale, getAllEscale, getCurrEscaleEntrant, getCurrEscaleSortant, updateEscale}

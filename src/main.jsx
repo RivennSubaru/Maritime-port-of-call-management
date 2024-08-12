@@ -20,6 +20,7 @@ import FormPilote from './pages/Formulaire/FormPilote.jsx'
 import FormSearch from './pages/Formulaire/FormSearch.jsx'
 import FormEscaleTest from './pages/Formulaire/FormEscaleTest.jsx'
 import EscaleEntrant from './component/Accordion/EscaleEntrant.jsx'
+import EscaleSortant from './component/Accordion/EscaleSortant.jsx'
 
 const queryClient = new QueryClient();
 
@@ -49,7 +50,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
 
           <Route path='/test/form/search' element={<FormSearch/>}/>
           <Route path='/test/form/escale' element={<FormEscaleTest/>}/>
-          <Route path='/test/accordion' element={<EscaleEntrant/>}/>
+          <Route path='/test/accordion/entrant' element={<EscaleEntrant/>}/>
+          <Route path='/test/accordion/sortant' element={<EscaleSortant/>}/>
         </Routes>
       </BrowserRouter>
     </QueryClientProvider>
