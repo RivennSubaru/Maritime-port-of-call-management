@@ -23,6 +23,7 @@ import EscaleEntrant from './component/Accordion/EscaleEntrant.jsx'
 import EscaleSortant from './component/Accordion/EscaleSortant.jsx'
 import EscaleManager from './component/EscaleManager.jsx'
 import EscaleCountCard from './component/EscaleCountCard.jsx'
+import Stat from './component/Stat.jsx'
 
 const queryClient = new QueryClient();
 
@@ -56,6 +57,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <Route path='/test/accordion/sortant' element={<EscaleSortant/>}/>
           <Route path='/test/accordion/manager' element={<EscaleManager/>}/>
           <Route path='/test/count' element={<EscaleCountCard/>}/>
+          <Route path='/test/stat' element={<Stat/>}/>
         </Routes>
       </BrowserRouter>
     </QueryClientProvider>
