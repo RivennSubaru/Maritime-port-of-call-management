@@ -88,6 +88,17 @@ const getCountEscales = asyncHandler(async (req, res) => {
 });
 
 
+// GET NUMB OF ESCALE ENTRANT /DAY /MONTH
+const getFinEscalesPerDay = asyncHandler(async (req, res) => {
+    const sql = "SELECT MONTH(ATA), DAY(ATA) AS jour, COUNT(*) AS nombreEscalesTerminees FROM escales WHERE ATA IS NOT NULL AND etatEscale = \"Terminé\" AND typeMouvement = \"Entrant\" AND MONTH(ATA) = MONTH(CURDATE()) AND YEAR(ATA) = YEAR(CURDATE()) GROUP BY jour ORDER BY jour;";
+
+    db.query(sql, (err, data) => {
+        if (err) res.status(500).send({error: err.message});
+        res.status(201).send(data);
+    })
+});
+
+
 
 // UPDATE ESCALE
 const updateEscale = asyncHandler(async (req, res) => {
@@ -105,4 +116,15 @@ const updateEscale = asyncHandler(async (req, res) => {
     })
 });
 
-module.exports = {addEscale, getAllEscale, getCurrEscaleEntrant, getCurrEscaleSortant, getAllMonthEscale, getMonthEscalePrev, getMonthEscaleFin, getCountEscales, updateEscale}
+module.exports = {  
+    addEscale, 
+    getAllEscale, 
+    getCurrEscaleEntrant, 
+    getCurrEscaleSortant, 
+    getAllMonthEscale, 
+    getMonthEscalePrev, 
+    getMonthEscaleFin, 
+    getCountEscales,
+    getFinEscalesPerDay,
+    updateEscale
+}
