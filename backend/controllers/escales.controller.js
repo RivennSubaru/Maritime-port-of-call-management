@@ -90,7 +90,7 @@ const getCountEscales = asyncHandler(async (req, res) => {
 
 // GET NUMB OF ESCALE ENTRANT /DAY /MONTH
 const getFinEscalesPerDay = asyncHandler(async (req, res) => {
-    const sql = "SELECT MONTH(ATA), DAY(ATA) AS jour, COUNT(*) AS nombreEscalesTerminees FROM escales WHERE ATA IS NOT NULL AND etatEscale = \"Terminé\" AND typeMouvement = \"Entrant\" AND MONTH(ATA) = MONTH(CURDATE()) AND YEAR(ATA) = YEAR(CURDATE()) GROUP BY jour ORDER BY jour;";
+    const sql = "SELECT MONTH(ATA) AS mois, DAY(ATA) AS jours, COUNT(*) AS `count` FROM escales WHERE ATA IS NOT NULL AND etatEscale = \"Terminé\" AND typeMouvement = \"Entrant\" AND YEAR(ATA) = YEAR(CURDATE()) GROUP BY mois, jours ORDER BY mois, jours;";
 
     db.query(sql, (err, data) => {
         if (err) res.status(500).send({error: err.message});
