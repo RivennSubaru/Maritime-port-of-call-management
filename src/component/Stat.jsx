@@ -1,9 +1,11 @@
 import React, { useState, useMemo } from 'react';
 import { LineChart } from '@mui/x-charts/LineChart';
-import { MenuItem, Select, FormControl, InputLabel } from '@mui/material';
+import { MenuItem, Select, FormControl, InputLabel, Typography } from '@mui/material';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 
-// Données fournies par le backend
-const dataFromBackend = [
+// Simulation
+/* const countPerDay = [
   {"mois": 1, "jours": 2, "count": 2},
   {"mois": 1, "jours": 5, "count": 10},
   {"mois": 2, "jours": 1, "count": 7},
@@ -17,9 +19,9 @@ const dataFromBackend = [
   {"mois": 5, "jours": 1, "count": 15},
   {"mois": 5, "jours": 2, "count": 10},
   {"mois": 5, "jours": 3, "count": 4}
-];
+]; */
 
-// Correspondance des mois
+/*******  CORRESPONDANCE DES MOIS *******/
 const monthNames = [
   'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 
   'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
@@ -28,14 +30,47 @@ const monthNames = [
 export default function Stat() {
   const [selectedMonth, setSelectedMonth] = useState(1); // Mois par défaut sélectionné
 
-  // Filtrer les données en fonction du mois sélectionné
+  /****** FETCH DES DONNÉES *****/
+  const fetchData = async () => {
+    const reponse = await axios.get("http://localhost:8081/escale/getFinPerDay");
+    return reponse.data;
+  }
+  const {isPending, isError, data:countPerDay = [], error} = useQuery({
+      queryKey: ['lineChart'],
+      queryFn: fetchData
+  });
+
+  /**** FILTRER LES DONNÉES EN FONCTION DU MOIS SÉLECTIONNÉ ****/
   const filteredData = useMemo(() => {
-    return dataFromBackend.filter(item => item.mois === selectedMonth);
+    return countPerDay.filter(item => item.mois === selectedMonth);
   }, [selectedMonth]);
 
-  // Extraire les labels et les données pour le graphique
+  /**** EXTRAIRE LES LABELS ET LES DONNÉES POUR LE GRAPHIQUE ****/
   const xLabels = filteredData.map(item => `Jour ${item.jours}`);
   const yData = filteredData.map(item => item.count);
+  
+  if (isPending) {
+    return (
+        <>
+            <Typography variant="h6" gutterBottom>
+                Navires se préparant à sortir
+            </Typography>
+            <p>chargement de la liste...</p>
+        </>
+    )
+  }
+
+  if (isError) {
+    console.log(error);
+    return (
+        <>
+            <Typography variant="h6" gutterBottom>
+                Navires se préparant à sortir
+            </Typography>
+            <p>Une erreur s'est produit</p>
+        </>
+    )
+  }
 
   return (
     <div>
