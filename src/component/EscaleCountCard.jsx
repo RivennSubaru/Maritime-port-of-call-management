@@ -51,7 +51,7 @@ const EscaleCountCard = () => {
         Ce mois de Juillet 2024
       </Typography>
       <Typography variant="body2" sx={{ color: '#FF00FF', maxWidth: "67%" }}>
-        { counts[0].nombreTermine > 1 ? `${counts[0].nombreTermine} terminées` : `${counts[0].nombreTermine} terminée,` }
+        { counts[0].nombreTermine > 1 ? `${counts[0].nombreTermine} terminées,` : `${counts[0].nombreTermine} terminée,` }
         { counts[0].nombrePrevu > 1 ? ` ${counts[0].nombrePrevu} prévues` : ` ${counts[0].nombrePrevu} prévue` }
         {` et ${counts[0].nombreActif} en cours`}
       </Typography>
