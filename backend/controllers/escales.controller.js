@@ -37,7 +37,7 @@ const getCurrEscaleEntrant = asyncHandler(async (req, res) => {
     })
 })
 
-// GET ALL CURRENT INCOMING ESCALE
+// GET ALL CURRENT ESCALE SORTANT
 const getCurrEscaleSortant = asyncHandler(async (req, res) => {
     const sql = "SELECT `idEscale`, `numEscale`, escales.idNav, navires.numNav, navires.nomNav, escales.idQuai, quais.nomQuai, DATE(`ETD`) AS dateDepartEst, TIME(`ETA`) AS heureDepartEst, `provenance`, `dateCreationEscale` FROM `escales` JOIN navires ON escales.idNav = navires.idNav JOIN quais ON escales.idQuai = quais.idQuai WHERE DATE(`ETD`) = CURRENT_DATE AND etatEscale = \"Prévu\" AND typeMouvement = \"Sortant\"";
 
