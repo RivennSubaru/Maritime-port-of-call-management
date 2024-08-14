@@ -35,10 +35,10 @@ const EscaleCountCard = () => {
     <Box 
       sx={{
         borderRadius: '10px',
-        boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
         padding: '16px',
         backgroundColor: 'white',
-        maxWidth: '250px',
+        maxWidth: "345px",
+        flex: 1
       }}
     >
       <Typography variant="subtitle2" sx={{ color: '#007AFF', fontSize: "1.2rem" }}>

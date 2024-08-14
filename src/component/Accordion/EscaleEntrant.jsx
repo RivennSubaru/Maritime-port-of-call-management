@@ -61,7 +61,7 @@ const ScrollableContainer = styled('div')({
 
 const EscaleEntrant = () => {
 
-  const escales = [
+  /* const escales = [
     {
       nomNav: "Mercy Ships",
       numEscale: "2420241200123009",
@@ -90,15 +90,19 @@ const EscaleEntrant = () => {
       nomQuai: "MOLE C",
       heureArrivEst: "15h00",
     },
-  ];
+  ]; */
+
+  const handleArrived = (escale) => {
+    console.log(escale);
+  }
 
   // Recuperation des donnée à afficher
-  /* const fetchData = async () => {
+  const fetchData = async () => {
     const reponse = await axios.get("http://localhost:8081/escale/getCurrEntrant");
     return reponse.data;
   }
   const {isPending, isError, data:escales = [], error} = useQuery({
-      queryKey: ['escale'],
+      queryKey: ['entrant'],
       queryFn: fetchData
   });
 
@@ -109,7 +113,7 @@ const EscaleEntrant = () => {
   if (isError) {
       console.log(error);
       return <h3>Une erreur s'est produit</h3>
-  } */
+  }
 
   if (escales.length == 0) {
     return (
@@ -140,18 +144,19 @@ const EscaleEntrant = () => {
               <Typography>Arrivée estimée : {escale.heureArrivEst}</Typography>
               <ButtonContainer>
               <Button 
-                  variant="contained" 
-                  color="primary" 
-                  size="small"
-                  sx={{
-                      backgroundColor: 'rgba(74, 136, 255, 1)', // Couleur de fond personnalisée
-                      '&:hover': {
-                      backgroundColor: 'rgba(56, 104, 195, 1)', // Couleur de fond au survol
-                      },
-                      textTransform: 'none', // Garde le texte tel qu'il est, sans le transformer en majuscules
-                  }}
+                variant="contained" 
+                color="primary" 
+                size="small"
+                sx={{
+                    backgroundColor: 'rgba(74, 136, 255, 1)', // Couleur de fond personnalisée
+                    '&:hover': {
+                    backgroundColor: 'rgba(56, 104, 195, 1)', // Couleur de fond au survol
+                    },
+                    textTransform: 'none', // Garde le texte tel qu'il est, sans le transformer en majuscules
+                }}
+                onClick={() => handleArrived(escale)}
               >
-                  Arriver
+                Arriver
               </Button>
               </ButtonContainer>
             </AccordionDetails>

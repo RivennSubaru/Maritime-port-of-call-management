@@ -61,7 +61,7 @@ const ScrollableContainer = styled('div')({
 
 const EscaleSortant = () => {
 
-  const escales = [
+  /* const escales = [
     {
       nomNav: "VOLAZARA",
       numEscale: "2420241200123008",
@@ -90,15 +90,19 @@ const EscaleSortant = () => {
       nomQuai: "MOLE D",
       heureDepartEst: "16h00",
     },
-  ];
+  ]; */
+
+  const handleArrived = (escale) => {
+    console.log(escale);
+  }
 
   // Recuperation des donnée à afficher
-  /* const fetchData = async () => {
+  const fetchData = async () => {
     const reponse = await axios.get("http://localhost:8081/escale/getCurrSortant");
     return reponse.data;
   }
   const {isPending, isError, data:escales = [], error} = useQuery({
-      queryKey: ['escale'],
+      queryKey: ['sortant'],
       queryFn: fetchData
   });
 
@@ -123,7 +127,7 @@ const EscaleSortant = () => {
             <p>Une erreur s'est produit</p>
         </>
     )
-  } */
+  }
 
   if (escales.length == 0) {
     return (
@@ -164,6 +168,7 @@ const EscaleSortant = () => {
                       },
                       textTransform: 'none', // Garde le texte tel qu'il est, sans le transformer en majuscules
                   }}
+                  onClick={() => handleArrived(escale)}
               >
                   Partir
               </Button>

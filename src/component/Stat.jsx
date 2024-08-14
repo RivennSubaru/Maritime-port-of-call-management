@@ -52,10 +52,7 @@ export default function Stat() {
   if (isPending) {
     return (
         <>
-            <Typography variant="h6" gutterBottom>
-                Navires se préparant à sortir
-            </Typography>
-            <p>chargement de la liste...</p>
+          <p>chargement des données...</p>
         </>
     )
   }
@@ -64,9 +61,6 @@ export default function Stat() {
     console.log(error);
     return (
         <>
-            <Typography variant="h6" gutterBottom>
-                Navires se préparant à sortir
-            </Typography>
             <p>Une erreur s'est produit</p>
         </>
     )
