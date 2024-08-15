@@ -6,6 +6,7 @@ const router = express.Router();
 // POST
 router.post('/add', addEscale);
 router.post('/update', updateEscale);
+router.post('/update/finish', finishEscale);
 
 // GET
 router.get('/getAll', getAllEscale);
@@ -16,6 +17,5 @@ router.get('/getMonthPrev', getMonthEscalePrev);
 router.get('/getMonthFin', getMonthEscaleFin);
 router.get('/getCount', getCountEscales);
 router.get('/getFinPerDay', getFinEscalesPerDay);
-router.get('/update/finish', finishEscale);
 
 module.exports = router;
