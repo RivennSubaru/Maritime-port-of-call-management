@@ -118,8 +118,8 @@ const EscaleEntrant = () => {
 
   const handleArrived = (escale) => {
 
+    // Soustraire la longueur dispo du quai par la longueur du navire
     var {longueurDispo} = escale;
-
     longueurDispo -= escale.longueursNav;
 
     toast.promise(

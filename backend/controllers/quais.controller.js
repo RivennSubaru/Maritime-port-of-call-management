@@ -45,12 +45,11 @@ const updateQuai = asyncHandler(async (req, res) => {
 
 // NEW NAVIRE TO QUAI
 const addNavire = asyncHandler(async (req, res) => {
-    const {nom, emplacementQuai, profondeurQuai, longueursQuai, id} = req.body;
+    const {longueurDispo, idQuai} = req.body;
 
-    const sql = "UPDATE quais SET nomQuai = ?, emplacementQuai = ?, profondeurQuai = ?, longueursQuai = ? WHERE idQuai = ?";
-    const values = [nom, emplacementQuai, profondeurQuai, longueursQuai, id];
+    const sql = "UPDATE quais SET longueurDispo = ? WHERE idQuai = ?";
 
-    db.query(sql, values, (err, data) => {
+    db.query(sql, [longueurDispo, idQuai], (err, data) => {
         if (err) {
             res.status(500).send({error: err});
             return;
