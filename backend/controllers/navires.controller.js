@@ -71,6 +71,21 @@ const updateNavire = asyncHandler(async (req, res) => {
     })
 });
 
+// AMARRER NAVIRE
+const amarrerNavire = asyncHandler(async (req, res) => {
+    const {idNav} = req.body;
+
+    const sql = "UPDATE navires SET situationNav = \"Amarré\" WHERE idNav = ?";
+
+    db.query(sql, [idNav], (err, data) => {
+        if (err) {
+            res.status(500).send({error: err});
+            return;
+        }
+        res.status(201).send({message: "navire modifié"});
+    })
+});
+
 // DELETE NAVIRE
 const deleteNavire = asyncHandler(async (req, res) => {
     const { id } = req.params;
@@ -83,4 +98,4 @@ const deleteNavire = asyncHandler(async (req, res) => {
     })
 })
 
-module.exports = {addNavire, addNavireSousRequete, getAllNavires, updateNavire, deleteNavire, getAllNaviresParti};
+module.exports = {addNavire, addNavireSousRequete, getAllNavires, updateNavire, amarrerNavire, deleteNavire, getAllNaviresParti};
