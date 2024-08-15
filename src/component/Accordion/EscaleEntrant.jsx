@@ -7,7 +7,8 @@ import MuiAccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import axios from 'axios';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { toast } from 'react-hot-toast';
 
 const Accordion = styled((props) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -92,8 +93,40 @@ const EscaleEntrant = () => {
     },
   ]; */
 
+
+  // envoie de requete au serveur
+  const mutation = useMutation({
+
+    // update ou add en fonction des cas
+    mutationFn: async ({idEscale, idNav, idQuai, longueursNav}) => {
+      
+      await axios.post("http://localhost:8081/escale/update/finish", idEscale);
+      await axios.post("http://localhost:8081/quai/update/addNavire", {idQuai, longueursNav});
+      await axios.post("http://localhost:8081/navire/update/arrived", idNav);
+    },
+    onError: (error) => {
+        setTimeout(() => {
+            toast(
+                "Il semble que vous rencontriez un probleme.\n\n Le probleme peut venir soit de la connexion au serveur soit de la base de donnée ou une mauvaise connexion.\nVeuillez réessayer plus tard.",
+                {
+                  duration: 12000,
+                }
+            );
+        }, 1000);
+        console.log(error);
+    }
+})
+
   const handleArrived = (escale) => {
-    console.log(escale);
+
+    toast.promise(
+      mutation.mutateAsync(escale),
+      {
+        loading: "chargement...",
+        success: "Navire amaré",
+        error: "Une erreur est survenue"
+      }
+    );
   }
 
   // Recuperation des donnée à afficher
@@ -140,6 +173,7 @@ const EscaleEntrant = () => {
             <AccordionDetails>
               <Typography>N° Escale : {escale.numEscale}</Typography>
               <Typography>Code navire : {escale.numNav}</Typography>
+              <Typography>Longueur : {escale.longueursNav} m</Typography>
               <Typography>Quai attribué : {escale.nomQuai}</Typography>
               <Typography>Arrivée estimée : {escale.heureArrivEst}</Typography>
               <ButtonContainer>
