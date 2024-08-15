@@ -29,7 +29,7 @@ const getAllEscale = asyncHandler(async (req, res) => {
 
 // GET ALL CURRENT INCOMING ESCALE
 const getCurrEscaleEntrant = asyncHandler(async (req, res) => {
-    const sql = "SELECT `idEscale`, `numEscale`, escales.idNav, navires.numNav, navires.nomNav, escales.idQuai, quais.nomQuai, DATE(`ETA`) AS dateArrivEst, TIME(`ETA`) AS heureArrivEst, `provenance`, DATE(`ATD`) AS dateDepartEff, TIME(`ATD`) AS heureDepartEff, `dateCreationEscale` FROM `escales` JOIN navires ON escales.idNav = navires.idNav JOIN quais ON escales.idQuai = quais.idQuai WHERE DATE(`ETA`) = CURRENT_DATE AND etatEscale = \"Actif\" AND typeMouvement = \"Entrant\"";
+    const sql = "SELECT `idEscale`, `numEscale`, escales.idNav, navires.numNav, navires.nomNav, navires.longueursNav, escales.idQuai, quais.nomQuai, DATE(`ETA`) AS dateArrivEst, TIME(`ETA`) AS heureArrivEst, `provenance`, DATE(`ATD`) AS dateDepartEff, TIME(`ATD`) AS heureDepartEff, `dateCreationEscale` FROM `escales` JOIN navires ON escales.idNav = navires.idNav JOIN quais ON escales.idQuai = quais.idQuai WHERE DATE(`ETA`) = CURRENT_DATE AND etatEscale = \"Actif\" AND typeMouvement = \"Entrant\"";
 
     db.query(sql, (err, data) => {
         if (err) res.status(500).send({error: err.message});
@@ -116,6 +116,21 @@ const updateEscale = asyncHandler(async (req, res) => {
     })
 });
 
+// FINISH ONE ESCALE
+const finishEscale = asyncHandler(async (req, res) => {
+    const {idEscale} = req.body;
+
+    const sql = "UPDATE escales SET etatEscale = \"Terminé\", ATA = NOW() WHERE idEscale = ?";
+
+    db.query(sql, [idEscale], (err, data) => {
+        if (err) {
+            res.status(500).send({error: err});
+            return;
+        }
+        res.status(201).send({message: "Escale modifiée"});
+    })
+});
+
 module.exports = {  
     addEscale, 
     getAllEscale, 
@@ -126,5 +141,6 @@ module.exports = {
     getMonthEscaleFin, 
     getCountEscales,
     getFinEscalesPerDay,
-    updateEscale
+    updateEscale,
+    finishEscale
 }

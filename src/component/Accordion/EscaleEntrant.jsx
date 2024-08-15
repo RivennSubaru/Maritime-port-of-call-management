@@ -97,7 +97,6 @@ const EscaleEntrant = () => {
   // envoie de requete au serveur
   const mutation = useMutation({
 
-    // update ou add en fonction des cas
     mutationFn: async ({idEscale, idNav, idQuai, longueursNav}) => {
       
       await axios.post("http://localhost:8081/escale/update/finish", idEscale);

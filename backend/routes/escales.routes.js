@@ -1,5 +1,5 @@
 const express = require("express");
-const {addEscale, getAllEscale, getCurrEscaleEntrant, getCurrEscaleSortant, getAllMonthEscale, getMonthEscalePrev, getMonthEscaleFin, getCountEscales, getFinEscalesPerDay, updateEscale} = require('../controllers/escales.controller');
+const {addEscale, getAllEscale, getCurrEscaleEntrant, getCurrEscaleSortant, getAllMonthEscale, getMonthEscalePrev, getMonthEscaleFin, getCountEscales, getFinEscalesPerDay, updateEscale, finishEscale} = require('../controllers/escales.controller');
 
 const router = express.Router();
 
@@ -16,5 +16,6 @@ router.get('/getMonthPrev', getMonthEscalePrev);
 router.get('/getMonthFin', getMonthEscaleFin);
 router.get('/getCount', getCountEscales);
 router.get('/getFinPerDay', getFinEscalesPerDay);
+router.get('/update/finish', finishEscale);
 
 module.exports = router;
