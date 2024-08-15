@@ -97,10 +97,10 @@ const EscaleEntrant = () => {
   // envoie de requete au serveur
   const mutation = useMutation({
 
-    mutationFn: async ({idEscale, idNav, idQuai, longueursNav}) => {
+    mutationFn: async ({idEscale, idNav, idQuai, longueurDispo}) => {
       
       await axios.post("http://localhost:8081/escale/update/finish", idEscale);
-      await axios.post("http://localhost:8081/quai/update/addNavire", {idQuai, longueursNav});
+      await axios.post("http://localhost:8081/quai/update/addNavire", {idQuai, longueurDispo});
       await axios.post("http://localhost:8081/navire/update/arrived", idNav);
     },
     onError: (error) => {
@@ -118,8 +118,12 @@ const EscaleEntrant = () => {
 
   const handleArrived = (escale) => {
 
+    var {longueurDispo} = escale;
+
+    longueurDispo -= escale.longueursNav;
+
     toast.promise(
-      mutation.mutateAsync(escale),
+      mutation.mutateAsync({...escale, longueurDispo}),
       {
         loading: "chargement...",
         success: "Navire amaré",

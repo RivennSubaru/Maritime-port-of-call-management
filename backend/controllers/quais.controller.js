@@ -43,6 +43,22 @@ const updateQuai = asyncHandler(async (req, res) => {
     })
 });
 
+// NEW NAVIRE TO QUAI
+const addNavire = asyncHandler(async (req, res) => {
+    const {nom, emplacementQuai, profondeurQuai, longueursQuai, id} = req.body;
+
+    const sql = "UPDATE quais SET nomQuai = ?, emplacementQuai = ?, profondeurQuai = ?, longueursQuai = ? WHERE idQuai = ?";
+    const values = [nom, emplacementQuai, profondeurQuai, longueursQuai, id];
+
+    db.query(sql, values, (err, data) => {
+        if (err) {
+            res.status(500).send({error: err});
+            return;
+        }
+        res.status(201).send({message: "Quai modifié"});
+    })
+});
+
 // DELETE QUAI
 const deleteQuai = asyncHandler(async (req, res) => {
     const { id } = req.params;
