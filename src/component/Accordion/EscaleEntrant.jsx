@@ -101,11 +101,11 @@ const EscaleEntrant = () => {
 
     mutationFn: async ({idEscale, idNav, idQuai, longueurDispo}) => {
       
-      await axios.post("http://localhost:8081/escale/update/finish", {idEscale});
+      await axios.post("http://localhost:8081/escale/update/changeEtat", {idEscale, etatEscale: "Terminé"});
       /* console.log("escale updated"); */
       await axios.post("http://localhost:8081/quai/update/addNavire", {idQuai, longueurDispo});
       /* console.log("quai updated"); */
-      await axios.post("http://localhost:8081/navire/update/arrived", {idNav});
+      await axios.post("http://localhost:8081/navire/update/changeSituation", {idNav, situationNav: "Amarré"});
       /* console.log("navire updated"); */
       await axios.post("http://localhost:8081/changement/add", {idNav, idQuai, typeChange: "escale"})
     },
@@ -124,7 +124,7 @@ const EscaleEntrant = () => {
       // Recharger la liste apres l'operation
       queryClient.invalidateQueries("entrant");
     }
-})
+  });
 
   const handleArrived = (escale) => {
 

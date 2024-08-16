@@ -1,12 +1,12 @@
 const express = require("express");
-const {addEscale, getAllEscale, getCurrEscaleEntrant, getCurrEscaleSortant, getAllMonthEscale, getMonthEscalePrev, getMonthEscaleFin, getCountEscales, getFinEscalesPerDay, updateEscale, finishEscale} = require('../controllers/escales.controller');
+const {addEscale, getAllEscale, getCurrEscaleEntrant, getCurrEscaleSortant, getAllMonthEscale, getMonthEscalePrev, getMonthEscaleFin, getCountEscales, getFinEscalesPerDay, updateEscale, changeEtatEscale} = require('../controllers/escales.controller');
 
 const router = express.Router();
 
 // POST
 router.post('/add', addEscale);
 router.post('/update', updateEscale);
-router.post('/update/finish', finishEscale);
+router.post('/update/changeEtat', changeEtatEscale);
 
 // GET
 router.get('/getAll', getAllEscale);

@@ -39,7 +39,7 @@ const getCurrEscaleEntrant = asyncHandler(async (req, res) => {
 
 // GET ALL CURRENT ESCALE SORTANT
 const getCurrEscaleSortant = asyncHandler(async (req, res) => {
-    const sql = "SELECT `idEscale`, `numEscale`, escales.idNav, navires.numNav, navires.nomNav, navires.longueursNav, escales.idQuai, quais.nomQuai, quais.longueurDispo, DATE(`ETD`) AS dateDepartEst, TIME(`ETA`) AS heureDepartEst, `provenance`, `dateCreationEscale` FROM `escales` JOIN navires ON escales.idNav = navires.idNav JOIN quais ON escales.idQuai = quais.idQuai WHERE DATE(`ETD`) = CURRENT_DATE AND etatEscale = \"Prévu\" AND typeMouvement = \"Sortant\"";
+    const sql = "SELECT `idEscale`, `numEscale`, escales.idNav, navires.numNav, navires.nomNav, navires.longueursNav, escales.idQuai, quais.nomQuai, quais.longueurDispo, typeMouvement, DATE(`ETD`) AS dateDepartEst, TIME(`ETA`) AS heureDepartEst, `provenance`, `dateCreationEscale` FROM `escales` JOIN navires ON escales.idNav = navires.idNav JOIN quais ON escales.idQuai = quais.idQuai WHERE DATE(`ETD`) = CURRENT_DATE AND etatEscale = \"Prévu\" AND typeMouvement = \"Sortant\"";
 
     db.query(sql, (err, data) => {
         if (err) res.status(500).send({error: err.message});
@@ -116,13 +116,13 @@ const updateEscale = asyncHandler(async (req, res) => {
     })
 });
 
-// FINISH ONE ESCALE
-const finishEscale = asyncHandler(async (req, res) => {
-    const {idEscale} = req.body;
+// CHANGEMENT ETAT ESCALE
+const changeEtatEscale = asyncHandler(async (req, res) => {
+    const {idEscale, etatEscale} = req.body;
 
-    const sql = "UPDATE escales SET etatEscale = \"Terminé\", ATA = NOW() WHERE idEscale = ?";
+    const sql = "UPDATE escales SET etatEscale = \""+ etatEscale +"\", ATA = NOW() WHERE idEscale = ?";
 
-    db.query(sql, [idEscale], (err, data) => {
+    db.query(sql, [idEscale, etatEscale], (err, data) => {
         if (err) {
             res.status(500).send({error: err});
             return;
@@ -142,5 +142,5 @@ module.exports = {
     getCountEscales,
     getFinEscalesPerDay,
     updateEscale,
-    finishEscale
+    changeEtatEscale
 }

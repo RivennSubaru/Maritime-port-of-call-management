@@ -71,13 +71,13 @@ const updateNavire = asyncHandler(async (req, res) => {
     })
 });
 
-// AMARRER NAVIRE
-const amarrerNavire = asyncHandler(async (req, res) => {
-    const {idNav} = req.body;
+// CHANGEMENT SITUATION
+const changeSituation = asyncHandler(async (req, res) => {
+    const {idNav, situationNav} = req.body;
 
-    const sql = "UPDATE navires SET situationNav = \"Amarré\" WHERE idNav = ?";
+    const sql = "UPDATE navires SET situationNav = \"" + situationNav + "\" WHERE idNav = ?";
 
-    db.query(sql, [idNav], (err, data) => {
+    db.query(sql, [idNav, situationNav], (err, data) => {
         if (err) {
             res.status(500).send({error: err});
             return;
@@ -98,4 +98,4 @@ const deleteNavire = asyncHandler(async (req, res) => {
     })
 })
 
-module.exports = {addNavire, addNavireSousRequete, getAllNavires, updateNavire, amarrerNavire, deleteNavire, getAllNaviresParti};
+module.exports = {addNavire, addNavireSousRequete, getAllNavires, updateNavire, changeSituation, deleteNavire, getAllNaviresParti};
