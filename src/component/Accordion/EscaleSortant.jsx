@@ -7,7 +7,8 @@ import MuiAccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import axios from 'axios';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'react-hot-toast';
 
 const Accordion = styled((props) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -92,8 +93,61 @@ const EscaleSortant = () => {
     },
   ]; */
 
-  const handleArrived = (escale) => {
-    console.log(escale);
+  /**** QUERYCLIENT (actualisation de la liste) ****/
+  const queryClient = useQueryClient();
+
+  // envoie de requete au serveur
+  const mutation = useMutation({
+
+    mutationFn: async ({typeMouvement, idEscale, idNav, idQuai, longueurDispo}) => {
+
+      
+      if(typeMouvement == "Sortant"){
+       
+        await axios.post("http://localhost:8081/escale/update/start", {idEscale});
+        await axios.post("http://localhost:8081/quai/update/changeLongDispo", {idQuai, longueurDispo});
+        await axios.post("http://localhost:8081/navire/update/changeSituation", {idNav, situationNav: "parti"});
+        await axios.post("http://localhost:8081/changement/remove", {idNav, idQuai});
+        
+      } else {
+        
+        await axios.post("http://localhost:8081/navire/update/changeSituation", {idNav, situationNav: "En mouvement"});
+        /* console.log("navire updated"); */
+      }
+      
+    },
+    onError: (error) => {
+        setTimeout(() => {
+            toast(
+                "Il semble que vous rencontriez un probleme.\n\n Le probleme peut venir soit de la connexion au serveur soit de la base de donnée ou une mauvaise connexion.\nVeuillez réessayer plus tard.",
+                {
+                  duration: 12000,
+                }
+            );
+        }, 1000);
+        console.log(error);
+    },
+    onSuccess: () => {
+      // Recharger la liste apres l'operation
+      queryClient.invalidateQueries("sortant");
+    }
+  });
+
+  const handleArrived = async (escale) => {
+    if(escale.typeMouvement == "Sortant") {
+
+      // Additionner la longueur dispo du quai par la longueur du navire
+      escale.longueurDispo += escale.longueursNav;
+    }
+
+    await toast.promise(
+      mutation.mutateAsync(escale),
+      {
+        loading: "chargement...",
+        success: "Navire sorti du quai",
+        error: "Une erreur est survenue"
+      }
+    );
   }
 
   // Recuperation des donnée à afficher
@@ -110,7 +164,7 @@ const EscaleSortant = () => {
     return (
         <>
             <Typography variant="h6" gutterBottom>
-                Navires se préparant à sortir
+                Navires se préparant à partir
             </Typography>
             <p>chargement de la liste...</p>
         </>
@@ -122,7 +176,7 @@ const EscaleSortant = () => {
     return (
         <>
             <Typography variant="h6" gutterBottom>
-                Navires se préparant à sortir
+                Navires se préparant à partir
             </Typography>
             <p>Une erreur s'est produit</p>
         </>
@@ -133,7 +187,7 @@ const EscaleSortant = () => {
     return (
         <>
             <Typography variant="h6" gutterBottom color="rgba(255, 159, 67, 1)">
-              Navires se préparant à sortir
+              Navires se préparant à partir
             </Typography>
             <p> Aucun navire sortant aujourd'hui </p>
         </>
@@ -143,7 +197,7 @@ const EscaleSortant = () => {
   return (
     <>
       <Typography variant="h6" gutterBottom color="rgba(255, 159, 67, 1)" paddingBottom={2}>
-        Navires se préparant à sortir
+        Navires se préparant à partir
       </Typography>
       <ScrollableContainer>
         {escales.map((escale, index) => (
