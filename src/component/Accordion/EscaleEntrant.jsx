@@ -129,11 +129,10 @@ const EscaleEntrant = () => {
   const handleArrived = (escale) => {
 
     // Soustraire la longueur dispo du quai par la longueur du navire
-    var {longueurDispo} = escale;
-    longueurDispo -= escale.longueursNav;
+    escale.longueurDispo -= escale.longueursNav;
 
     toast.promise(
-      mutation.mutateAsync({...escale, longueurDispo}),
+      mutation.mutateAsync(escale),
       {
         loading: "chargement...",
         success: "Navire amaré",
