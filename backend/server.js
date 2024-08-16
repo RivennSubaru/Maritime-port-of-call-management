@@ -9,6 +9,7 @@ const quaiRoutes = require("./routes/quais.routes");
 const piloteRoutes = require("./routes/pilotes.routes");
 const navireRoutes = require("./routes/navires.routes");
 const typesRoutes = require("./routes/types.routes");
+const changementRoutes = require("./routes/changements.routes");
 
 dotenv.config();
 
@@ -26,6 +27,7 @@ app.use("/quai", quaiRoutes);
 app.use("/pilote", piloteRoutes);
 app.use("/navire", navireRoutes);
 app.use("/type", typesRoutes);
+app.use("/changement", changementRoutes);
 
 
 const PORT = process.env.PORT || 8081;
