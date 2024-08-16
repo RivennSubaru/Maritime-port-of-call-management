@@ -70,4 +70,4 @@ const deleteQuai = asyncHandler(async (req, res) => {
     })
 })
 
-module.exports = {addQuai, getAllQuai, updateQuai, deleteQuai};
+module.exports = {addQuai, getAllQuai, updateQuai, addNavire, deleteQuai};

@@ -7,7 +7,7 @@ import MuiAccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import axios from 'axios';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-hot-toast';
 
 const Accordion = styled((props) => (
@@ -93,15 +93,20 @@ const EscaleEntrant = () => {
     },
   ]; */
 
+  /**** QUERYCLIENT (actualisation de la liste) ****/
+  const queryClient = useQueryClient();
 
   // envoie de requete au serveur
   const mutation = useMutation({
 
     mutationFn: async ({idEscale, idNav, idQuai, longueurDispo}) => {
       
-      await axios.post("http://localhost:8081/escale/update/finish", idEscale);
+      await axios.post("http://localhost:8081/escale/update/finish", {idEscale});
+      /* console.log("escale updated"); */
       await axios.post("http://localhost:8081/quai/update/addNavire", {idQuai, longueurDispo});
-      await axios.post("http://localhost:8081/navire/update/arrived", idNav);
+      /* console.log("quai updated"); */
+      await axios.post("http://localhost:8081/navire/update/arrived", {idNav});
+      /* console.log("navire updated"); */
     },
     onError: (error) => {
         setTimeout(() => {
@@ -113,6 +118,10 @@ const EscaleEntrant = () => {
             );
         }, 1000);
         console.log(error);
+    },
+    onSuccess: () => {
+      // Recharger la liste apres l'operation
+      queryClient.invalidateQueries("entrant");
     }
 })
 
