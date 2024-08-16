@@ -43,8 +43,8 @@ const updateQuai = asyncHandler(async (req, res) => {
     })
 });
 
-// NEW NAVIRE TO QUAI
-const addNavire = asyncHandler(async (req, res) => {
+// CHANGEMENT LONGUEUR DISPO QUAI
+const changeLongDispo = asyncHandler(async (req, res) => {
     const {longueurDispo, idQuai} = req.body;
 
     const sql = "UPDATE quais SET longueurDispo = ? WHERE idQuai = ?";
@@ -70,4 +70,4 @@ const deleteQuai = asyncHandler(async (req, res) => {
     })
 })
 
-module.exports = {addQuai, getAllQuai, updateQuai, addNavire, deleteQuai};
+module.exports = {addQuai, getAllQuai, updateQuai, changeLongDispo, deleteQuai};

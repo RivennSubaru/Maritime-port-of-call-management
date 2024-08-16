@@ -6,7 +6,7 @@ const router = express.Router();
 // POST
 router.post("/add", addQuai);
 router.post("/update", updateQuai);
-router.post("/update/addNavire", changeLongDispo);
+router.post("/update/changeLongDispo", changeLongDispo);
 
 // GET
 router.get("/getAll", getAllQuai);
