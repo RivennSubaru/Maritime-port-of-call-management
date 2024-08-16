@@ -12,7 +12,7 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import ListItem from '@mui/material/ListItem';
+import AssignmentLateIcon from '@mui/icons-material/AssignmentLate';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
@@ -22,7 +22,7 @@ import AnchorIcon from '@mui/icons-material/Anchor';
 import DirectionsBoatIcon from '@mui/icons-material/DirectionsBoat';
 import ShowChartIcon from '@mui/icons-material/ShowChart';
 import InfoIcon from '@mui/icons-material/Info';
-import { Link } from '@mui/material';
+import { Badge, Link } from '@mui/material';
 
 const drawerWidth = 240;
 
@@ -108,22 +108,31 @@ export default function Dashboard({outLet}) {
     <>
       <CssBaseline />
       <AppBar position="fixed" open={open}>
-        <Toolbar>
+        <Toolbar
+          sx={{
+            pr: '24px', // keep right padding when drawer closed
+          }}
+        >
           <IconButton
             color="inherit"
             aria-label="open drawer"
             onClick={handleDrawerOpen}
             edge="start"
             sx={{
-              marginRight: 5,
+              marginRight: "36px",
               ...(open && { display: 'none' }),
             }}
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            Gestion d'escale
+          <Typography variant="h6" noWrap component="div" flex={1}>
+            SPAT
           </Typography>
+          <IconButton color="inherit">
+              <Badge badgeContent={4} color="error">
+                <AssignmentLateIcon />
+              </Badge>
+            </IconButton>
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={open}>
