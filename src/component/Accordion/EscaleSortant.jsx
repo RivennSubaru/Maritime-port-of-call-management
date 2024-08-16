@@ -62,7 +62,7 @@ const ScrollableContainer = styled('div')({
 
 const EscaleSortant = () => {
 
-  /* const escales = [
+  const escales = [
     {
       nomNav: "VOLAZARA",
       numEscale: "2420241200123008",
@@ -77,21 +77,7 @@ const EscaleSortant = () => {
       nomQuai: "MOLE A",
       heureDepartEst: "14h00",
     },
-    {
-      nomNav: "Logos Hope",
-      numEscale: "2420241200123010",
-      numNav: "3010",
-      nomQuai: "MOLE C",
-      heureDepartEst: "15h00",
-    },
-    {
-      nomNav: "Lorem ipsum",
-      numEscale: "2420241200123011",
-      numNav: "3011",
-      nomQuai: "MOLE D",
-      heureDepartEst: "16h00",
-    },
-  ]; */
+  ];
 
   /**** QUERYCLIENT (actualisation de la liste) ****/
   const queryClient = useQueryClient();
@@ -158,7 +144,7 @@ const EscaleSortant = () => {
   }
 
   // Recuperation des donnée à afficher
-  const fetchData = async () => {
+  /* const fetchData = async () => {
     const reponse = await axios.get("http://localhost:8081/escale/getCurrSortant");
     return reponse.data;
   }
@@ -199,7 +185,7 @@ const EscaleSortant = () => {
             <p> Aucun navire sortant aujourd'hui </p>
         </>
     )
-  }
+  } */
 
   return (
     <>

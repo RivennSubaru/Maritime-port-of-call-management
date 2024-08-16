@@ -32,15 +32,7 @@ const EscaleCountCard = () => {
     )
   }
   return (
-    <Box 
-      sx={{
-        borderRadius: '10px',
-        padding: '16px',
-        backgroundColor: 'white',
-        maxWidth: "345px",
-        flex: 1
-      }}
-    >
+    <>
       <Typography variant="subtitle2" sx={{ color: '#007AFF', fontSize: "1.2rem" }}>
         Nombre d'escales
       </Typography>
@@ -58,7 +50,7 @@ const EscaleCountCard = () => {
       <Link href="#" sx={{ display: 'block', marginTop: '50px', fontSize: '14px' }}>
         Voir la liste
       </Link>
-    </Box>
+    </>
   );
 };
 

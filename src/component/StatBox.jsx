@@ -1,7 +1,7 @@
 // StatBox.js
 import React, { useMemo } from 'react';
 import { LineChart } from '@mui/x-charts/LineChart';
-import { Box } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 
 // Simulation
 const countPerDay = [
@@ -61,16 +61,10 @@ export default function StatBox() {
     } */
 
     return (
-        <Box
-            sx={{
-                width: 'fit-content',
-                height: 'auto',
-                padding: 2,
-                borderRadius: '16px',
-                backgroundColor: '#fff',
-                flex: 1,
-            }}
-        >
+        <>
+            <Typography variant="subtitle2" sx={{ color: '#007AFF', fontSize: "1.2rem" }}>
+                Ce mois-ci
+            </Typography>
             <LineChart
                 width={500}
                 height={250}
@@ -79,6 +73,6 @@ export default function StatBox() {
                 ]}
                 xAxis={[{ scaleType: 'point', data: xLabels }]}
             />
-        </Box>
+        </>
     );
 }

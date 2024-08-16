@@ -62,7 +62,7 @@ const ScrollableContainer = styled('div')({
 
 const EscaleEntrant = () => {
 
-  /* const escales = [
+  const escales = [
     {
       nomNav: "Mercy Ships",
       numEscale: "2420241200123009",
@@ -77,21 +77,7 @@ const EscaleEntrant = () => {
       nomQuai: "MOLE D",
       heureArrivEst: "16h00",
     },
-    {
-      nomNav: "VOLAZARA",
-      numEscale: "2420241200123008",
-      numNav: "3008",
-      nomQuai: "MOLE B",
-      heureArrivEst: "13h00",
-    },
-    {
-      nomNav: "Logos Hope",
-      numEscale: "2420241200123010",
-      numNav: "3010",
-      nomQuai: "MOLE C",
-      heureArrivEst: "15h00",
-    },
-  ]; */
+  ];
 
   /**** QUERYCLIENT (actualisation de la liste) ****/
   const queryClient = useQueryClient();
@@ -146,7 +132,7 @@ const EscaleEntrant = () => {
   }
 
   // Recuperation des donnée à afficher
-  const fetchData = async () => {
+  /* const fetchData = async () => {
     const reponse = await axios.get("http://localhost:8081/escale/getCurrEntrant");
     return reponse.data;
   }
@@ -173,7 +159,7 @@ const EscaleEntrant = () => {
             <p> Aucun navire à l'horizon </p>
         </>
     )
-  }
+  } */
 
   return ( 
     <>
