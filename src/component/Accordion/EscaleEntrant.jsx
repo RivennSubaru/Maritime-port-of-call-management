@@ -103,7 +103,7 @@ const EscaleEntrant = () => {
       
       await axios.post("http://localhost:8081/escale/update/changeEtat", {idEscale, etatEscale: "Terminé"});
       /* console.log("escale updated"); */
-      await axios.post("http://localhost:8081/quai/update/addNavire", {idQuai, longueurDispo});
+      await axios.post("http://localhost:8081/quai/update/changeLongDispo", {idQuai, longueurDispo});
       /* console.log("quai updated"); */
       await axios.post("http://localhost:8081/navire/update/changeSituation", {idNav, situationNav: "Amarré"});
       /* console.log("navire updated"); */
