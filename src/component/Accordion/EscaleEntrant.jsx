@@ -101,7 +101,7 @@ const EscaleEntrant = () => {
 
     mutationFn: async ({idEscale, idNav, idQuai, longueurDispo}) => {
       
-      await axios.post("http://localhost:8081/escale/update/changeEtat", {idEscale, etatEscale: "Terminé"});
+      await axios.post("http://localhost:8081/escale/update/finish", {idEscale});
       /* console.log("escale updated"); */
       await axios.post("http://localhost:8081/quai/update/changeLongDispo", {idQuai, longueurDispo});
       /* console.log("quai updated"); */

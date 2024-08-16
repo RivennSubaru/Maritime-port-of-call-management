@@ -116,13 +116,28 @@ const updateEscale = asyncHandler(async (req, res) => {
     })
 });
 
-// CHANGEMENT ETAT ESCALE
-const changeEtatEscale = asyncHandler(async (req, res) => {
-    const {idEscale, etatEscale} = req.body;
+// FINISH ESCALE
+const finishEscale = asyncHandler(async (req, res) => {
+    const {idEscale} = req.body;
 
-    const sql = "UPDATE escales SET etatEscale = ?, ATA = NOW() WHERE idEscale = ?";
+    const sql = "UPDATE escales SET etatEscale = \"Terminé\", ATA = NOW() WHERE idEscale = ?";
 
-    db.query(sql, [etatEscale, idEscale], (err, data) => {
+    db.query(sql, [idEscale], (err, data) => {
+        if (err) {
+            res.status(500).send({error: err});
+            return;
+        }
+        res.status(201).send({message: "Escale modifiée"});
+    })
+});
+
+// COMMENCER ESCALE
+const startEscale = asyncHandler(async (req, res) => {
+    const {idEscale} = req.body;
+
+    const sql = "UPDATE escales SET etatEscale = \"Actif\", ATD = NOW() WHERE idEscale = ?";
+
+    db.query(sql, [idEscale], (err, data) => {
         if (err) {
             res.status(500).send({error: err});
             return;
@@ -142,5 +157,6 @@ module.exports = {
     getCountEscales,
     getFinEscalesPerDay,
     updateEscale,
-    changeEtatEscale
+    finishEscale,
+    startEscale
 }

@@ -26,7 +26,7 @@ const removeChange = asyncHandler(async (req, res) => {
             res.status(500).send({error: err});
             return;
         }
-        res.status(201).send({message: "Changement ajouté"});
+        res.status(201).send({message: "Changement effacé"});
     })
 });
 
