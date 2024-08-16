@@ -107,6 +107,7 @@ const EscaleEntrant = () => {
       /* console.log("quai updated"); */
       await axios.post("http://localhost:8081/navire/update/arrived", {idNav});
       /* console.log("navire updated"); */
+      await axios.post("http://localhost:8081/changement/add", {idNav, idQuai, typeChange: "escale"})
     },
     onError: (error) => {
         setTimeout(() => {
