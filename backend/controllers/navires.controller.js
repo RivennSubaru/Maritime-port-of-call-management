@@ -75,9 +75,9 @@ const updateNavire = asyncHandler(async (req, res) => {
 const changeSituation = asyncHandler(async (req, res) => {
     const {idNav, situationNav} = req.body;
 
-    const sql = "UPDATE navires SET situationNav = \"" + situationNav + "\" WHERE idNav = ?";
+    const sql = "UPDATE navires SET situationNav = ? WHERE idNav = ?";
 
-    db.query(sql, [idNav, situationNav], (err, data) => {
+    db.query(sql, [situationNav, idNav], (err, data) => {
         if (err) {
             res.status(500).send({error: err});
             return;

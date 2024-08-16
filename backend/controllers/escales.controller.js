@@ -120,9 +120,9 @@ const updateEscale = asyncHandler(async (req, res) => {
 const changeEtatEscale = asyncHandler(async (req, res) => {
     const {idEscale, etatEscale} = req.body;
 
-    const sql = "UPDATE escales SET etatEscale = \""+ etatEscale +"\", ATA = NOW() WHERE idEscale = ?";
+    const sql = "UPDATE escales SET etatEscale = ?, ATA = NOW() WHERE idEscale = ?";
 
-    db.query(sql, [idEscale, etatEscale], (err, data) => {
+    db.query(sql, [etatEscale, idEscale], (err, data) => {
         if (err) {
             res.status(500).send({error: err});
             return;

@@ -16,4 +16,18 @@ const addChange = asyncHandler(async (req, res) => {
     })
 });
 
-module.exports = {addChange}
+const removeChange = asyncHandler(async (req, res) => {
+    const {idNav, idQuai} = req.body;
+
+    const sql = "DELETE FROM `escales` WHERE idNav = ? AND idQuai = ?";
+
+    db.query(sql, [idNav, idQuai], (err, data) => {
+        if (err) {
+            res.status(500).send({error: err});
+            return;
+        }
+        res.status(201).send({message: "Changement ajouté"});
+    })
+});
+
+module.exports = {addChange, removeChange}
