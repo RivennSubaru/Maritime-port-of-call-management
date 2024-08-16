@@ -104,15 +104,22 @@ const EscaleSortant = () => {
       
       if(typeMouvement == "Sortant"){
        
+        // Demarrer l'escale
         await axios.post("http://localhost:8081/escale/update/start", {idEscale});
+
+        // Liberer longueur disponible
         await axios.post("http://localhost:8081/quai/update/changeLongDispo", {idQuai, longueurDispo});
+
+        // Faire partir le navire
         await axios.post("http://localhost:8081/navire/update/changeSituation", {idNav, situationNav: "parti"});
+
+        // Supprimer l'association du quai avec le navire
         await axios.post("http://localhost:8081/changement/remove", {idNav, idQuai});
         
       } else {
         
+        // Mettre navire en mouvement j'usqu'à son arriver au port
         await axios.post("http://localhost:8081/navire/update/changeSituation", {idNav, situationNav: "En mouvement"});
-        /* console.log("navire updated"); */
       }
       
     },

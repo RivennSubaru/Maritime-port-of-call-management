@@ -101,12 +101,16 @@ const EscaleEntrant = () => {
 
     mutationFn: async ({idEscale, idNav, idQuai, longueurDispo}) => {
       
+      // Terminer l'escale
       await axios.post("http://localhost:8081/escale/update/finish", {idEscale});
-      /* console.log("escale updated"); */
+
+      // Reduire la longueur disponible
       await axios.post("http://localhost:8081/quai/update/changeLongDispo", {idQuai, longueurDispo});
-      /* console.log("quai updated"); */
+
+      // Amarrer le navire
       await axios.post("http://localhost:8081/navire/update/changeSituation", {idNav, situationNav: "Amarré"});
-      /* console.log("navire updated"); */
+
+      // Associer le quai avec le navire
       await axios.post("http://localhost:8081/changement/add", {idNav, idQuai, typeChange: "escale"})
     },
     onError: (error) => {
