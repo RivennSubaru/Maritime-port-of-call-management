@@ -19,7 +19,7 @@ const addChange = asyncHandler(async (req, res) => {
 const removeChange = asyncHandler(async (req, res) => {
     const {idNav, idQuai} = req.body;
 
-    const sql = "DELETE FROM `escales` WHERE idNav = ? AND idQuai = ?";
+    const sql = "DELETE FROM changements WHERE idNav = ? AND idQuai = ?";
 
     db.query(sql, [idNav, idQuai], (err, data) => {
         if (err) {
