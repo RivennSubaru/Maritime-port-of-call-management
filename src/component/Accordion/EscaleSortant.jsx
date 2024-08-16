@@ -77,6 +77,20 @@ const EscaleSortant = () => {
       nomQuai: "MOLE A",
       heureDepartEst: "14h00",
     },
+    {
+      nomNav: "Logos Hope",
+      numEscale: "2420241200123010",
+      numNav: "3010",
+      nomQuai: "MOLE C",
+      heureDepartEst: "15h00",
+    },
+    {
+      nomNav: "Lorem ipsum",
+      numEscale: "2420241200123011",
+      numNav: "3011",
+      nomQuai: "MOLE D",
+      heureDepartEst: "16h00",
+    },
   ];
 
   /**** QUERYCLIENT (actualisation de la liste) ****/

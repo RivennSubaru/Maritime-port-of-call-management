@@ -14,7 +14,7 @@ const columnsQuai = [
 const ListeQuai = () => {
     return (
         <>
-            <h2>Liste de quais</h2>
+            <h2 style={{color:"#728699", fontWeight:"500"}}>Liste de quais</h2>
             <section className='listeQuai'>
                 <AfficheListe 
                     columns={columnsQuai}

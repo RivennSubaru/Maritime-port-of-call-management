@@ -37,7 +37,7 @@ const columns = [
 const ListeNavire = () => {
     return (
         <>
-            <h2>Liste de navires</h2>
+            <h2 style={{color:"#728699", fontWeight:"500"}}>Liste de navires</h2>
             <section className='listeNavire'>
                 <TableListe
                     columns={columns}

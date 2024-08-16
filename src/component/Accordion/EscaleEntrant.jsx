@@ -77,6 +77,20 @@ const EscaleEntrant = () => {
       nomQuai: "MOLE D",
       heureArrivEst: "16h00",
     },
+    {
+      nomNav: "VOLAZARA",
+      numEscale: "2420241200123008",
+      numNav: "3008",
+      nomQuai: "MOLE B",
+      heureArrivEst: "13h00",
+    },
+    {
+      nomNav: "Logos Hope",
+      numEscale: "2420241200123010",
+      numNav: "3010",
+      nomQuai: "MOLE C",
+      heureArrivEst: "15h00",
+    },
   ];
 
   /**** QUERYCLIENT (actualisation de la liste) ****/

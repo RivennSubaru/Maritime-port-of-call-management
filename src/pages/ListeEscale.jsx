@@ -2,6 +2,7 @@ import React from 'react';
 import FormEscale from './Formulaire/FormEscale';
 import TableListe from '../component/TableListe';
 import { formatDate } from '../_utils/dateFormatter';
+import { Typography } from '@mui/material';
 
 const columns = [
     { id: 'numEscale', label: 'Numéro d\'Escale', minWidth: 100 },
@@ -57,7 +58,7 @@ const columns = [
 const ListeEscale = () => {
     return (
         <>
-            <h2>Liste des escales</h2>
+            <h2 style={{color:"#728699", fontWeight:"500"}}>Liste des escales</h2 >
             <section className='listeEscale'>
                 <TableListe
                     columns={columns}
