@@ -27,9 +27,18 @@ const getAllEscale = asyncHandler(async (req, res) => {
     })
 })
 
-// GET ALL CURRENT INCOMING ESCALE
+// GET ALL CURRENT ESCALE ENTRANT
 const getCurrEscaleEntrant = asyncHandler(async (req, res) => {
     const sql = "SELECT `idEscale`, `numEscale`, escales.idNav, navires.numNav, navires.nomNav, navires.longueursNav, escales.idQuai, quais.nomQuai, quais.longueurDispo, DATE(`ETA`) AS dateArrivEst, TIME(`ETA`) AS heureArrivEst, `provenance`, DATE(`ATD`) AS dateDepartEff, TIME(`ATD`) AS heureDepartEff, `dateCreationEscale` FROM `escales` JOIN navires ON escales.idNav = navires.idNav JOIN quais ON escales.idQuai = quais.idQuai WHERE DATE(`ETA`) = CURRENT_DATE AND etatEscale = \"Actif\" AND typeMouvement = \"Entrant\"";
+
+    db.query(sql, (err, data) => {
+        if (err) res.status(500).send({error: err.message});
+        res.status(201).send(data);
+    })
+})
+// GET LATE ESCALE ENTRANT
+const getLateEscaleEntrant = asyncHandler(async (req, res) => {
+    const sql = "SELECT `idEscale`, `numEscale`, escales.idNav, navires.numNav, navires.nomNav, navires.longueursNav, escales.idQuai, quais.nomQuai, quais.longueurDispo, DATE(`ETA`) AS dateArrivEst, TIME(`ETA`) AS heureArrivEst, `provenance`, DATE(`ATD`) AS dateDepartEff, TIME(`ATD`) AS heureDepartEff, `dateCreationEscale` FROM `escales` JOIN navires ON escales.idNav = navires.idNav JOIN quais ON escales.idQuai = quais.idQuai WHERE DATE(`ETA`) < CURRENT_DATE AND etatEscale = \"Actif\" AND typeMouvement = \"Entrant\"";
 
     db.query(sql, (err, data) => {
         if (err) res.status(500).send({error: err.message});
@@ -46,6 +55,26 @@ const getCurrEscaleSortant = asyncHandler(async (req, res) => {
         res.status(201).send(data);
     })
 })
+// GET LATE ESCALE SORTANT
+const getLateEscaleSortant = asyncHandler(async (req, res) => {
+    const sql = "SELECT `idEscale`, `numEscale`, escales.idNav, navires.numNav, navires.nomNav, navires.longueursNav, escales.idQuai, quais.nomQuai, quais.longueurDispo, typeMouvement, DATE(`ETD`) AS dateDepartEst, TIME(`ETA`) AS heureDepartEst, `provenance`, `dateCreationEscale` FROM `escales` JOIN navires ON escales.idNav = navires.idNav JOIN quais ON escales.idQuai = quais.idQuai WHERE DATE(`ETD`) < CURRENT_DATE AND etatEscale = \"Prévu\" AND typeMouvement = \"Sortant\"";
+
+    db.query(sql, (err, data) => {
+        if (err) res.status(500).send({error: err.message});
+        res.status(201).send(data);
+    })
+})
+
+// GET ALL LATE ESCALE
+const getAllLateEscale = asyncHandler(async (req, res) => {
+    const sql = "SELECT * FROM escales WHERE (DATE(`ETA`) < CURRENT_DATE AND etatEscale = \"Actif\" AND typeMouvement = \"Entrant\") OR (DATE(`ETD`) < CURRENT_DATE AND etatEscale = \"Prévu\" AND typeMouvement = \"Sortant\")";
+
+    db.query(sql, (err, data) => {
+        if (err) res.status(500).send({error: err.message});
+        res.status(201).send(data);
+    })
+})
+
 
 // GET ALL ESCALE IN CURRENT MONTH
 const getAllMonthEscale = asyncHandler(async (req, res) => {
@@ -150,7 +179,10 @@ module.exports = {
     addEscale, 
     getAllEscale, 
     getCurrEscaleEntrant, 
-    getCurrEscaleSortant, 
+    getCurrEscaleSortant,
+    getAllLateEscale,
+    getLateEscaleEntrant,
+    getLateEscaleSortant,
     getAllMonthEscale, 
     getMonthEscalePrev, 
     getMonthEscaleFin, 

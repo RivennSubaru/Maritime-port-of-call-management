@@ -22,7 +22,8 @@ import AnchorIcon from '@mui/icons-material/Anchor';
 import DirectionsBoatIcon from '@mui/icons-material/DirectionsBoat';
 import ShowChartIcon from '@mui/icons-material/ShowChart';
 import InfoIcon from '@mui/icons-material/Info';
-import { Badge, Link } from '@mui/material';
+import { Badge, CircularProgress, Link } from '@mui/material';
+import ErrorIcon from '@mui/icons-material/Error';
 
 const drawerWidth = 240;
 
@@ -92,7 +93,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 );
 
 
-export default function Dashboard({outLet}) {
+export default function Dashboard({isPending, isError, retards}) {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
 
@@ -103,6 +104,25 @@ export default function Dashboard({outLet}) {
   const handleDrawerClose = () => {
     setOpen(false);
   };
+
+  // Custom
+  const RetardButton = () => {
+    if (isPending) {
+      return <CircularProgress color="secondary" size={25}/>
+    }
+
+    if (isError) {
+      return <ErrorIcon/>
+    }
+
+    return (
+      <IconButton href='/retard' color="inherit">
+          <Badge badgeContent={retards.length} color="error">
+            <AssignmentLateIcon />
+          </Badge>
+      </IconButton>
+    );
+  }
 
   return (
     <>
@@ -128,11 +148,7 @@ export default function Dashboard({outLet}) {
           <Typography variant="h6" noWrap component="div" flex={1}>
             SPAT
           </Typography>
-          <IconButton color="inherit">
-              <Badge badgeContent={4} color="error">
-                <AssignmentLateIcon />
-              </Badge>
-            </IconButton>
+          <RetardButton/>
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={open}>

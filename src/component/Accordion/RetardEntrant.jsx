@@ -29,7 +29,7 @@ const AccordionSummary = styled((props) => (
   />
 ))(({ theme }) => ({
   color: 'rgba(65, 65, 65, 1)',
-  backgroundColor: 'rgba(196, 255, 251, 1)',
+  backgroundColor: '#f7f7f7',
   '& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': {
     transform: 'rotate(90deg)',
   },
@@ -40,7 +40,7 @@ const AccordionSummary = styled((props) => (
 
 const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
   color: 'rgba(85, 85, 85, 1)',
-  backgroundColor: 'rgba(241, 255, 254, 1)',
+  backgroundColor: 'white',
   padding: theme.spacing(2),
   borderTop: 'none',
   display: 'flex',
@@ -60,9 +60,9 @@ const ScrollableContainer = styled('div')({
   overflowY: 'auto',
 });
 
-const EscaleEntrant = () => {
-
-  /* const escales = [
+const RetardEntrant = () => {
+/* 
+  const escales = [
     {
       nomNav: "Mercy Ships",
       numEscale: "2420241200123009",
@@ -147,7 +147,7 @@ const EscaleEntrant = () => {
 
   // Recuperation des donnée à afficher
   const fetchData = async () => {
-    const reponse = await axios.get("http://localhost:8081/escale/getCurrEntrant");
+    const reponse = await axios.get("http://localhost:8081/escale/getLateEntrant");
     return reponse.data;
   }
   const {isPending, isError, data:escales = [], error} = useQuery({
@@ -156,65 +156,53 @@ const EscaleEntrant = () => {
   });
 
   if (isPending) {
-    return <h3>chargement de la liste...</h3>  
+    return <p>chargement de la liste...</p>  
   }
 
   if (isError) {
-      console.log(error);
-      return <h3>Une erreur s'est produit</h3>
+    console.log(error);
+    return <p>Une erreur s'est produit</p>
   }
 
   if (escales.length == 0) {
-    return (
-        <>
-            <Typography variant="h6" gutterBottom color="rgba(90, 196, 255, 1)">
-              Navires en approche
-            </Typography>
-            <p> Aucun navire à l'horizon </p>
-        </>
-    )
+    return <p> Aucun navire en retard </p>
   }
 
   return ( 
-    <>
-      <Typography variant="h6" gutterBottom color="rgba(90, 196, 255, 1)" paddingBottom={2}>
-        Navires en approche
-      </Typography>
-      <ScrollableContainer>
+    <ScrollableContainer>
         {escales.map((escale, index) => (
-          <Accordion key={index}>
-            <AccordionSummary aria-controls={`panel${index}-content`} id={`panel${index}-header`}>
-              <Typography>{escale.nomNav}</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <Typography>N° Escale : {escale.numEscale}</Typography>
-              <Typography>Code navire : {escale.numNav}</Typography>
-              <Typography>Longueur : {escale.longueursNav} m</Typography>
-              <Typography>Quai attribué : {escale.nomQuai}</Typography>
-              <Typography>Arrivée estimée : {escale.heureArrivEst}</Typography>
-              <ButtonContainer>
-              <Button 
-                variant="contained" 
-                color="primary" 
-                size="small"
-                sx={{
-                    backgroundColor: 'rgba(74, 136, 255, 1)', // Couleur de fond personnalisée
-                    '&:hover': {
-                    backgroundColor: 'rgba(56, 104, 195, 1)', // Couleur de fond au survol
-                    },
-                    textTransform: 'none', // Garde le texte tel qu'il est, sans le transformer en majuscules
-                }}
-                onClick={() => handleArrived(escale)}
-              >
-                Arriver
-              </Button>
-              </ButtonContainer>
-            </AccordionDetails>
-          </Accordion>
+            <Accordion key={index}>
+                <AccordionSummary aria-controls={`panel${index}-content`} id={`panel${index}-header`}>
+                    <Typography>{escale.nomNav}</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                    <Typography>N° Escale : {escale.numEscale}</Typography>
+                    <Typography>Code navire : {escale.numNav}</Typography>
+                    <Typography>Longueur : {escale.longueursNav} m</Typography>
+                    <Typography>Quai attribué : {escale.nomQuai}</Typography>
+                    <Typography>Arrivée estimée : {escale.heureArrivEst}</Typography>
+                    <ButtonContainer>
+                        <Button 
+                            variant="contained" 
+                            color="primary" 
+                            size="small"
+                            sx={{
+                                backgroundColor: 'rgba(74, 136, 255, 1)', // Couleur de fond personnalisée
+                                '&:hover': {
+                                backgroundColor: 'rgba(56, 104, 195, 1)', // Couleur de fond au survol
+                                },
+                                textTransform: 'none', // Garde le texte tel qu'il est, sans le transformer en majuscules
+                            }}
+                            onClick={() => handleArrived(escale)}
+                        >
+                            Arriver
+                        </Button>
+                    </ButtonContainer>
+                </AccordionDetails>
+            </Accordion>
         ))}
-      </ScrollableContainer>
-    </>
+    </ScrollableContainer>
   );
 }
 
-export default EscaleEntrant;
+export default RetardEntrant;

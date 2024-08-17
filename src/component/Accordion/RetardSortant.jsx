@@ -29,7 +29,7 @@ const AccordionSummary = styled((props) => (
   />
 ))(({ theme }) => ({
   color: 'rgba(65, 65, 65, 1)',
-  backgroundColor: 'rgba(196, 255, 251, 1)',
+  backgroundColor: '#f7f7f7',
   '& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': {
     transform: 'rotate(90deg)',
   },
@@ -40,7 +40,7 @@ const AccordionSummary = styled((props) => (
 
 const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
   color: 'rgba(85, 85, 85, 1)',
-  backgroundColor: 'rgba(241, 255, 254, 1)',
+  backgroundColor: 'white',
   padding: theme.spacing(2),
   borderTop: 'none',
   display: 'flex',
@@ -60,36 +60,36 @@ const ScrollableContainer = styled('div')({
   overflowY: 'auto',
 });
 
-const EscaleEntrant = () => {
+const RetardSortant = () => {
 
   /* const escales = [
-    {
-      nomNav: "Mercy Ships",
-      numEscale: "2420241200123009",
-      numNav: "3009",
-      nomQuai: "MOLE A",
-      heureArrivEst: "14h00",
-    },
-    {
-      nomNav: "Lorem ipsum",
-      numEscale: "2420241200123011",
-      numNav: "3011",
-      nomQuai: "MOLE D",
-      heureArrivEst: "16h00",
-    },
     {
       nomNav: "VOLAZARA",
       numEscale: "2420241200123008",
       numNav: "3008",
       nomQuai: "MOLE B",
-      heureArrivEst: "13h00",
+      heureDepartEst: "13h00",
+    },
+    {
+      nomNav: "Mercy Ships",
+      numEscale: "2420241200123009",
+      numNav: "3009",
+      nomQuai: "MOLE A",
+      heureDepartEst: "14h00",
     },
     {
       nomNav: "Logos Hope",
       numEscale: "2420241200123010",
       numNav: "3010",
       nomQuai: "MOLE C",
-      heureArrivEst: "15h00",
+      heureDepartEst: "15h00",
+    },
+    {
+      nomNav: "Lorem ipsum",
+      numEscale: "2420241200123011",
+      numNav: "3011",
+      nomQuai: "MOLE D",
+      heureDepartEst: "16h00",
     },
   ]; */
 
@@ -99,19 +99,29 @@ const EscaleEntrant = () => {
   // envoie de requete au serveur
   const mutation = useMutation({
 
-    mutationFn: async ({idEscale, idNav, idQuai, longueurDispo}) => {
+    mutationFn: async ({typeMouvement, idEscale, idNav, idQuai, longueurDispo}) => {
+
       
-      // Terminer l'escale
-      await axios.post("http://localhost:8081/escale/update/finish", {idEscale});
+      if(typeMouvement == "Sortant"){
+       
+        // Demarrer l'escale
+        await axios.post("http://localhost:8081/escale/update/start", {idEscale});
 
-      // Reduire la longueur disponible
-      await axios.post("http://localhost:8081/quai/update/changeLongDispo", {idQuai, longueurDispo});
+        // Liberer longueur disponible
+        await axios.post("http://localhost:8081/quai/update/changeLongDispo", {idQuai, longueurDispo});
 
-      // Amarrer le navire
-      await axios.post("http://localhost:8081/navire/update/changeSituation", {idNav, situationNav: "Amarré"});
+        // Faire partir le navire
+        await axios.post("http://localhost:8081/navire/update/changeSituation", {idNav, situationNav: "parti"});
 
-      // Associer le quai avec le navire
-      await axios.post("http://localhost:8081/changement/add", {idNav, idQuai, typeChange: "escale"})
+        // Supprimer l'association du quai avec le navire
+        await axios.post("http://localhost:8081/changement/remove", {idNav, idQuai});
+        
+      } else {
+        
+        // Mettre navire en mouvement j'usqu'à son arriver au port
+        await axios.post("http://localhost:8081/navire/update/changeSituation", {idNav, situationNav: "En mouvement"});
+      }
+      
     },
     onError: (error) => {
         setTimeout(() => {
@@ -126,20 +136,22 @@ const EscaleEntrant = () => {
     },
     onSuccess: () => {
       // Recharger la liste apres l'operation
-      queryClient.invalidateQueries("entrant");
+      queryClient.invalidateQueries("sortant");
     }
   });
 
-  const handleArrived = (escale) => {
+  const handleArrived = async (escale) => {
+    if(escale.typeMouvement == "Sortant") {
 
-    // Soustraire la longueur dispo du quai par la longueur du navire
-    escale.longueurDispo -= escale.longueursNav;
+      // Additionner la longueur dispo du quai par la longueur du navire
+      escale.longueurDispo += escale.longueursNav;
+    }
 
-    toast.promise(
+    await toast.promise(
       mutation.mutateAsync(escale),
       {
         loading: "chargement...",
-        success: "Navire amaré",
+        success: "Navire sorti du quai",
         error: "Une erreur est survenue"
       }
     );
@@ -147,74 +159,61 @@ const EscaleEntrant = () => {
 
   // Recuperation des donnée à afficher
   const fetchData = async () => {
-    const reponse = await axios.get("http://localhost:8081/escale/getCurrEntrant");
+    const reponse = await axios.get("http://localhost:8081/escale/getLateSortant");
     return reponse.data;
   }
   const {isPending, isError, data:escales = [], error} = useQuery({
-      queryKey: ['entrant'],
+      queryKey: ['sortant'],
       queryFn: fetchData
   });
 
   if (isPending) {
-    return <h3>chargement de la liste...</h3>  
+    return <p>chargement de la liste...</p>
   }
 
   if (isError) {
-      console.log(error);
-      return <h3>Une erreur s'est produit</h3>
+    console.log(error);
+    return <p>Une erreur s'est produit</p>
   }
 
   if (escales.length == 0) {
-    return (
-        <>
-            <Typography variant="h6" gutterBottom color="rgba(90, 196, 255, 1)">
-              Navires en approche
-            </Typography>
-            <p> Aucun navire à l'horizon </p>
-        </>
-    )
+    return <p> Aucun navire en retard </p>
   }
 
-  return ( 
-    <>
-      <Typography variant="h6" gutterBottom color="rgba(90, 196, 255, 1)" paddingBottom={2}>
-        Navires en approche
-      </Typography>
-      <ScrollableContainer>
+  return (
+    <ScrollableContainer>
         {escales.map((escale, index) => (
-          <Accordion key={index}>
+            <Accordion key={index}>
             <AccordionSummary aria-controls={`panel${index}-content`} id={`panel${index}-header`}>
-              <Typography>{escale.nomNav}</Typography>
+                <Typography>{escale.nomNav}</Typography>
             </AccordionSummary>
             <AccordionDetails>
-              <Typography>N° Escale : {escale.numEscale}</Typography>
-              <Typography>Code navire : {escale.numNav}</Typography>
-              <Typography>Longueur : {escale.longueursNav} m</Typography>
-              <Typography>Quai attribué : {escale.nomQuai}</Typography>
-              <Typography>Arrivée estimée : {escale.heureArrivEst}</Typography>
-              <ButtonContainer>
-              <Button 
-                variant="contained" 
-                color="primary" 
-                size="small"
-                sx={{
-                    backgroundColor: 'rgba(74, 136, 255, 1)', // Couleur de fond personnalisée
-                    '&:hover': {
-                    backgroundColor: 'rgba(56, 104, 195, 1)', // Couleur de fond au survol
-                    },
-                    textTransform: 'none', // Garde le texte tel qu'il est, sans le transformer en majuscules
-                }}
-                onClick={() => handleArrived(escale)}
-              >
-                Arriver
-              </Button>
-              </ButtonContainer>
+                <Typography>N° Escale : {escale.numEscale}</Typography>
+                <Typography>Code navire : {escale.numNav}</Typography>
+                <Typography>Quai attribué : {escale.nomQuai}</Typography>
+                <Typography>Départ estimé : {escale.heureDepartEst}</Typography>
+                <ButtonContainer>
+                <Button 
+                    variant="contained" 
+                    color="primary" 
+                    size="small"
+                    sx={{
+                        backgroundColor: 'rgba(74, 136, 255, 1)', // Couleur de fond personnalisée
+                        '&:hover': {
+                        backgroundColor: 'rgba(56, 104, 195, 1)', // Couleur de fond au survol
+                        },
+                        textTransform: 'none', // Garde le texte tel qu'il est, sans le transformer en majuscules
+                    }}
+                    onClick={() => handleArrived(escale)}
+                >
+                    Partir
+                </Button>
+                </ButtonContainer>
             </AccordionDetails>
-          </Accordion>
+            </Accordion>
         ))}
-      </ScrollableContainer>
-    </>
+    </ScrollableContainer>
   );
 }
 
-export default EscaleEntrant;
+export default RetardSortant;

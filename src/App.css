@@ -1,0 +1,10 @@
+section.liste {
+    width: 75%;
+    margin: auto;
+}
+
+section.retard {
+    display: flex;
+    flex-direction: column;
+    gap: 5vw;
+}
