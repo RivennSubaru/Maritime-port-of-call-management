@@ -212,12 +212,12 @@ const TableListe = ({columns, apiUrl, Item, FormComponent}) => {
     };
 
     if (isPending) {
-        return <h3>chargement de la liste...</h3>  
+        return <p>chargement de la liste...</p>  
     }
 
     if (isError) {
         console.log(error);
-        return <h3>Une erreur s'est produit</h3>
+        return <p>Une erreur s'est produit</p>
     }
 
     return (

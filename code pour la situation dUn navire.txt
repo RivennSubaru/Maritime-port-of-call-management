@@ -3,3 +3,31 @@ Code pour la situation d'un navire
 En mouvement (escale entrant)
 Parti (escale sortant ou nouveau navire)
 Amarré (pas d'escale mais amarré au port)
+
+[
+    {idChange: 2, idNav: 4,	nomNav: "BLA", idQuai: 3, nomQuai: "Mole B", typeChange: "escale", dateChange: "2024-08-13 09:57:17"},
+    {idChange: 3, idNav: 3,	nomNav: "Logos Hope", idQuai: 3, nomQuai: "Mole B", typeChange: "escale", dateChange: "2024-09-13 09:57:17"},
+    {idChange: 4, idNav: 5,	nomNav: "Mercy ships", idQuai: 4, nomQuai: "Mole C1", typeChange: "escale", dateChange: "2024-08-15 09:59:25"},
+    {idChange: 5, idNav: 7,	nomNav: "Vaso Tryght", idQuai: 3, nomQuai: "Mole B", typeChange: "escale", dateChange: "2024-08-16 06:57:16"}
+]
+
+SELECT quais.`idQuai`, `nomQuai`, `emplacementQuai`, `profondeurQuai`, `longueursQuai`, `longueurDispo`, changements.idNav, navires.nomNav, changements.typeChange, changements.dateChange FROM `quais` JOIN changements ON quais.idQuai = changements.idQuai JOIN navires ON navires.idNav = changements.idNav;
+
+[
+    {
+        idQuai: 3, 
+        nomQuai: "Mole B", 
+        occupation: [
+            {idNav: 4, nomNav: "BLA", typeChange: "escale", dateChange: "2024-08-13 09:57:17"},
+            {idNav: 3, nomNav: "Logos Hope", typeChange: "escale", dateChange: "2024-09-13 09:57:17"},
+            {idNav: 5, nomNav: "Vaso Tryght", typeChange: "escale", dateChange: "2024-08-16 06:57:16"},
+        ],
+    },
+    {
+        idQuai: 4, 
+        nomQuai: "Mole C1", 
+        occupation: [
+            {idNav: 5, nomNav: "Mercy ships", typeChange: "escale", dateChange: "2024-08-15 09:59:25"}
+        ],
+    }
+]

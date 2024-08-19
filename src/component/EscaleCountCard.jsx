@@ -13,8 +13,6 @@ const EscaleCountCard = () => {
       queryFn: fetchData
   });
 
-  console.log(counts);
-
   if (isPending) {
     return (
         <>

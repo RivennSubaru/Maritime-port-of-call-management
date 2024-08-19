@@ -14,7 +14,7 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { useEffect } from 'react';
 
-const FormQuai = ({initialValues}) => {
+const FormQuai = ({initialValues, handleClose}) => {
     const {handleSubmit, control, setValue, reset, formState: {errors}} = useForm();
 
     // Pour actualiser automatiquement la liste
@@ -59,6 +59,9 @@ const FormQuai = ({initialValues}) => {
                 error: "Quai non ajouté"
             }
         )
+
+        // Fermer la fenetre s'il s'agit d'une modification
+        if (initialValues) handleClose();
     }
 
     // Preremplissage du formulaire
@@ -89,7 +92,7 @@ const FormQuai = ({initialValues}) => {
                     <Grid container spacing={2}>
                         <Grid item xs={12} sm={6}>
                             <Controller
-                                name='nom'
+                                name='nomQuai'
                                 control={control}
                                 defaultValue=""
                                 rules={{required: "Ce champ ne peut être vide"}}
