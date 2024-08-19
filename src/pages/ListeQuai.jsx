@@ -29,6 +29,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import jsPDF from 'jspdf';
 import ExcelJS from 'exceljs';
+import AssignNav from '../component/AssignNav';
 
 // Fonction pour surligner le texte recherché
 const highlightSearchTerm = (text, searchTerm) => {
@@ -273,7 +274,8 @@ const ListeQuai = () => {
     };
 
     // Fonction pour ouvrir la fenetre d'assignation de navire
-    const handleAddNav = () => {
+    const handleAddNav = (row) => {
+        setSelectedRow(row);
         setOpenAssignNav(true);
     }
 
@@ -460,10 +462,10 @@ const ListeQuai = () => {
             >
                 <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title" display= 'flex' alignItems='center' gap='15px'>
                     <ErrorIcon color='error' sx={{ fontSize: '2.5rem !important' }}/>
-                    Assignation de navire
+                    Affectation de navire
                 </DialogTitle>
                 <DialogContent>
-                    yahoo !
+                    <AssignNav quai={selectedRow}/>
                 </DialogContent>
                 <DialogActions>
                     <Button autoFocus onClick={() => setOpenAssignNav(false)}>
