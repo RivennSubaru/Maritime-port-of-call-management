@@ -17,6 +17,7 @@ import SearchIcon from '@mui/icons-material/Search'; // Import SearchIcon
 import { useState } from 'react';
 import EditIcon from '@mui/icons-material/Edit'; // Import EditIcon
 import DeleteIcon from '@mui/icons-material/Delete'; // Import DeleteIcon
+import RemoveIcon from '@mui/icons-material/Remove';
 import ErrorIcon from '@mui/icons-material/Error';
 import PrintIcon from '@mui/icons-material/Print';
 import CreateIcon from '@mui/icons-material/Create';
@@ -65,7 +66,7 @@ const columns = [
     { id: 'longueurDispo', label: 'Longueur disponible (m)'},
 ];
 
-function Row({ row, search, handleAddNav, handleEdit, handleDelete } ) {
+function Row({ row, search, handleAddNav, handleEdit, handleDelete, handleRemoveAssign } ) {
     const [open, setOpen] = React.useState(false);
 
     return (
@@ -133,26 +134,50 @@ function Row({ row, search, handleAddNav, handleEdit, handleDelete } ) {
                             <Typography variant="h6" gutterBottom component="div">
                                 Occupation
                             </Typography>
-                            <Table size="small" aria-label="purchases">
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>Date</TableCell>
-                                        <TableCell>Navire</TableCell>
-                                        <TableCell align="right">Type de Changement</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {row.occupation.map((occ) => (
-                                        <TableRow key={occ.dateChange}>
-                                            <TableCell component="th" scope="row">
-                                                {occ.dateChange}
-                                            </TableCell>
-                                            <TableCell>{occ.nomNav}</TableCell>
-                                            <TableCell align="right">{occ.typeChange}</TableCell>
+                            {
+                                // Si l'idNav du premier objet de occupation n'est pas null (quai occupé) afficher la liste
+                                row.occupation[0].idNav != null ?
+                                <Table size="small">
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell>Date</TableCell>
+                                            <TableCell>Navire</TableCell>
+                                            <TableCell align="right">Type de Changement</TableCell>
+                                            <TableCell align="right">Longueur (m)</TableCell>
+                                            <TableCell align="right">Retirer</TableCell>
                                         </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
+                                    </TableHead>
+                                    <TableBody>
+                                        {row.occupation.map((occ) => (
+                                            <TableRow key={occ.dateChange}>
+                                                <TableCell component="th" scope="row">
+                                                    {occ.dateChange}
+                                                </TableCell>
+                                                <TableCell>{occ.nomNav}</TableCell>
+                                                <TableCell align="right">{occ.typeChange}</TableCell>
+                                                <TableCell align="right">{occ.longueursNav}</TableCell>
+                                                <TableCell align="right">
+                                                    <IconButton
+                                                        sx={{
+                                                            color: 'gray', // Couleur de base
+                                                            '&:hover': {
+                                                                color: 'error.main', // Couleur au survol (par défaut la couleur d'erreur de MUI)
+                                                                backgroundColor: 'rgb(211 47 47 / 6%)'
+                                                            }
+                                                        }}
+                                                        onClick={() => handleRemoveAssign({idNav: occ.idNav, longueurNav: occ.longueursNav, idQuai: row.idQuai, longueurDispo: row.longueurDispo})}
+                                                    >
+                                                        <RemoveIcon fontSize='small' />
+                                                    </IconButton>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                                :
+                                <p>Aucun navire</p>
+                                // Si non afficher ceci
+                            }
                         </Box>
                     </Collapse>
                 </TableCell>
@@ -193,6 +218,7 @@ const ListeQuai = () => {
     const [search, setSearch] = useState(''); // Etat pour la barre de recherche
 
     const [openFormDialog, setOpenFormDialog] = useState(false);  // Etat pour l'ouverture de la fenetre du formulaire
+    const [openRemoveDialog, setOpenRemoveDialog] = useState(false);
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
     const [openAssignNav, setOpenAssignNav] = useState(false);
 
@@ -262,6 +288,84 @@ const ListeQuai = () => {
         saveAs(blob, 'table_data.xlsx');
     };
 
+    // Pour actualiser automatiquement la liste
+    const queryClient = useQueryClient();
+
+    const removeAssignMutation = useMutation({
+
+        mutationFn: async ({idNav, idQuai, longueurDispo}) => {
+           
+            // Liberer longueur disponible
+            await axios.post("http://localhost:8081/quai/update/changeLongDispo", {idQuai, longueurDispo});
+    
+            // Faire partir le navire
+            await axios.post("http://localhost:8081/navire/update/changeSituation", {idNav, situationNav: "parti"});
+    
+            // Supprimer l'association du quai avec le navire
+            await axios.post("http://localhost:8081/changement/remove", {idNav, idQuai});
+          
+        },
+        onError: (error) => {
+            setTimeout(() => {
+                toast(
+                    "Il semble que vous rencontriez un probleme.\n\n Le probleme peut venir soit de la connexion au serveur soit de la base de donnée ou une mauvaise connexion.\nVeuillez réessayer plus tard.",
+                    {
+                      duration: 12000,
+                    }
+                );
+            }, 1000);
+            console.log(error);
+        },
+        onSuccess: () => {
+          // Recharger la liste apres l'operation
+          queryClient.invalidateQueries("quai");
+        }
+      });
+
+    // Gestion de la suppression
+    const deleteMutation = useMutation({
+        mutationFn: async (id) => {
+            await axios.delete(`http://localhost:8081/quai/${id}`);
+        },
+        onSuccess: () => {
+            // Recharger la liste apres ajout ou modification
+            queryClient.invalidateQueries('quai');
+        },
+        onError: (error) => {
+            console.log(error);
+        }
+    });
+
+    const handleConfirmDelete = async () => {
+
+        await toast.promise(
+            deleteMutation.mutateAsync(selectedRow.idQuai),
+            {
+                loading: "Chargement...",
+                success: "Item supprimé",
+                error: "Erreur lors de la suppression de l'item"
+            }
+        );
+        setOpenDeleteDialog(false);
+        setSelectedRow(null);
+        /* console.log(selectedRow.idQuai); */
+    };
+
+    const handleConfirmRemove = async () => {
+
+        selectedRow.longueurDispo += selectedRow.longueurNav;
+
+        await toast.promise(
+            removeAssignMutation.mutateAsync(selectedRow),
+            {
+              loading: "chargement...",
+              success: "Navire retiré du quai",
+              error: "Une erreur est survenue"
+            }
+        );
+        setOpenRemoveDialog(false);
+        setSelectedRow(null);
+    }
 
     /* Gestion de recherche */
     const handleSearchChange = (event) => {
@@ -291,41 +395,16 @@ const ListeQuai = () => {
         console.log(row);
     }
 
+    const handleRemoveAssign = (occ) => {
+        setSelectedRow(occ);
+        setOpenRemoveDialog(true);
+    }
+
     // Fonction pour fermer le formulaire et 
     const handleCloseForm = () => {
         setOpenFormDialog(false); 
         setSelectedRow(null);   // Rendre null apres fermeture du formulaire de modification
     }
-
-    // Pour actualiser automatiquement la liste
-    const queryClient = useQueryClient();
-
-    // Gestion de la suppression
-    const deleteMutation = useMutation({
-        mutationFn: async (id) => {
-            await axios.delete(`${apiUrl}/${id}`);
-        },
-        onSuccess: () => {
-            // Recharger la liste apres ajout ou modification
-            queryClient.invalidateQueries([apiUrl]);
-        },
-        onError: (error) => {
-            console.log(error);
-        }
-    });
-
-    const handleConfirmDelete = () => {
-        toast.promise(
-            deleteMutation.mutateAsync(selectedRow.idQuai),
-            {
-                loading: "Chargement...",
-                success: "Item supprimé",
-                error: "Erreur lors de la suppression de l'item"
-            }
-        );
-        setOpenDeleteDialog(false);
-        /* console.log(selectedRow.idQuai); */
-    };
 
     if (isPending) {
         return <p>chargement de la liste...</p>  
@@ -338,6 +417,7 @@ const ListeQuai = () => {
     
     return (
         <>
+            <h2 style={{color:"#728699", fontWeight:"500"}}>Liste de quais</h2>
             <div style={{ display: 'flex', justifyContent: 'flex-end'}}>
                 <TextField
                     placeholder='Recherche...'
@@ -386,7 +466,7 @@ const ListeQuai = () => {
                     </TableHead>
                     <TableBody>
                         {filteredData.map((row) => (
-                            <Row key={row.idQuai} row={row} search={search} handleAddNav={handleAddNav} handleEdit={handleEdit} handleDelete={handleDelete}/>
+                            <Row key={row.idQuai} row={row} search={search} handleAddNav={handleAddNav} handleEdit={handleEdit} handleDelete={handleDelete} handleRemoveAssign={handleRemoveAssign}/>
                         ))}
                     </TableBody>
                 </Table>
@@ -452,6 +532,28 @@ const ListeQuai = () => {
                         Annuler
                     </Button>
                     <Button onClick={handleConfirmDelete} variant="contained" color='error'>Supprimer</Button>
+                </DialogActions>
+            </Dialog> 
+            <Dialog
+                open={openRemoveDialog}
+                onClose={() => setOpenRemoveDialog(false)}
+                PaperComponent={PaperComponent}
+                aria-labelledby="draggable-dialog-title"
+            >
+                <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title" display= 'flex' alignItems='center' gap='15px'>
+                    <ErrorIcon sx={{ fontSize: '2.5rem !important',  color: 'primary.main' }}/>
+                    Retrait de navire
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Êtes-vous sûr de vouloir retirer ce navire du quai ?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button autoFocus onClick={() => setOpenRemoveDialog(false)}>
+                        Annuler
+                    </Button>
+                    <Button onClick={handleConfirmRemove} variant="contained" color='error'>Retirer</Button>
                 </DialogActions>
             </Dialog> 
             <Dialog

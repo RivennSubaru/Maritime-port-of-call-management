@@ -29,7 +29,7 @@ const getAllQuai = asyncHandler(async (req, res) => {
 
 // GET ALL QUAI WITH ALL OCCUPATION
 const getAllQuaiOccupation = asyncHandler(async (req, res) => {
-    const sql = "SELECT q.idQuai, q.nomQuai, q.emplacementQuai, q.profondeurQuai, q.longueursQuai, q.longueurDispo, JSON_ARRAYAGG( JSON_OBJECT( 'idNav', n.idNav, 'nomNav', n.nomNav, 'typeChange', c.typeChange, 'dateChange', c.dateChange ) ) AS occupation FROM quais q LEFT JOIN changements c ON q.idQuai = c.idQuai LEFT JOIN navires n ON c.idNav = n.idNav GROUP BY q.idQuai, q.nomQuai ORDER BY `occupation` ASC;";
+    const sql = "SELECT q.idQuai, q.nomQuai, q.emplacementQuai, q.profondeurQuai, q.longueursQuai, q.longueurDispo, JSON_ARRAYAGG( JSON_OBJECT( 'idNav', n.idNav, 'nomNav', n.nomNav, 'typeChange', c.typeChange, 'dateChange', c.dateChange, 'longueursNav', n.longueursNav ) ) AS occupation FROM quais q LEFT JOIN changements c ON q.idQuai = c.idQuai LEFT JOIN navires n ON c.idNav = n.idNav GROUP BY q.idQuai, q.nomQuai ORDER BY `occupation` ASC;";
 
     db.query(sql, (err, data) => {
         if (err) res.status(500).send({error: err.message});
