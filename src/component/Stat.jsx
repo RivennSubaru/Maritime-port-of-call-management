@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { LineChart } from '@mui/x-charts/LineChart';
-import { MenuItem, Select, FormControl, InputLabel, Typography } from '@mui/material';
+import { MenuItem, Select, FormControl, InputLabel, Typography, Paper } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 
@@ -68,12 +68,13 @@ export default function Stat() {
 
   return (
     <div>
-      <FormControl fullWidth>
+      <FormControl sx={{width: '10vw'}}>
         <InputLabel id="month-select-label">Mois</InputLabel>
         <Select
           labelId="month-select-label"
           value={selectedMonth}
           label="Mois"
+          size='small'
           onChange={(e) => setSelectedMonth(e.target.value)}
         >
           {monthNames.map((name, index) => (
@@ -84,14 +85,26 @@ export default function Stat() {
         </Select>
       </FormControl>
       
-      <LineChart
-        width={500}
-        height={300}
-        series={[
-          { data: yData, label: `Escales pour le mois ${monthNames[selectedMonth - 1]}` }
-        ]}
-        xAxis={[{ scaleType: 'point', data: xLabels }]}
-      />
+      <Paper
+        sx={{
+          p: 2,
+          display: 'flex',
+          flexDirection: 'column',
+          height: 450, // Augmenter la hauteur si nécessaire
+          width: '75%',
+          borderRadius: "10px",
+          marginTop: "1.5vw"
+        }}
+      >
+        <LineChart
+          width={900}
+          height={450}
+          series={[
+            { data: yData, label: `Escales pour le mois de ${monthNames[selectedMonth - 1]}` }
+          ]}
+          xAxis={[{ scaleType: 'point', data: xLabels }]}
+        />
+      </Paper>
     </div>
   );
 }
