@@ -45,7 +45,7 @@ const EscaleCountCard = () => {
         { counts[0].nombrePrevu > 1 ? ` ${counts[0].nombrePrevu} prévues` : ` ${counts[0].nombrePrevu} prévue` }
         {` et ${counts[0].nombreActif} en cours`}
       </Typography>
-      <Link href="#" sx={{ display: 'block', marginTop: '50px', fontSize: '14px' }}>
+      <Link href="/escale" sx={{ display: 'block', marginTop: '50px', fontSize: '14px' }}>
         Voir la liste
       </Link>
     </>
