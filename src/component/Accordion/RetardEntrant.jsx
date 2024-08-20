@@ -9,6 +9,7 @@ import Button from '@mui/material/Button';
 import axios from 'axios';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-hot-toast';
+import { formatDate } from '../../_utils/dateFormatter';
 
 const Accordion = styled((props) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -180,7 +181,7 @@ const RetardEntrant = () => {
                     <Typography>Code navire : {escale.numNav}</Typography>
                     <Typography>Longueur : {escale.longueursNav} m</Typography>
                     <Typography>Quai attribué : {escale.nomQuai}</Typography>
-                    <Typography>Arrivée estimée : {escale.heureArrivEst}</Typography>
+                    <Typography>Arrivée estimée : { formatDate(escale.dateArrivEst)}</Typography>
                     <ButtonContainer>
                         <Button 
                             variant="contained" 
