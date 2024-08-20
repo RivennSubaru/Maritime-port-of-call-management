@@ -21,7 +21,6 @@ import SailingIcon from '@mui/icons-material/Sailing';
 import AnchorIcon from '@mui/icons-material/Anchor';
 import DirectionsBoatIcon from '@mui/icons-material/DirectionsBoat';
 import ShowChartIcon from '@mui/icons-material/ShowChart';
-import InfoIcon from '@mui/icons-material/Info';
 import { Badge, CircularProgress, Link } from '@mui/material';
 import ErrorIcon from '@mui/icons-material/Error';
 
@@ -159,8 +158,8 @@ export default function Dashboard({isPending, isError, retards}) {
         </DrawerHeader>
         <Divider />
         <List>
-          {['Tableau de bord', 'Liste des escales', 'Liste des quais', 'Liste des navires'].map((text, index) => (
-            <Link href={["/tableauBord", "/escale", "/quai", "/navire"].find((n, i) => i == index)} key={text} sx={{ display: 'block', textDecoration: "none", color: "rgba(0, 0, 0, 0.54)" }}>
+          {['Tableau de bord', 'Liste des navires', 'Liste des quais', 'Liste des escales'].map((text, index) => (
+            <Link href={["/tableauBord", "/navire", "/quai", "/escale"].find((n, i) => i == index)} key={text} sx={{ display: 'block', textDecoration: "none", color: "rgba(0, 0, 0, 0.54)" }}>
               <ListItemButton
                 sx={{
                   minHeight: 48,
@@ -175,7 +174,7 @@ export default function Dashboard({isPending, isError, retards}) {
                     justifyContent: 'center',
                   }}
                 >
-                  {[<DashboardIcon/>, <SailingIcon />, <AnchorIcon />, <DirectionsBoatIcon />].find((n, i) => i === index)}
+                  {[<DashboardIcon/>, <DirectionsBoatIcon />, <AnchorIcon />, <SailingIcon />].find((n, i) => i === index)}
                 </ListItemIcon>
                 <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
@@ -184,8 +183,8 @@ export default function Dashboard({isPending, isError, retards}) {
         </List>
         <Divider />
         <List>
-          {['Statistique', 'A propos'].map((text, index) => (
-            <Link href={["/stat", "/about"].find((n, i) => i == index)} key={text} sx={{ display: 'block', textDecoration: "none", color: "rgba(0, 0, 0, 0.54)" }}>
+          {['Statistique'].map((text, index) => (
+            <Link href={["/stat"].find((n, i) => i == index)} key={text} sx={{ display: 'block', textDecoration: "none", color: "rgba(0, 0, 0, 0.54)" }}>
               <ListItemButton
                 sx={{
                   minHeight: 48,
@@ -200,7 +199,7 @@ export default function Dashboard({isPending, isError, retards}) {
                     justifyContent: 'center',
                   }}
                 >
-                  {[<ShowChartIcon/>, <InfoIcon />].find((n, i) => i === index)}
+                  {[<ShowChartIcon/>].find((n, i) => i === index)}
                 </ListItemIcon>
                 <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
