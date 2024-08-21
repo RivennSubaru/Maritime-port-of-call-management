@@ -17,12 +17,6 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 
-
-// Recupération de la liste de type de navire
-const fetchTypes = async () => {
-    const reponse = await axios.get("http://localhost:8081/type/getAll");
-    return reponse.data;
-}
 // Recupération de la liste des pilotes
 const fetchPilote = async () => {
     const reponse = await axios.get("http://localhost:8081/pilote/getAll");
@@ -34,7 +28,6 @@ const FormNavire = ({initialValues, handleClose}) => {
     // Useform gestion du formulaire
     const { handleSubmit, control, setValue, reset, watch, formState: { errors } } = useForm();
 
-    const [type, setType] = useState(''); /* type */
     const [piloteName, setPiloteName] = useState(''); /* Nom pilote */
     const [isNewPilote, setIsNewPilote] = useState('non'); /* formulaire pilote */
 
@@ -54,24 +47,6 @@ const FormNavire = ({initialValues, handleClose}) => {
         return {isPending, isError, data, error}
     }
 
-    // Afficher la liste des type dans la liste déroulante
-    const afficheListeTypes = () => {
-
-        // Recuperation des données des types
-        const {isPending, isError, data: types} = fetchQuery(fetchTypes, "types")
-
-        if (isPending) {
-            return [<MenuItem key="loading" value="" disabled>Chargement...</MenuItem>];
-        }
-    
-        if (isError) {
-            return [<MenuItem key="error" value="" disabled>Erreur de chargement</MenuItem>];
-        }
-    
-        return types.map((type) => (
-            <MenuItem key={type.idType} value={type.idType}>{type.labelType}</MenuItem>
-        ));
-    };
     // Afficher la liste des pilotes
     const afficheListePilotes = () => {
 
@@ -90,19 +65,13 @@ const FormNavire = ({initialValues, handleClose}) => {
         ));
     };
 
-
-    // Changement dynamique de l'idType du navire en fonction du labelType
-    const handleNavireChange = (event) => {
-        setType(event.target.value);
-        setValue('type', event.target.value);
-        setValue('idType', event.target.value);
-    };
-
     // Changement dynamique de l'idPilote en fonction du nom du pilote
     const handlePiloteChange = (event) => {
         setPiloteName(event.target.value);
         setValue('piloteName', event.target.value);
         setValue('idPilote', event.target.value);
+
+        console.log(event.target.value);
     };
 
     // Gestion de l'affichage de la formulaire spéciale pilote
@@ -166,10 +135,10 @@ const FormNavire = ({initialValues, handleClose}) => {
     
             } else {
 
-                const {nomNav, numNav, idType, tirantEau, longueur, nomPilote, prenomPilote, telPilote, emailPilote} = await data;
+                const {nomNav, numNav, typeNav, tirantEau, longueur, nomPilote, prenomPilote, telPilote, emailPilote} = await data;
     
                 const pilote = {nomPilote, prenomPilote, telPilote, emailPilote};
-                const navire = {nomNav, numNav, idType, tirantEau, longueur, telPilote};
+                const navire = {nomNav, numNav, typeNav, tirantEau, longueur, telPilote};
     
                 toast.loading("Enregistrement du pilote...", { id: toastId });
                 /* await new Promise((resolve) => setTimeout(resolve, 2000)); */
@@ -188,7 +157,6 @@ const FormNavire = ({initialValues, handleClose}) => {
         }
 
         reset([]);
-        setType('');
         setPiloteName('');
         setIsNewPilote('non');
         
@@ -202,9 +170,7 @@ const FormNavire = ({initialValues, handleClose}) => {
             reset(initialValues);
 
             // pour type
-            setType(initialValues.idType || '');
-            setValue('idType', initialValues.idType);
-            setValue('type', initialValues.type);
+            setValue('typeNav', initialValues.type);
 
             // pour pilote
             setPiloteName(initialValues.idPilote || '');
@@ -269,32 +235,10 @@ const FormNavire = ({initialValues, handleClose}) => {
                             />
                         </Grid>
                         <Grid item xs={12} gap={2} sx={{ display: "flex", alignItems: "flex-end", flexDirection: "row-reverse" }}>
-                            <Grid item xs={1.7} sm={1.7}>
-                                <Controller
-                                    name="idType"
-                                    control={control}
-                                    defaultValue=""
-                                    rules={{ required: "Ce champ est requis" }}
-                                    render={({ field }) => (
-                                        <TextField
-                                            {...field}
-                                            required
-                                            fullWidth
-                                            autoFocus
-                                            id="idType"
-                                            label="ID"
-                                            size='small'
-                                            value={type}
-                                            disabled
-                                            error={!!errors.idType}
-                                        />
-                                    )}
-                                />
-                            </Grid>
                             <Grid item xs={10}>
                                 <InputLabel id="demo-simple-select-label">Type du navire</InputLabel>
                                 <Controller
-                                    name="type"
+                                    name="typeNav"
                                     control={control}
                                     defaultValue=""
                                     rules={{ required: "Ce champ est requis" }}
@@ -303,22 +247,23 @@ const FormNavire = ({initialValues, handleClose}) => {
                                             <Select
                                                 {...field}
                                                 id="typeNav"
-                                                value={type}
                                                 label="Type navire"
-                                                onChange={handleNavireChange}
                                                 fullWidth
                                                 size='small'
                                                 error={!!errors.type}
                                             >
                                                 
-                                                {
-                                                    /* Affichages de la liste des types */
-                                                    afficheListeTypes() 
-                                                }
+                                                <MenuItem value="passager">Passager</MenuItem>
+                                                <MenuItem value="marchandise diverse">Marchandise diverse</MenuItem>
+                                                <MenuItem value="vraquier">Vraquier</MenuItem>
+                                                <MenuItem value="Ro-Ro">Ro-Ro</MenuItem>
+                                                <MenuItem value="conteneur">Conteneur</MenuItem>
+                                                <MenuItem value="conteneur">conteneur</MenuItem>
+                                                <MenuItem value="bornage (petit)">Bornage (petit)</MenuItem>
 
                                             </Select>
-                                            {errors.type && (
-                                                <FormHelperText error>{errors.type.message}</FormHelperText>
+                                            {errors.typeNav && (
+                                                <FormHelperText error>{errors.typeNav.message}</FormHelperText>
                                             )}
                                         </>
                                     )}
