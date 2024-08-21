@@ -13,7 +13,7 @@ import { toast } from 'react-hot-toast';
 
 /************** FETCH LIST ***************/
 const fetchNavires = async () => {
-    const reponse = await axios.get("http://localhost:8081/navire/getAllParti");
+    const reponse = await axios.get("http://localhost:8081/navire/getAllToEscale");
     /* console.log(reponse.data); */
     return reponse.data;
 }
@@ -135,8 +135,8 @@ const FormEscale = ({initialValues, handleClose}) => {
             }
         )
 
-        // Fermer la fenetre s'il s'agit d'une modification
-        if (initialValues) handleClose();
+        // Fermer la fenetre 
+        handleClose();
     }
 
 
@@ -307,8 +307,8 @@ const FormEscale = ({initialValues, handleClose}) => {
                             <InputLabel id="demo-simple-select-label">État</InputLabel>
                             <Controller
                                 name="etatEscale"
-                                defaultValue='prévu'
                                 control={control}
+                                defaultValue='Prévu'
                                 rules={{ required: "Ce champ est requis" }}
                                 render={({ field }) => (
                                     <>
@@ -320,9 +320,9 @@ const FormEscale = ({initialValues, handleClose}) => {
                                             onChange={handleStateChange}
                                             error={!!errors.etat}
                                         >
-                                            <MenuItem value="prévu">Prévu</MenuItem>
-                                            <MenuItem value="actif">Actif</MenuItem>
-                                            <MenuItem value="terminé">Terminé</MenuItem>
+                                            <MenuItem value="Prévu">Prévu</MenuItem>
+                                            <MenuItem value="Actif">Actif</MenuItem>
+                                            <MenuItem value="Terminé">Terminé</MenuItem>
                                         </Select>
                                         {errors.etat && (
                                             <FormHelperText error>{errors.etatEscale.message}</FormHelperText>
