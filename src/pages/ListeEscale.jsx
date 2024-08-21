@@ -49,7 +49,14 @@ const columns = [
     {
       id: 'ATA',
       label: 'ATA',
-      minWidth: 170,
+      minWidth: 30,
+      align: 'left',
+      format: formatDate,
+    },
+    {
+      id: 'ATD',
+      label: 'ATD',
+      minWidth: 30,
       align: 'left',
       format: formatDate,
     },
