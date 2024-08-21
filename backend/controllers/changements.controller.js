@@ -30,4 +30,31 @@ const removeChange = asyncHandler(async (req, res) => {
     })
 });
 
-module.exports = {addChange, removeChange}
+const deleteChangeNav = asyncHandler(async (req, res) => {
+    const {id} = req.params;
+
+    const sql = "DELETE FROM changements WHERE idNav = ?";
+
+    db.query(sql, [id], (err, data) => {
+        if (err) {
+            res.status(500).send({error: err});
+            return;
+        }
+        res.status(201).send({message: "Changement effacé"});
+    })
+});
+const deleteChangeQuai = asyncHandler(async (req, res) => {
+    const {id} = req.params;
+
+    const sql = "DELETE FROM changements WHERE idQuai = ?";
+
+    db.query(sql, [id], (err, data) => {
+        if (err) {
+            res.status(500).send({error: err});
+            return;
+        }
+        res.status(201).send({message: "Changement effacé"});
+    })
+});
+
+module.exports = {addChange, removeChange, deleteChangeNav, deleteChangeQuai}
