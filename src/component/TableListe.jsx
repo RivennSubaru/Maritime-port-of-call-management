@@ -23,6 +23,7 @@ import DeleteIcon from '@mui/icons-material/Delete'; // Import DeleteIcon
 import { useState } from 'react';
 import Draggable from 'react-draggable';
 import ErrorIcon from '@mui/icons-material/Error';
+import { toast } from 'react-hot-toast';
 
 // Fonction pour surligner le texte recherché
 const highlightSearchTerm = (text, searchTerm) => {
@@ -166,13 +167,13 @@ const TableListe = ({columns, apiUrl, Item, FormComponent}) => {
     const handleEdit = (row) => {
         setSelectedRow(row);
         setOpenFormDialog(true);
-        console.log(row);
+        /* console.log(row); */
     }
 
     const handleDelete = (row) => {
         setSelectedRow(row);
         setOpenDeleteDialog(true);
-        console.log(row);
+        /* console.log(row); */
     }
 
     // Fonction pour fermer le formulaire et 
@@ -188,6 +189,7 @@ const TableListe = ({columns, apiUrl, Item, FormComponent}) => {
     const deleteMutation = useMutation({
         mutationFn: async (id) => {
             await axios.delete(`${apiUrl}/${id}`);
+            Item == 'navire' && await axios.delete(`http://localhost:8081/escale/${id}`);
         },
         onSuccess: () => {
             // Recharger la liste apres ajout ou modification
