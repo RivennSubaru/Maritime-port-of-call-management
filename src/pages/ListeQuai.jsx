@@ -344,7 +344,7 @@ const ListeQuai = () => {
             deleteMutation.mutateAsync(selectedRow.idQuai),
             {
                 loading: "Chargement...",
-                success: "Item supprimé",
+                success: "Quai supprimé",
                 error: "Erreur lors de la suppression de l'item"
             }
         );
