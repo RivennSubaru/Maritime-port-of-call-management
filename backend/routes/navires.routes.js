@@ -1,5 +1,5 @@
 const express = require("express");
-const {addNavire, addNavireSousRequete, getAllNavires, getAllNaviresParti, getAllNaviresLibre, updateNavire, changeSituation, deleteNavire} = require("../controllers/navires.controller");
+const {addNavire, addNavireSousRequete, getAllNavires, getAllNaviresParti, getAllNaviresToEscale, getAllNaviresLibre, updateNavire, changeSituation, deleteNavire} = require("../controllers/navires.controller");
 
 const router = express.Router();
 
@@ -12,6 +12,7 @@ router.post("/update/changeSituation", changeSituation);
 // GET
 router.get("/getAll", getAllNavires);
 router.get("/getAllParti", getAllNaviresParti);
+router.get("/getAllToEscale", getAllNaviresToEscale);
 router.get("/getAllLibre", getAllNaviresLibre);
 
 // DELETE
