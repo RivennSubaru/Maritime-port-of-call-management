@@ -388,7 +388,7 @@ const TableListe = ({columns, apiUrl, Item, FormComponent}) => {
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Cette action effacera toutes les données de la ligne selectionnée. 
+                        Cette action effacera toutes les données de la ligne selectionnée ainsi que les escales qui y sont reliés.<br /><br />
                         Êtes-vous sûr de vouloir supprimer cet item ?
                     </DialogContentText>
                 </DialogContent>
