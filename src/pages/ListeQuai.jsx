@@ -325,10 +325,12 @@ const ListeQuai = () => {
     // Gestion de la suppression
     const deleteMutation = useMutation({
         mutationFn: async (id) => {
+            await axios.delete(`http://localhost:8081/escale/quai/${id}`);
+            await axios.delete(`http://localhost:8081/changement/quai/${id}`);
             await axios.delete(`http://localhost:8081/quai/${id}`);
         },
         onSuccess: () => {
-            // Recharger la liste apres ajout ou modification
+            // Recharger la liste
             queryClient.invalidateQueries('quai');
         },
         onError: (error) => {

@@ -188,8 +188,14 @@ const TableListe = ({columns, apiUrl, Item, FormComponent}) => {
     // Gestion de la suppression
     const deleteMutation = useMutation({
         mutationFn: async (id) => {
-            await axios.delete(`${apiUrl}/${id}`);
-            Item == 'navire' && await axios.delete(`http://localhost:8081/escale/${id}`);
+            if (Item == 'navire') {
+                await axios.delete(`http://localhost:8081/changement/nav/${id}`);
+                console.log("changement deleted")
+                await axios.delete(`http://localhost:8081/escale/nav/${id}`);
+                console.log("escale deleted");
+                await axios.delete(`${apiUrl}/${id}`);
+                console.log("nav deleted");
+            }
         },
         onSuccess: () => {
             // Recharger la liste apres ajout ou modification
