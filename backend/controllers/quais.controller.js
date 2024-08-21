@@ -3,10 +3,10 @@ const db = require('../config/db');
 
 // ADD QUAI
 const addQuai = asyncHandler(async (req, res) => {
-    const {nom, emplacementQuai, profondeurQuai, longueursQuai} = req.body;
+    const {nomQuai, emplacementQuai, profondeurQuai, longueursQuai} = req.body;
 
     const sql = "INSERT INTO `quais` (nomQuai, emplacementQuai, profondeurQuai, longueursQuai, longueurDispo) VALUES (?, ?, ?, ?, ?)";
-    const values = [nom, emplacementQuai, profondeurQuai, longueursQuai, longueursQuai];
+    const values = [nomQuai, emplacementQuai, profondeurQuai, longueursQuai, longueursQuai];
 
     db.query(sql, values, (err, data) => {
         if (err) {
@@ -39,7 +39,7 @@ const getAllQuaiOccupation = asyncHandler(async (req, res) => {
 
 // UPDATE QUAI
 const updateQuai = asyncHandler(async (req, res) => {
-    const {nom, emplacementQuai, profondeurQuai, longueursQuai, id} = req.body;
+    const {nomQuai, emplacementQuai, profondeurQuai, longueursQuai, id} = req.body;
 
     const sql = "UPDATE quais SET nomQuai = ?, emplacementQuai = ?, profondeurQuai = ?, longueursQuai = ? WHERE idQuai = ?";
     const values = [nom, emplacementQuai, profondeurQuai, longueursQuai, id];
