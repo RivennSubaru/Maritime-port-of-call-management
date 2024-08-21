@@ -46,6 +46,9 @@ const FormQuai = ({initialValues, handleClose}) => {
             // Recharger la liste apres ajout ou modification
             queryClient.invalidateQueries("quais");
             reset([]);
+
+            // Fermer la fenetre 
+            handleClose();
         }
     })
 
@@ -59,9 +62,6 @@ const FormQuai = ({initialValues, handleClose}) => {
                 error: "Quai non ajouté"
             }
         )
-
-        // Fermer la fenetre s'il s'agit d'une modification
-        if (initialValues) handleClose();
     }
 
     // Preremplissage du formulaire

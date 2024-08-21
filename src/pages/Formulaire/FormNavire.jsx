@@ -160,8 +160,8 @@ const FormNavire = ({initialValues, handleClose}) => {
         setPiloteName('');
         setIsNewPilote('non');
         
-        // Fermer la fenetre s'il s'agit d'une modification
-        if (initialValues) handleClose();
+        // Fermer la fenetre
+        handleClose();
     };
 
     // Preremplissage du formulaire
