@@ -175,6 +175,29 @@ const startEscale = asyncHandler(async (req, res) => {
     })
 });
 
+// DELETE ESCALE (USE ONLY WHEN DELETING NAV) || THIS WILL DELETE EVERY ESCALE DONE BY THE DELETED NAV
+const deleteEscaleNav = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+
+    const sql = "DELETE FROM escales WHERE idNav = ?";
+    
+    db.query(sql, [id], (err, data) => {
+        if (err) return res.status(500).send({error: err});
+        res.status(201).send({message: "Escale supprimé avec succès"})
+    })
+})
+// DELETE ESCALE (USE ONLY WHEN DELETING QUAI) || THIS WILL DELETE EVERY ESCALE DONE BY THE DELETED QUAI
+const deleteEscaleQuai = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+
+    const sql = "DELETE FROM escales WHERE idQuai = ?";
+    
+    db.query(sql, [id], (err, data) => {
+        if (err) return res.status(500).send({error: err});
+        res.status(201).send({message: "Escale supprimé avec succès"})
+    })
+})
+
 module.exports = {  
     addEscale, 
     getAllEscale, 
@@ -190,5 +213,7 @@ module.exports = {
     getFinEscalesPerDay,
     updateEscale,
     finishEscale,
-    startEscale
+    startEscale,
+    deleteEscaleNav,
+    deleteEscaleQuai
 }
