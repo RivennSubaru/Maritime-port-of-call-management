@@ -234,41 +234,39 @@ const FormNavire = ({initialValues, handleClose}) => {
                                 )}
                             />
                         </Grid>
-                        <Grid item xs={12} gap={2} sx={{ display: "flex", alignItems: "flex-end", flexDirection: "row-reverse" }}>
-                            <Grid item xs={10}>
-                                <InputLabel id="demo-simple-select-label">Type du navire</InputLabel>
-                                <Controller
-                                    name="typeNav"
-                                    control={control}
-                                    defaultValue=""
-                                    rules={{ required: "Ce champ est requis" }}
-                                    render={({ field }) => (
-                                        <>
-                                            <Select
-                                                {...field}
-                                                id="typeNav"
-                                                label="Type navire"
-                                                fullWidth
-                                                size='small'
-                                                error={!!errors.type}
-                                            >
-                                                
-                                                <MenuItem value="passager">Passager</MenuItem>
-                                                <MenuItem value="marchandise diverse">Marchandise diverse</MenuItem>
-                                                <MenuItem value="vraquier">Vraquier</MenuItem>
-                                                <MenuItem value="Ro-Ro">Ro-Ro</MenuItem>
-                                                <MenuItem value="conteneur">Conteneur</MenuItem>
-                                                <MenuItem value="conteneur">conteneur</MenuItem>
-                                                <MenuItem value="bornage (petit)">Bornage (petit)</MenuItem>
+                        <Grid item xs={12}>
+                            <InputLabel id="demo-simple-select-label">Type du navire</InputLabel>
+                            <Controller
+                                name="typeNav"
+                                control={control}
+                                defaultValue=""
+                                rules={{ required: "Ce champ est requis" }}
+                                render={({ field }) => (
+                                    <>
+                                        <Select
+                                            {...field}
+                                            id="typeNav"
+                                            label="Type navire"
+                                            fullWidth
+                                            size='small'
+                                            error={!!errors.type}
+                                        >
+                                            
+                                            <MenuItem value="passager">Passager</MenuItem>
+                                            <MenuItem value="marchandise diverse">Marchandise diverse</MenuItem>
+                                            <MenuItem value="vraquier">Vraquier</MenuItem>
+                                            <MenuItem value="Ro-Ro">Ro-Ro</MenuItem>
+                                            <MenuItem value="conteneur">Conteneur</MenuItem>
+                                            <MenuItem value="conteneur">conteneur</MenuItem>
+                                            <MenuItem value="bornage (petit)">Bornage (petit)</MenuItem>
 
-                                            </Select>
-                                            {errors.typeNav && (
-                                                <FormHelperText error>{errors.typeNav.message}</FormHelperText>
-                                            )}
-                                        </>
-                                    )}
-                                />
-                            </Grid>
+                                        </Select>
+                                        {errors.typeNav && (
+                                            <FormHelperText error>{errors.typeNav.message}</FormHelperText>
+                                        )}
+                                    </>
+                                )}
+                            />
                         </Grid>
                         <Grid item xs={12} sm={6}>
                             <Controller
