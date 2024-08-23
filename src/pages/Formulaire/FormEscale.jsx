@@ -48,12 +48,14 @@ const formatDate = (date) => {
     return formattedDate;
 };
 
-const FormEscale = ({initialValues, handleClose}) => {
+const FormEscale = ({initialValues, handleClose, setNotif}) => {
 
     /***************  STATES *****************/
     // Liste de tous les navires et Quais
     const [listeNav, setListeNav] = useState([]);
     const [listeQuais, setListeQuais] = useState([]);
+
+    const [notifNumEscale, setNotifNumEscale] = useState();
 
     // disabled
     const [isDisabled, setIsDisabled] = useState(true);
@@ -96,14 +98,21 @@ const FormEscale = ({initialValues, handleClose}) => {
             // Recharger la liste apres ajout ou modification
             queryClient.invalidateQueries("escale");
             reset([]);
+
+            // Envoi du numero d'escale au notification
+            setNotif.setNumEscale(notifNumEscale);
+            setNotif.setOpen(true);
+            setNotif.setType(initialValues ? "modification" : "ajout");
+            setNotif.setDisplayButton(true);
+
+            // Fermer la fenetre 
+            handleClose();
         }
     })
 
     
     /*************** SOUMISSION ***************/
     const onSubmit = async (data) => {
-        console.log("Initial Values: ", initialValues);
-
         // OBJET NAVIRE ET QUAI selectionné
         const selectedNavire = listeNav.find(navire => navire.id === data.idNav);
         const selectedQuai = listeQuais.find(quai => quai.id === data.idQuai);
@@ -113,11 +122,14 @@ const FormEscale = ({initialValues, handleClose}) => {
             const codeDate = formatDate(data.ETD);
 
             // Code du navire
-            const numNavire = selectedNavire ? selectedNavire.numNav : '';
+            const numNavire = selectedNavire ? selectedNavire.numNav : ''; 
 
             // Code numeros escale
             const numEscale = codeDate + '' + numNavire;
             
+        // MAJ notifNumEscale POUR LA NOTIFICATION
+        setNotifNumEscale(numEscale);
+
         // INSERTION DU NUM ESCALE DANS LE DATA
         data = {...data, numEscale};
         
@@ -134,9 +146,6 @@ const FormEscale = ({initialValues, handleClose}) => {
                 error: initialValues && Object.keys(initialValues).length > 0 ? "Modification échouée" : "Création d'escale échouée"
             }
         )
-
-        // Fermer la fenetre 
-        handleClose();
     }
 
 
@@ -448,6 +457,9 @@ const FormEscale = ({initialValues, handleClose}) => {
                         sx={{ mt: 3, mb: 2, bgcolor: "#3fc8ff"}}
                     >
                         {initialValues ? 'Modifier' : 'Ajouter'}
+                    </Button>
+                    <Button onClick={() => {setNotif("setNotif")}}>
+                        SetNotif
                     </Button>
                 </Box>
             </Box>

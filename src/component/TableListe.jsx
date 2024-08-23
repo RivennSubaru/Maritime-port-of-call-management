@@ -51,7 +51,7 @@ function PaperComponent(props) {
     );
 }
 
-const TableListe = ({columns, apiUrl, Item, FormComponent}) => {
+const TableListe = ({columns, apiUrl, Item, FormComponent, setNotif}) => {
 
     // Icone et label des menus rapides
     const actions = [
@@ -375,7 +375,7 @@ const TableListe = ({columns, apiUrl, Item, FormComponent}) => {
                 aria-describedby="scroll-dialog-description"
             >
                 <DialogContent dividers>
-                    <FormComponent initialValues={selectedRow} handleClose={handleCloseForm}/>
+                    <FormComponent initialValues={selectedRow} handleClose={handleCloseForm} setNotif={setNotif}/>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleCloseForm}>Annuler</Button>
