@@ -1,4 +1,6 @@
-import { Box, Button, FormHelperText, Grid, InputLabel, MenuItem, Select } from '@mui/material';
+import { Box, Button, FormHelperText, Grid, InputLabel, MenuItem, Select, TextField } from '@mui/material';
+import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import React from 'react';
@@ -43,7 +45,7 @@ const AssignNav = ({quai}) => {
     // envoie de requete au serveur
     const mutation = useMutation({
 
-        mutationFn: async ({idQuai , longueurDispo, idNav}) => {
+        mutationFn: async ({idQuai , longueurDispo, idNav, typeChange, dateChange}) => {
 
         // Reduire la longueur disponible
         await axios.post("http://localhost:8081/quai/update/changeLongDispo", {idQuai, longueurDispo});
@@ -52,7 +54,7 @@ const AssignNav = ({quai}) => {
         await axios.post("http://localhost:8081/navire/update/changeSituation", {idNav, situationNav: "Amarré"});
 
         // Associer le quai avec le navire
-        await axios.post("http://localhost:8081/changement/add", {idNav, idQuai, typeChange: "affectation"})
+        await axios.post("http://localhost:8081/changement/add", {idNav, idQuai, typeChange, dateChange})
         },
         onError: (error) => {
             setTimeout(() => {
@@ -81,7 +83,7 @@ const AssignNav = ({quai}) => {
         const {id} = selectedNavire;
         
         toast.promise(
-            mutation.mutateAsync({idQuai , longueurDispo, idNav: id}),
+            mutation.mutateAsync({idQuai , longueurDispo, idNav: id, typeChange: data.typeChange, dateChange: data.dateChange}),
             {
               loading: "chargement...",
               success: "Navire affecté",
@@ -109,35 +111,82 @@ const AssignNav = ({quai}) => {
 
     return (
         <Box onSubmit={handleSubmit(onSubmit)} component="form" noValidate sx={{ mt: 3 }}>
-            <InputLabel id="demo-simple-select-label">Navire</InputLabel>
-            <Controller
-                name="idNav"
-                control={control}
-                defaultValue=""
-                rules={{ required: "Ce champ est requis" }}
-                render={({ field }) => (
-                    <>
-                        <Select
-                            {...field}
-                            id="idNav"
-                            label="Navire"
-                            fullWidth
-                            size='small'
-                            error={!!errors.idNav}
-                        >
-                            
-                            {
-                                /* Affichages de la liste des navires */
-                                renderOptions()
-                            }
+            <Grid container spacing={2}>
+                <Grid item xs={6}>
+                    <InputLabel id="demo-simple-select-label">Navire</InputLabel>
+                    <Controller
+                        name="idNav"
+                        control={control}
+                        defaultValue=""
+                        rules={{ required: "Ce champ est requis" }}
+                        render={({ field }) => (
+                            <>
+                                <Select
+                                    {...field}
+                                    id="idNav"
+                                    label="Navire"
+                                    fullWidth
+                                    size='small'
+                                    error={!!errors.idNav}
+                                >
+                                    
+                                    {
+                                        /* Affichages de la liste des navires */
+                                        renderOptions()
+                                    }
 
-                        </Select>
-                        {errors.idNav && (
-                            <FormHelperText error>{errors.idNav.message}</FormHelperText>
+                                </Select>
+                                {errors.idNav && (
+                                    <FormHelperText error>{errors.idNav.message}</FormHelperText>
+                                )}
+                            </>
                         )}
-                    </>
-                )}
-            />
+                    />
+                </Grid>
+                <Grid item xs={6}>
+                    <InputLabel id="demo-simple-select-label">Origine de l'affectation</InputLabel>
+                    <Controller
+                        name="typeChange"
+                        defaultValue=''
+                        control={control}
+                        rules={{ required: "Ce champ est requis" }}
+                        render={({ field }) => (
+                            <>
+                                <Select
+                                    {...field}
+                                    id="typeChange"
+                                    fullWidth
+                                    size='small'
+                                    error={!!errors.typeChange}
+                                >
+                                    <MenuItem value="Escale">Escale</MenuItem>
+                                    <MenuItem value="Simple Affectation">Simple affectation</MenuItem>
+                                </Select>
+                                {errors.typeChange && (
+                                    <FormHelperText error>{errors.typeChange.message}</FormHelperText>
+                                )}
+                            </>
+                        )}
+                    />
+                </Grid>
+                <Grid item xs={12}>
+                    <Controller
+                        name='dateChange'
+                        control={control}
+                        defaultValue={null}
+                        render={({ field }) => (
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DateTimePicker
+                                    {...field}
+                                    label="Date de l'affectation"
+                                    sx={{width: "100%"}}
+                                    textField={(params) => <TextField {...params}/>}
+                                />
+                            </LocalizationProvider>
+                        )}
+                    />
+                </Grid>
+            </Grid>
             <Button
                 type="submit"
                 fullWidth
