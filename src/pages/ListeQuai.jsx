@@ -458,12 +458,12 @@ const ListeQuai = () => {
                     <TableHead>
                         <TableRow>
                             <TableCell />
-                            <TableCell>Nom du Quai</TableCell>
-                            <TableCell align="right">Emplacement</TableCell>
-                            <TableCell align="right">Profondeur (m)</TableCell>
-                            <TableCell align="right">Longueur (m)</TableCell>
-                            <TableCell align="right">Longueur Disponible (m)</TableCell>
-                            <TableCell align="center">Action</TableCell>
+                            <TableCell sx={{fontWeight: "bold"}}>Nom du Quai</TableCell>
+                            <TableCell sx={{fontWeight: "bold"}} align="right">Emplacement</TableCell>
+                            <TableCell sx={{fontWeight: "bold"}} align="right">Profondeur (m)</TableCell>
+                            <TableCell sx={{fontWeight: "bold"}} align="right">Longueur (m)</TableCell>
+                            <TableCell sx={{fontWeight: "bold"}} align="right">Longueur Disponible (m)</TableCell>
+                            <TableCell sx={{fontWeight: "bold"}} align="center">Action</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
