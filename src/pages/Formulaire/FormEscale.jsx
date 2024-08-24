@@ -59,7 +59,8 @@ const FormEscale = ({initialValues, handleClose, setNotif}) => {
     const [notifNumEscale, setNotifNumEscale] = useState();
 
     // disabled
-    const [isDisabled, setIsDisabled] = useState(true);
+    const [isATADisabled, setIsATADisabled] = useState(true);
+    const [isATDDisabled, setIsATDDisabled] = useState(true);
 
     
     /**************** USEFORM *****************/
@@ -199,8 +200,10 @@ const FormEscale = ({initialValues, handleClose, setNotif}) => {
             };
             reset(formattedValues);
 
-            // Activer les champs des dates effectifs si l'escale est déja terminé
-            setIsDisabled(formattedValues.etatEscale == 'Terminé' ? false : true);
+            // Activer le champ de la date de départ effective si l'escale a déja commencer
+            setIsATDDisabled(etat == 'Actif' || 'Terminé' ? false : true);
+            // Activer le champ de la date d'arrivé effective si l'escale est déja terminé
+            setIsATADisabled(etat == 'Terminé' ? false : true);
         }
     }, [initialValues, reset]);
 
@@ -211,8 +214,10 @@ const FormEscale = ({initialValues, handleClose, setNotif}) => {
         const etat = event.target.value;
         setValue('etatEscale', etat);
 
-        // Activer les champs des dates effectifs si l'escale est déja terminé
-        setIsDisabled(etat == 'Terminé' ? false : true);
+        // Activer le champ de la date de départ effective si l'escale a déja commencer
+        setIsATDDisabled(etat == 'Actif' || 'Terminé' ? false : true);
+        // Activer le champ de la date d'arrivé effective si l'escale est déja terminé
+        setIsATADisabled(etat == 'Terminé' ? false : true);
     }
     
     return (
@@ -413,36 +418,41 @@ const FormEscale = ({initialValues, handleClose, setNotif}) => {
                             />
                         </Grid>
                         <Divider variant="middle" sx={{ width: '96%', my: 3 }}>
-                            <Chip label="A l'arrivée" size="small" />
+                            <Chip label="Au départ" size="small" />
                         </Divider>
-                        <Grid item xs={12} sm={6}>
+                        <Grid item xs={12}>
                             <Controller
                                 name='ATD'
                                 control={control}
                                 defaultValue={null}
-                                disabled={isDisabled}
+                                disabled={isATDDisabled}
                                 render={({ field }) => (
                                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                                         <DateTimePicker
                                             {...field}
                                             label="Départ effectif(ATD)"
+                                            sx={{width: "100%"}}
                                             textField={(params) => <TextField {...params}/>}
                                         />
                                     </LocalizationProvider>
                                 )}
                             />
                         </Grid>
-                        <Grid item xs={12} sm={6}>
+                        <Divider variant="middle" sx={{ width: '96%', my: 3 }}>
+                            <Chip label="A l'arrivée" size="small" />
+                        </Divider>
+                        <Grid item xs={12}>
                             <Controller
                                 name='ATA'
                                 control={control}
                                 defaultValue={null}
-                                disabled={isDisabled}
+                                disabled={isATADisabled}
                                 render={({ field }) => (
                                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                                         <DateTimePicker
                                             {...field}
                                             label="Arrivé effectif(ATA)"
+                                            sx={{width: "100%"}}
                                             textField={(params) => <TextField {...params} />}
                                         />
                                     </LocalizationProvider>
