@@ -46,18 +46,18 @@ const getLateEscaleEntrant = asyncHandler(async (req, res) => {
     })
 })
 
-// GET ALL CURRENT ESCALE SORTANT
+// GET ALL CURRENT ESCALE FOR NAVIRE DEPARTURE (ESCALE PEUT ETRE ENTRANT MAIS NAVIRE SORT DU QUAI)
 const getCurrEscaleSortant = asyncHandler(async (req, res) => {
-    const sql = "SELECT `idEscale`, `numEscale`, escales.idNav, navires.numNav, navires.nomNav, navires.longueursNav, escales.idQuai, quais.nomQuai, quais.longueurDispo, typeMouvement, DATE(`ETD`) AS dateDepartEst, TIME(`ETA`) AS heureDepartEst, `provenance`, `dateCreationEscale` FROM `escales` JOIN navires ON escales.idNav = navires.idNav JOIN quais ON escales.idQuai = quais.idQuai WHERE DATE(`ETD`) = CURRENT_DATE AND etatEscale = \"Prévu\" AND typeMouvement = \"Sortant\"";
+    const sql = "SELECT `idEscale`, `numEscale`, escales.idNav, navires.numNav, navires.nomNav, navires.longueursNav, escales.idQuai, quais.nomQuai, quais.longueurDispo, typeMouvement, DATE(`ETD`) AS dateDepartEst, TIME(`ETA`) AS heureDepartEst, `provenance`, `dateCreationEscale` FROM `escales` JOIN navires ON escales.idNav = navires.idNav JOIN quais ON escales.idQuai = quais.idQuai WHERE DATE(`ETD`) = CURRENT_DATE AND etatEscale = \"Prévu\" AND (typeMouvement = \"Sortant\" OR typeMouvement = \"Entrant\")";
 
     db.query(sql, (err, data) => {
         if (err) res.status(500).send({error: err.message});
         res.status(201).send(data);
     })
 })
-// GET LATE ESCALE SORTANT
+// GET LATE ESCALE FOR NAVIRE DEPARTURE
 const getLateEscaleSortant = asyncHandler(async (req, res) => {
-    const sql = "SELECT `idEscale`, `numEscale`, escales.idNav, navires.numNav, navires.nomNav, navires.longueursNav, escales.idQuai, quais.nomQuai, quais.longueurDispo, typeMouvement, DATE(`ETD`) AS dateDepartEst, TIME(`ETA`) AS heureDepartEst, `provenance`, `dateCreationEscale` FROM `escales` JOIN navires ON escales.idNav = navires.idNav JOIN quais ON escales.idQuai = quais.idQuai WHERE DATE(`ETD`) < CURRENT_DATE AND etatEscale = \"Prévu\" AND typeMouvement = \"Sortant\"";
+    const sql = "SELECT `idEscale`, `numEscale`, escales.idNav, navires.numNav, navires.nomNav, navires.longueursNav, escales.idQuai, quais.nomQuai, quais.longueurDispo, typeMouvement, DATE(`ETD`) AS dateDepartEst, TIME(`ETA`) AS heureDepartEst, `provenance`, `dateCreationEscale` FROM `escales` JOIN navires ON escales.idNav = navires.idNav JOIN quais ON escales.idQuai = quais.idQuai WHERE DATE(`ETD`) < CURRENT_DATE AND etatEscale = \"Prévu\" AND (typeMouvement = \"Sortant\" OR typeMouvement = \"Entrant\")";
 
     db.query(sql, (err, data) => {
         if (err) res.status(500).send({error: err.message});

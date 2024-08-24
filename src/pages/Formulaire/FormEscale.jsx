@@ -10,10 +10,11 @@ import { useEffect } from 'react';
 import Divider from '@mui/material/Divider';
 import dayjs from 'dayjs';
 import { toast } from 'react-hot-toast';
+import CityAutocomplete from '../../component/CityAutocomplete';
 
 /************** FETCH LIST ***************/
 const fetchNavires = async () => {
-    const reponse = await axios.get("http://localhost:8081/navire/getAllToEscale");
+    const reponse = await axios.get("http://localhost:8081/navire/getAll");
     /* console.log(reponse.data); */
     return reponse.data;
 }
@@ -113,6 +114,12 @@ const FormEscale = ({initialValues, handleClose, setNotif}) => {
     
     /*************** SOUMISSION ***************/
     const onSubmit = async (data) => {
+
+        if (data.ETD >= data.ETA) {
+            toast.error("ETD doit être inferieur à ETA");
+            return;
+        }
+
         // OBJET NAVIRE ET QUAI selectionné
         const selectedNavire = listeNav.find(navire => navire.id === data.idNav);
         const selectedQuai = listeQuais.find(quai => quai.id === data.idQuai);
@@ -191,6 +198,9 @@ const FormEscale = ({initialValues, handleClose, setNotif}) => {
                 ATA: initialValues.ATA ? dayjs(initialValues.ATA) : null
             };
             reset(formattedValues);
+
+            // Activer les champs des dates effectifs si l'escale est déja terminé
+            setIsDisabled(formattedValues.etatEscale == 'Terminé' ? false : true);
         }
     }, [initialValues, reset]);
 
@@ -202,7 +212,7 @@ const FormEscale = ({initialValues, handleClose, setNotif}) => {
         setValue('etatEscale', etat);
 
         // Activer les champs des dates effectifs si l'escale est déja terminé
-        setIsDisabled(etat == 'terminé' ? false : true);
+        setIsDisabled(etat == 'Terminé' ? false : true);
     }
     
     return (
@@ -374,41 +384,31 @@ const FormEscale = ({initialValues, handleClose, setNotif}) => {
                         </Grid>
                         <Grid item xs={12} sm={6}>
                             <Controller
-                                name='provenance'
+                                name="provenance"
                                 control={control}
                                 defaultValue=''
                                 rules={{required: "Ce champ ne peut être vide"}}
 
                                 render={({ field }) => (
-                                    <TextField
-                                        {...field}
-                                        required
-                                        fullWidth
-                                        autoFocus
-                                        id="provenance"
-                                        label="Provenance"
-                                        size='small'
-                                    />
+                                <CityAutocomplete
+                                    {...field} // Propager les props du champ vers le composant
+                                    label="Provenance"
+                                />
                                 )}
                             />
                         </Grid>
                         <Grid item xs={12} sm={6}>
                             <Controller
-                                name='destination'
+                                name="destination"
                                 control={control}
                                 defaultValue=''
                                 rules={{required: "Ce champ ne peut être vide"}}
 
                                 render={({ field }) => (
-                                    <TextField
-                                        {...field}
-                                        required
-                                        fullWidth
-                                        autoFocus
-                                        id="destination"
-                                        label="Déstination"
-                                        size='small'
-                                    />
+                                <CityAutocomplete
+                                    {...field} // Propager les props du champ vers le composant
+                                    label="Déstination"
+                                />
                                 )}
                             />
                         </Grid>
@@ -457,9 +457,6 @@ const FormEscale = ({initialValues, handleClose, setNotif}) => {
                         sx={{ mt: 3, mb: 2, bgcolor: "#3fc8ff"}}
                     >
                         {initialValues ? 'Modifier' : 'Ajouter'}
-                    </Button>
-                    <Button onClick={() => {setNotif("setNotif")}}>
-                        SetNotif
                     </Button>
                 </Box>
             </Box>

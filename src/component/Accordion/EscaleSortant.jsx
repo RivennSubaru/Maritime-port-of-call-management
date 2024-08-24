@@ -101,12 +101,11 @@ const EscaleSortant = () => {
 
     mutationFn: async ({typeMouvement, idEscale, idNav, idQuai, longueurDispo}) => {
 
+      // Demarrer l'escale
+      await axios.post("http://localhost:8081/escale/update/start", {idEscale});
       
       if(typeMouvement == "Sortant"){
        
-        // Demarrer l'escale
-        await axios.post("http://localhost:8081/escale/update/start", {idEscale});
-
         // Liberer longueur disponible
         await axios.post("http://localhost:8081/quai/update/changeLongDispo", {idQuai, longueurDispo});
 
