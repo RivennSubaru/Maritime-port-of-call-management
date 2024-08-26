@@ -136,16 +136,9 @@ export default function Dashboard({ isPending, isError, retards }) {
 
   // Ajout de l'élément de menu pour les statistiques si l'utilisateur est administrateur
   if (role) {
-      // Ajouter "Gerer utilisateurs" après "Tableau de bord"
-      const dashboardIndex = menuItems.findIndex(item => item.text === 'Tableau de bord');
-      if (dashboardIndex !== -1) {
-          menuItems.splice(dashboardIndex + 1, 0, { text: 'Gerer utilisateurs', icon: <FontAwesomeIcon icon={faUsers} />, path: '/usermanager' });
-      }
-      
-      // Ajouter "Statistique" à la fin de la liste
-      menuItems.push({ text: 'Statistique', icon: <ShowChartIcon />, path: '/stat' });
+    menuItems.push({ text: 'Gerer utilisateurs', icon: <FontAwesomeIcon icon={faUsers} />, path: '/usermanager' });
+    menuItems.push({ text: 'Statistique', icon: <ShowChartIcon />, path: '/stat' });
   }
-
 
   return (
     <>
