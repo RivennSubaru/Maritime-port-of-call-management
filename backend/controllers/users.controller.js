@@ -4,12 +4,12 @@ const db = require('../config/db');
 
 // INSCRIPTION
 const registerUser = asyncHandler(async (req, res) => {
-    const {nomUser, prenomUser, emailUser, password} = req.body;
+    const {pseudo, emailUser, password} = req.body;
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const sql = 'INSERT INTO utilisateurs (nomUser, prenomUser, emailUser, password) VALUES (?, ?, ?, ?)';
-    const values = [nomUser, prenomUser, emailUser, hashedPassword];
+    const sql = 'INSERT INTO utilisateurs (pseudo, emailUser, password) VALUES (?, ?, ?)';
+    const values = [pseudo, emailUser, hashedPassword];
 
     db.query(sql, values, (err, data) => {
         if (err) {
