@@ -26,6 +26,8 @@ import ErrorIcon from '@mui/icons-material/Error';
 import AvatarLogout from './AvatarLogout';
 import { NavLink, useLocation } from 'react-router-dom'; // Utilisation de NavLink
 import AvatarAndName from './AvatarAndName';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUsers } from '@fortawesome/free-solid-svg-icons';
 
 const drawerWidth = 240;
 
@@ -134,8 +136,16 @@ export default function Dashboard({ isPending, isError, retards }) {
 
   // Ajout de l'élément de menu pour les statistiques si l'utilisateur est administrateur
   if (role) {
-    menuItems.push({ text: 'Statistique', icon: <ShowChartIcon />, path: '/stat' });
+      // Ajouter "Gerer utilisateurs" après "Tableau de bord"
+      const dashboardIndex = menuItems.findIndex(item => item.text === 'Tableau de bord');
+      if (dashboardIndex !== -1) {
+          menuItems.splice(dashboardIndex + 1, 0, { text: 'Gerer utilisateurs', icon: <FontAwesomeIcon icon={faUsers} />, path: '/usermanager' });
+      }
+      
+      // Ajouter "Statistique" à la fin de la liste
+      menuItems.push({ text: 'Statistique', icon: <ShowChartIcon />, path: '/stat' });
   }
+
 
   return (
     <>

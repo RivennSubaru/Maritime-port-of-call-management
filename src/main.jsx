@@ -15,6 +15,7 @@ import Stat from './component/Stat.jsx'
 import RetardEscale from './pages/RetardEscale.jsx'
 import AdminRoute from './component/Routes/AdminRoute.jsx'
 import UserRoute from './component/Routes/UserRoute.jsx'
+import UserManager from './pages/UserManager.jsx'
 
 const queryClient = new QueryClient();
 
@@ -35,6 +36,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
 
             {/* Routes protégées accessibles uniquement aux administrateurs */}
             <Route path='/stat' element={<AdminRoute element={Stat} />} />
+            <Route path='/usermanager' element={<AdminRoute element={UserManager} />} />
           </Route>
           
           <Route path='/inscription' element={<Inscription/>}/>
