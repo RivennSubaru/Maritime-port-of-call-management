@@ -21,11 +21,13 @@ const CityAutocomplete = ({ name, label, value, onChange }) => {
 
   return (
     <Autocomplete
+      freeSolo // Permet à l'utilisateur d'entrer des valeurs qui ne sont pas dans la liste des options
       options={filteredOptions}
       getOptionLabel={(option) => option.name}
       value={options.find(option => option.name === value) || null} // Assurez-vous que la valeur est bien synchronisée
-      onChange={(event, newValue) => {
-        onChange(newValue ? newValue.name : ''); // Passez uniquement le nom de la ville
+      onInputChange={(event, newInputValue) => {
+        setInputValue(newInputValue);
+        onChange(newInputValue); // Met à jour la valeur avec la saisie de l'utilisateur
       }}
       renderInput={(params) => (
         <TextField
