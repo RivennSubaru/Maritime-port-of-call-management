@@ -69,10 +69,10 @@ const Connexion = () => {
         },
         onSuccess: (res) => {
             // Recuperation de l'email depuis res.config.data qui est encore un string
-            const userEmail = JSON.parse(res.config.data).emailUser;
-            const pseudo = JSON.parse(res.config.data).pseudo;
-            localStorage.setItem("userMail", JSON.stringify(userEmail));
-            localStorage.setItem("pseudo", JSON.stringify(pseudo));
+            const userEmail = res.data[0].emailUser;
+            const pseudo = res.data[0].pseudo;
+            localStorage.setItem("userMail", userEmail);
+            localStorage.setItem("pseudo", pseudo);
 
             navigateTo('/');
             setTimeout(() => {
