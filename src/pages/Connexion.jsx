@@ -4,7 +4,6 @@ import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import Link from '@mui/material/Link';
-import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
@@ -20,7 +19,7 @@ function Copyright(props) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
+      <Link color="inherit" href="http://www.toamasina-port.com/">
         Port-Toamasina
       </Link>{' '}
       {new Date().getFullYear()}
@@ -71,7 +70,9 @@ const Connexion = () => {
         onSuccess: (res) => {
             // Recuperation de l'email depuis res.config.data qui est encore un string
             const userEmail = JSON.parse(res.config.data).emailUser;
+            const pseudo = JSON.parse(res.config.data).pseudo;
             localStorage.setItem("userMail", JSON.stringify(userEmail));
+            localStorage.setItem("pseudo", JSON.stringify(pseudo));
 
             navigateTo('/');
             setTimeout(() => {
@@ -142,18 +143,6 @@ const Connexion = () => {
                     >
                         Se connecter
                     </Button>
-                    <Grid container>
-                        <Grid item xs>
-                            <Link href="#" variant="body2">
-                                Mot de passe oublié?
-                            </Link>
-                        </Grid>
-                        <Grid item>
-                            <Link href="/inscription" variant="body2">
-                            {"Pas encore de compte? S'inscrire"}
-                            </Link>
-                        </Grid>
-                    </Grid>
                 </Box>
             </Box>
             <Copyright sx={{ mt: 8, mb: 4 }} />

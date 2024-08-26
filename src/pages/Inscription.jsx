@@ -14,12 +14,13 @@ import { toast } from 'react-hot-toast';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 
 function Copyright(props) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
+      <Link color="inherit" href="http://www.toamasina-port.com/">
         Port-toamasina
       </Link>{' '}
       {new Date().getFullYear()}
@@ -52,9 +53,6 @@ const Inscription = () => {
                 }
               );
             console.log(error);
-        },
-        onSuccess: () => {
-            navigateTo('/connexion');
         }
     })
 
@@ -63,8 +61,8 @@ const Inscription = () => {
             toast.error("Les mots de passes ne correspondent pas");
 
         } else {
-            const {nomUser, prenomUser, emailUser, password} = data;
-            const dataCopy = {nomUser, prenomUser, emailUser, password};
+            const {pseudo, emailUser, password} = data;
+            const dataCopy = {pseudo, emailUser, password};
 
             toast.promise(
                 mutation.mutateAsync(dataCopy),
@@ -96,28 +94,16 @@ const Inscription = () => {
             </Typography>
             <Box component="form" noValidate onSubmit={handleSubmit(onSubmit)} sx={{ mt: 3 }}>
                 <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12}>
                     <TextField
                         required
                         fullWidth
-                        autoFocus
-                        id="firstName"
-                        label="Nom"
-                        {...register("nomUser", {required: "Ce champ ne peut être vide"})}
-                        error={!!errors.nomUser}
-                        helperText={errors.nomUser ? errors.nomUser.message : ""}
-                    />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                    <TextField
-                        required
-                        fullWidth
-                        id="lastName"
-                        label="Prénoms"
+                        id="pseudo"
+                        label="Pseudo"
                         autoComplete="family-name"
-                        {...register("prenomUser", {required: "Ce champ ne peut être vide"})}
-                        error={!!errors.prenomUser}
-                        helperText={errors.prenomUser ? errors.prenomUser.message : ""}
+                        {...register("pseudo", {required: "Ce champ ne peut être vide"})}
+                        error={!!errors.pseudo}
+                        helperText={errors.pseudo ? errors.pseudo.message : ""}
                     />
                 </Grid>
                 <Grid item xs={12}>
@@ -168,15 +154,8 @@ const Inscription = () => {
                     variant="contained"
                     sx={{ mt: 3, mb: 2 }}
                 >
-                    S'inscrire
+                    Inscrire
                 </Button>
-                <Grid container justifyContent="flex-end">
-                <Grid item>
-                    <Link href="/connexion" variant="body2">
-                    Vous avez déja un compte? Se connecter
-                    </Link>
-                </Grid>
-                </Grid>
             </Box>
             </Box>
             <Copyright sx={{ mt: 5 }} />
