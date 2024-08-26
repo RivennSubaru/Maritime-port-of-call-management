@@ -1,10 +1,11 @@
-// StatBox.js
 import React, { useMemo } from 'react';
 import { LineChart } from '@mui/x-charts/LineChart';
 import { Box, Typography } from '@mui/material';
+import axios from 'axios';
+import { useQuery } from '@tanstack/react-query';
 
 // Simulation
-const countPerDay = [
+/* const countPerDay = [
   {"mois": 8, "jours": 1, "count": 2},
   {"mois": 8, "jours": 5, "count": 10},
   {"mois": 8, "jours": 6, "count": 7},
@@ -18,19 +19,28 @@ const countPerDay = [
   {"mois": 8, "jours": 22, "count": 15},
   {"mois": 8, "jours": 25, "count": 10},
   {"mois": 8, "jours": 30, "count": 4}
-];
+]; */
 
 export default function StatBox() {
 
+    /****** RECUPERATION DU TOKEN ******/
+    const token = localStorage.getItem('token');
+
     /****** FETCH DES DONNÉES *****/
-    /* const fetchData = async () => {
-        const reponse = await axios.get("http://localhost:8081/escale/getFinPerDay");
+    const fetchData = async () => {
+        const reponse = await axios.get("http://localhost:8081/escale/getFinPerDay", {
+            headers: {
+                Authorization: token
+            }
+        });
+
         return reponse.data;
     }
     const {isPending, isError, data:countPerDay = [], error} = useQuery({
         queryKey: ['lineChart'],
         queryFn: fetchData
-    }); */
+    });
+    console.log(countPerDay);
 
     const currentMonth = new Date().getMonth() + 1; // Mois courant
 
@@ -43,7 +53,7 @@ export default function StatBox() {
     const xLabels = filteredData.map(item => `j${item.jours}`);
     const yData = filteredData.map(item => item.count);
 
-    /* if (isPending) {
+    if (isPending) {
         return (
             <>
                 <p>chargement des données...</p>
@@ -58,7 +68,7 @@ export default function StatBox() {
                 <p>Une erreur s'est produit</p>
             </>
         )
-    } */
+    }
 
     return (
         <>

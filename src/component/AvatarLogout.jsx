@@ -16,10 +16,14 @@ const AvatarLogout = () => {
     };
 
     const handleLogout = () => {
-        localStorage.removeItem('userMail');
-        localStorage.removeItem('pseudo');
+        // Suppression des informations du localStorage
+        localStorage.removeItem("token");
+        localStorage.removeItem("userMail");
+        localStorage.removeItem("pseudo");
+        localStorage.removeItem("role");
 
-        navigateTo("/connexion");
+        // Redirection vers la page de connexion ou la page d'accueil
+        navigateTo('/connexion'); // Utilisez votre méthode de navigation
     }
 
     return (

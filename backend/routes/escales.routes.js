@@ -1,5 +1,6 @@
 const express = require("express");
 const {addEscale, getAllEscale, getCurrEscaleEntrant, getCurrEscaleSortant, getAllLateEscale, getLateEscaleEntrant, getLateEscaleSortant, getAllMonthEscale, getMonthEscalePrev, getMonthEscaleFin, getCountEscales, getFinEscalesPerDay, updateEscale, finishEscale, startEscale, deleteEscaleNav, deleteEscaleQuai} = require('../controllers/escales.controller');
+const { protect, adminOnly } = require('../middlewares/authMiddleware')
 
 const router = express.Router();
 
@@ -19,8 +20,8 @@ router.get('/getLateSortant', getLateEscaleSortant);
 router.get('/getAllMonth', getAllMonthEscale);
 router.get('/getMonthPrev', getMonthEscalePrev);
 router.get('/getMonthFin', getMonthEscaleFin);
-router.get('/getCount', getCountEscales);
-router.get('/getFinPerDay', getFinEscalesPerDay);
+router.get('/getCount', protect, adminOnly, getCountEscales);
+router.get('/getFinPerDay', protect, adminOnly, getFinEscalesPerDay);
 
 // DELETE (only when deleting nav or quai)
 router.delete("/nav/:id", deleteEscaleNav);

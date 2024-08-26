@@ -9,11 +9,11 @@ import axios from 'axios';
 function App() {
   const navigateTo = useNavigate();
 
-  useEffect(() => {
+  /* useEffect(() => {
     if (!(localStorage.getItem("userMail"))) {
       navigateTo("/connexion");
     }
-  })
+  }) */
 
   const DrawerHeader = styled('div')(({ theme }) => ({
     display: 'flex',

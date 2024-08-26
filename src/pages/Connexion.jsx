@@ -68,11 +68,17 @@ const Connexion = () => {
             console.log(error);
         },
         onSuccess: (res) => {
-            // Recuperation de l'email depuis res.config.data qui est encore un string
-            const userEmail = res.data[0].emailUser;
-            const pseudo = res.data[0].pseudo;
+            // Récupération du token JWT depuis la réponse
+            const token = res.data.token;
+            const userEmail = res.data.email;
+            const pseudo = res.data.pseudo;
+            const role = res.data.role;
+
+            // Stockage des informations utilisateur et du token
+            localStorage.setItem("token", token);
             localStorage.setItem("userMail", userEmail);
             localStorage.setItem("pseudo", pseudo);
+            localStorage.setItem("role", role);
 
             navigateTo('/');
             setTimeout(() => {

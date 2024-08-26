@@ -97,6 +97,8 @@ export default function Dashboard({ isPending, isError, retards }) {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
 
+  const role = localStorage.getItem('role') === "admin"; // Vérification du rôle de l'utilisateur
+
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -128,8 +130,12 @@ export default function Dashboard({ isPending, isError, retards }) {
     { text: 'Liste des navires', icon: <DirectionsBoatIcon />, path: '/navire' },
     { text: 'Liste des quais', icon: <AnchorIcon />, path: '/quai' },
     { text: 'Liste des escales', icon: <SailingIcon />, path: '/escale' },
-    { text: 'Statistique', icon: <ShowChartIcon />, path: '/stat' }
   ];
+
+  // Ajout de l'élément de menu pour les statistiques si l'utilisateur est administrateur
+  if (role) {
+    menuItems.push({ text: 'Statistique', icon: <ShowChartIcon />, path: '/stat' });
+  }
 
   return (
     <>
@@ -166,7 +172,7 @@ export default function Dashboard({ isPending, isError, retards }) {
           </IconButton>
         </DrawerHeader>
         <Divider />
-        { open && <AvatarAndName/> }
+        {/* { open && <AvatarAndName/> } */}
         <List>
           {menuItems.map((item) => (
             <NavLink

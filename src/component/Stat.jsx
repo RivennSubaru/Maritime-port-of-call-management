@@ -30,9 +30,17 @@ const monthNames = [
 export default function Stat() {
   const [selectedMonth, setSelectedMonth] = useState(1); // Mois par défaut sélectionné
 
+  /****** RECUPERATION DU TOKEN ******/
+  const token = localStorage.getItem('token');
+
   /****** FETCH DES DONNÉES *****/
   const fetchData = async () => {
-    const reponse = await axios.get("http://localhost:8081/escale/getFinPerDay");
+    const reponse = await axios.get("http://localhost:8081/escale/getFinPerDay", {
+      headers: {
+        Authorization: token
+      }
+    });
+
     return reponse.data;
   }
   const {isPending, isError, data:countPerDay = [], error} = useQuery({
