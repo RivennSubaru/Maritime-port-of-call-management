@@ -53,6 +53,9 @@ function PaperComponent(props) {
 
 const TableListe = ({columns, apiUrl, Item, FormComponent, setNotif}) => {
 
+    //Recuperation du token
+    const token = localStorage.getItem("token");
+
     // Icone et label des menus rapides
     const actions = [
         { icon: <CreateIcon />, name: 'Ajouter' },
@@ -62,8 +65,23 @@ const TableListe = ({columns, apiUrl, Item, FormComponent, setNotif}) => {
 
     // Recuperation des donnée à afficher
     const fetchData = async () => {
-        const reponse = await axios.get(apiUrl + "/getAll");
-        return reponse.data;
+
+        // Si c'est userManager donc admin, il faut securiser
+        if (Item === "utilisateur") {
+
+            const reponse = await axios.get(apiUrl + "/getAll", {
+                headers: {
+                    Authorization: token
+                }
+            });
+            return reponse.data;
+
+        } else {
+
+            const reponse = await axios.get(apiUrl + "/getAll");
+            return reponse.data;
+        }
+
     }
     const {isPending, isError, data = [], error} = useQuery({
         queryKey: [apiUrl],
@@ -190,11 +208,11 @@ const TableListe = ({columns, apiUrl, Item, FormComponent, setNotif}) => {
         mutationFn: async (id) => {
             if (Item == 'navire') {
                 await axios.delete(`http://localhost:8081/changement/nav/${id}`);
-                console.log("changement deleted")
                 await axios.delete(`http://localhost:8081/escale/nav/${id}`);
-                console.log("escale deleted");
                 await axios.delete(`${apiUrl}/${id}`);
-                console.log("nav deleted");
+            } else if (Item == 'utilisateur') {
+
+                await axios.delete(`${apiUrl}/${id}`);
             }
         },
         onSuccess: () => {
@@ -343,30 +361,34 @@ const TableListe = ({columns, apiUrl, Item, FormComponent, setNotif}) => {
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />
             </Paper>
-            <Box sx={{ position: 'fixed', right: 0, bottom: 0, zIndex: 999999 }}>
-                <SpeedDial
-                    ariaLabel="SpeedDial example"
-                    sx={{ position: 'absolute', bottom: 16, right: 16 }}
-                    icon={<SpeedDialIcon />}
-                >
-                    {actions.map((action) => (
-                        <SpeedDialAction
-                            key={action.name}
-                            icon={action.icon}
-                            tooltipTitle={action.name}
-                            onClick={() => {
-                                if (action.name === 'Ajouter') {
-                                    handleAdd();
-                                } else if (action.name === 'Imprimer PDF') {
-                                    handlePrintPDF();
-                                } else if (action.name === 'Exporter Excel') {
-                                    handlePrintExcel();
-                                }
-                            }}
-                        />
-                    ))}
-                </SpeedDial>
-            </Box>
+            {
+                // Gestion d'utilisateur pas besoin d'impression
+                Item !== 'utilisateur' &&
+                    <Box sx={{ position: 'fixed', right: 0, bottom: 0, zIndex: 999999 }}>
+                        <SpeedDial
+                            ariaLabel="SpeedDial example"
+                            sx={{ position: 'absolute', bottom: 16, right: 16 }}
+                            icon={<SpeedDialIcon />}
+                        >
+                            {actions.map((action) => (
+                                <SpeedDialAction
+                                    key={action.name}
+                                    icon={action.icon}
+                                    tooltipTitle={action.name}
+                                    onClick={() => {
+                                        if (action.name === 'Ajouter') {
+                                            handleAdd();
+                                        } else if (action.name === 'Imprimer PDF') {
+                                            handlePrintPDF();
+                                        } else if (action.name === 'Exporter Excel') {
+                                            handlePrintExcel();
+                                        }
+                                    }}
+                                />
+                            ))}
+                        </SpeedDial>
+                    </Box>
+            }
             <Dialog
                 open={openFormDialog}
                 onClose={() => setOpenFormDialog(false)}
@@ -394,8 +416,11 @@ const TableListe = ({columns, apiUrl, Item, FormComponent, setNotif}) => {
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Cette action effacera toutes les données de la ligne selectionnée ainsi que les escales qui y sont reliés.<br /><br />
-                        Êtes-vous sûr de vouloir supprimer cet item ?
+                        {Item === "navire" &&
+                        <>
+                            Cette action effacera toutes les données de la ligne selectionnée ainsi que les escales qui y sont reliés.<br /><br />
+                        </>}
+                            Êtes-vous sûr de vouloir supprimer cet item ?
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>

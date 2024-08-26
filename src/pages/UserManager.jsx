@@ -4,6 +4,7 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 import Inscription from './Inscription';
+import ListeUser from './ListeUser';
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -54,7 +55,7 @@ const UserManager = () => {
         <Inscription/>
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
-        Item Two
+        <ListeUser/>
       </CustomTabPanel>
     </Box>
   );

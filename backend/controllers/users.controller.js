@@ -55,6 +55,29 @@ const loginUser = asyncHandler(async (req, res) => {
             token: token
         });
     });
-})
+});
 
-module.exports = {registerUser, loginUser};
+
+// GET ALL (WITHOUT PASS)
+const getAllUser = asyncHandler(async (req, res) => {
+    const sql = "SELECT `idUser` AS id, `pseudo`, `emailUser`, `role` FROM `utilisateurs`";
+
+    db.query(sql, (err, data) => {
+        if (err) res.status(500).send({error: err.message});
+        res.status(201).send(data);
+    })
+});
+
+// DELETE USER 
+const deleteUser = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+
+    const sql = "DELETE FROM utilisateurs WHERE idUser = ?";
+    
+    db.query(sql, [id], (err, data) => {
+        if (err) return res.status(500).send({error: err});
+        res.status(201).send({message: "utilisateur supprimé avec succès"})
+    })
+});
+
+module.exports = {getAllUser, registerUser, loginUser, deleteUser};
