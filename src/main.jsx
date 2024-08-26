@@ -12,7 +12,6 @@ import ListeNavire from './pages/ListeNavire.jsx'
 import Statistique from './pages/Statistique.jsx'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Toaster } from 'react-hot-toast'
-import About from './pages/About.jsx'
 import FormEscale from './pages/Formulaire/FormEscale.jsx'
 import FormNavire from './pages/Formulaire/FormNavire.jsx'
 import FormQuai from './pages/Formulaire/FormQuai.jsx'
@@ -35,7 +34,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             <Route path='/quai' element={<ListeQuai/>}/>
             <Route path='/navire' element={<ListeNavire/>}/>
             <Route path='/stat' element={<Statistique/>}/>
-            <Route path='/about' element={<About/>}/>
             <Route path='/retard' element={<RetardEscale/>}/>
           </Route>
           
