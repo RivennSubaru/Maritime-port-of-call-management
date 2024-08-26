@@ -1,9 +1,12 @@
 import { IconButton, Menu, MenuItem } from '@mui/material';
 import React from 'react';
 import AccountCircle from '@mui/icons-material/AccountCircle';
+import { useNavigate } from 'react-router-dom';
 
 const AvatarLogout = () => {
     const [anchorEl, setAnchorEl] = React.useState(null);
+
+    const navigateTo = useNavigate();
 
     const handleMenu = (event) => {
         setAnchorEl(event.currentTarget);
@@ -13,7 +16,10 @@ const AvatarLogout = () => {
     };
 
     const handleLogout = () => {
-        
+        localStorage.removeItem('userMail');
+        localStorage.removeItem('pseudo');
+
+        navigateTo("/connexion");
     }
 
     return (
