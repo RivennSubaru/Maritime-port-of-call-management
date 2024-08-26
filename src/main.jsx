@@ -17,12 +17,6 @@ import FormEscale from './pages/Formulaire/FormEscale.jsx'
 import FormNavire from './pages/Formulaire/FormNavire.jsx'
 import FormQuai from './pages/Formulaire/FormQuai.jsx'
 import FormPilote from './pages/Formulaire/FormPilote.jsx'
-import FormSearch from './pages/Formulaire/FormSearch.jsx'
-import FormEscaleTest from './pages/Formulaire/FormEscaleTest.jsx'
-import EscaleEntrant from './component/Accordion/EscaleEntrant.jsx'
-import EscaleSortant from './component/Accordion/EscaleSortant.jsx'
-import EscaleManager from './component/EscaleManager.jsx'
-import Stat from './component/Stat.jsx'
 import RetardEscale from './pages/RetardEscale.jsx'
 
 const queryClient = new QueryClient();
