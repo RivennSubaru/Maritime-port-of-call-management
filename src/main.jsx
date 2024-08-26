@@ -37,9 +37,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             {/* Routes protégées accessibles uniquement aux administrateurs */}
             <Route path='/stat' element={<AdminRoute element={Stat} />} />
             <Route path='/usermanager' element={<AdminRoute element={UserManager} />} />
+            <Route path='/inscription' element={<AdminRoute element={Inscription}/>}/>
           </Route>
           
-          <Route path='/inscription' element={<Inscription/>}/>
           <Route path='/connexion' element={<Connexion/>}/>
           <Route path='*' element={<>Page introuvable</>}/>
         </Routes>
