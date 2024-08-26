@@ -23,6 +23,7 @@ import DirectionsBoatIcon from '@mui/icons-material/DirectionsBoat';
 import ShowChartIcon from '@mui/icons-material/ShowChart';
 import { Badge, CircularProgress, Link } from '@mui/material';
 import ErrorIcon from '@mui/icons-material/Error';
+import AvatarLogout from './AvatarLogout';
 
 const drawerWidth = 240;
 
@@ -148,6 +149,7 @@ export default function Dashboard({isPending, isError, retards}) {
             SPAT
           </Typography>
           <RetardButton/>
+          <AvatarLogout/>
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={open}>
