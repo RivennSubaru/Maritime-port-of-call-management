@@ -25,6 +25,7 @@ import { Badge, CircularProgress, Link } from '@mui/material';
 import ErrorIcon from '@mui/icons-material/Error';
 import AvatarLogout from './AvatarLogout';
 import { NavLink, useLocation } from 'react-router-dom'; // Utilisation de NavLink
+import AvatarAndName from './AvatarAndName';
 
 const drawerWidth = 240;
 
@@ -95,7 +96,6 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 export default function Dashboard({ isPending, isError, retards }) {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
-  const location = useLocation(); // Utilisation de useLocation pour connaître le chemin actuel
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -166,6 +166,7 @@ export default function Dashboard({ isPending, isError, retards }) {
           </IconButton>
         </DrawerHeader>
         <Divider />
+        { open && <AvatarAndName/> }
         <List>
           {menuItems.map((item) => (
             <NavLink
