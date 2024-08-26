@@ -31,14 +31,6 @@ function Copyright(props) {
 
 const Inscription = () => {
     const {handleSubmit, register, formState: {errors}} = useForm();
-
-    const navigateTo = useNavigate();
-
-    useEffect(() => {
-        if (localStorage.getItem("userMail")) {
-            navigateTo("/");
-        }
-    }) 
     
     // Envoie des informations au serveur
     const mutation = useMutation({
@@ -80,7 +72,7 @@ const Inscription = () => {
             <CssBaseline />
             <Box
             sx={{
-                marginTop: 8,
+                marginTop: 0,
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
