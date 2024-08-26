@@ -45,10 +45,7 @@ const AssignNav = ({quai}) => {
     // envoie de requete au serveur
     const mutation = useMutation({
 
-        mutationFn: async ({idQuai , longueurDispo, idNav, typeChange, dateChange}) => {
-
-        // Reduire la longueur disponible
-        await axios.post("http://localhost:8081/quai/update/changeLongDispo", {idQuai, longueurDispo});
+        mutationFn: async ({idQuai, idNav, typeChange, dateChange}) => {
 
         // Amarrer le navire
         await axios.post("http://localhost:8081/navire/update/changeSituation", {idNav, situationNav: "Amarré"});
@@ -70,6 +67,7 @@ const AssignNav = ({quai}) => {
         onSuccess: () => {
         // Recharger la liste apres l'operation
         queryClient.invalidateQueries("quai");
+        reset([]);
         }
     });
 
@@ -77,13 +75,11 @@ const AssignNav = ({quai}) => {
         // OBJET NAVIRE ET QUAI selectionné
         const selectedNavire = listeNav.find(navire => navire.id === data.idNav);
 
-        quai.longueurDispo -= selectedNavire.longueur;
-
-        const {idQuai , longueurDispo} = quai;
+        const {idQuai} = quai;
         const {id} = selectedNavire;
         
         toast.promise(
-            mutation.mutateAsync({idQuai , longueurDispo, idNav: id, typeChange: data.typeChange, dateChange: data.dateChange}),
+            mutation.mutateAsync({idQuai, idNav: id, typeChange: data.typeChange, dateChange: data.dateChange}),
             {
               loading: "chargement...",
               success: "Navire affecté",

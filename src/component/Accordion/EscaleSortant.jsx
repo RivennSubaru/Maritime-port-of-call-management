@@ -99,7 +99,7 @@ const EscaleSortant = () => {
   // envoie de requete au serveur
   const mutation = useMutation({
 
-    mutationFn: async ({typeMouvement, idEscale, idNav, idQuai, longueurDispo}) => {
+    mutationFn: async ({typeMouvement, idEscale, idNav, idQuai}) => {
 
       // Demarrer l'escale
       await axios.post("http://localhost:8081/escale/update/start", {idEscale});
@@ -107,7 +107,7 @@ const EscaleSortant = () => {
       if(typeMouvement == "Sortant"){
        
         // Liberer longueur disponible
-        await axios.post("http://localhost:8081/quai/update/changeLongDispo", {idQuai, longueurDispo});
+        await axios.post("http://localhost:8081/quai/update/changeLongDispo", {idQuai});
 
         // Faire partir le navire
         await axios.post("http://localhost:8081/navire/update/changeSituation", {idNav, situationNav: "parti"});
@@ -140,11 +140,6 @@ const EscaleSortant = () => {
   });
 
   const handleArrived = async (escale) => {
-    if(escale.typeMouvement == "Sortant") {
-
-      // Additionner la longueur dispo du quai par la longueur du navire
-      escale.longueurDispo += escale.longueursNav;
-    }
 
     await toast.promise(
       mutation.mutateAsync(escale),

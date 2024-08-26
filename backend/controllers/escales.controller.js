@@ -29,7 +29,7 @@ const getAllEscale = asyncHandler(async (req, res) => {
 
 // GET ALL CURRENT ESCALE ENTRANT
 const getCurrEscaleEntrant = asyncHandler(async (req, res) => {
-    const sql = "SELECT `idEscale`, `numEscale`, escales.idNav, navires.numNav, navires.nomNav, navires.longueursNav, escales.idQuai, quais.nomQuai, quais.longueurDispo, DATE(`ETA`) AS dateArrivEst, TIME(`ETA`) AS heureArrivEst, `provenance`, DATE(`ATD`) AS dateDepartEff, TIME(`ATD`) AS heureDepartEff, `dateCreationEscale` FROM `escales` JOIN navires ON escales.idNav = navires.idNav JOIN quais ON escales.idQuai = quais.idQuai WHERE DATE(`ETA`) = CURRENT_DATE AND etatEscale = \"Actif\" AND typeMouvement = \"Entrant\"";
+    const sql = "SELECT `idEscale`, `numEscale`, escales.idNav, navires.numNav, navires.nomNav, navires.longueursNav, escales.idQuai, quais.nomQuai, DATE(`ETA`) AS dateArrivEst, TIME(`ETA`) AS heureArrivEst, `provenance`, DATE(`ATD`) AS dateDepartEff, TIME(`ATD`) AS heureDepartEff, `dateCreationEscale` FROM `escales` JOIN navires ON escales.idNav = navires.idNav JOIN quais ON escales.idQuai = quais.idQuai WHERE DATE(`ETA`) = CURRENT_DATE AND etatEscale = \"Actif\" AND typeMouvement = \"Entrant\"";
 
     db.query(sql, (err, data) => {
         if (err) res.status(500).send({error: err.message});
@@ -38,7 +38,7 @@ const getCurrEscaleEntrant = asyncHandler(async (req, res) => {
 })
 // GET LATE ESCALE ENTRANT
 const getLateEscaleEntrant = asyncHandler(async (req, res) => {
-    const sql = "SELECT `idEscale`, `numEscale`, escales.idNav, navires.numNav, navires.nomNav, navires.longueursNav, escales.idQuai, quais.nomQuai, quais.longueurDispo, DATE(`ETA`) AS dateArrivEst, TIME(`ETA`) AS heureArrivEst, `provenance`, DATE(`ATD`) AS dateDepartEff, TIME(`ATD`) AS heureDepartEff, `dateCreationEscale` FROM `escales` JOIN navires ON escales.idNav = navires.idNav JOIN quais ON escales.idQuai = quais.idQuai WHERE DATE(`ETA`) < CURRENT_DATE AND etatEscale = \"Actif\" AND typeMouvement = \"Entrant\"";
+    const sql = "SELECT `idEscale`, `numEscale`, escales.idNav, navires.numNav, navires.nomNav, navires.longueursNav, escales.idQuai, quais.nomQuai, DATE(`ETA`) AS dateArrivEst, TIME(`ETA`) AS heureArrivEst, `provenance`, DATE(`ATD`) AS dateDepartEff, TIME(`ATD`) AS heureDepartEff, `dateCreationEscale` FROM `escales` JOIN navires ON escales.idNav = navires.idNav JOIN quais ON escales.idQuai = quais.idQuai WHERE DATE(`ETA`) < CURRENT_DATE AND etatEscale = \"Actif\" AND typeMouvement = \"Entrant\"";
 
     db.query(sql, (err, data) => {
         if (err) res.status(500).send({error: err.message});
@@ -48,7 +48,7 @@ const getLateEscaleEntrant = asyncHandler(async (req, res) => {
 
 // GET ALL CURRENT ESCALE FOR NAVIRE DEPARTURE (ESCALE PEUT ETRE ENTRANT MAIS NAVIRE SORT DU QUAI)
 const getCurrEscaleSortant = asyncHandler(async (req, res) => {
-    const sql = "SELECT `idEscale`, `numEscale`, escales.idNav, navires.numNav, navires.nomNav, navires.longueursNav, escales.idQuai, quais.nomQuai, quais.longueurDispo, typeMouvement, DATE(`ETD`) AS dateDepartEst, TIME(`ETA`) AS heureDepartEst, `provenance`, `dateCreationEscale` FROM `escales` JOIN navires ON escales.idNav = navires.idNav JOIN quais ON escales.idQuai = quais.idQuai WHERE DATE(`ETD`) = CURRENT_DATE AND etatEscale = \"Prévu\" AND (typeMouvement = \"Sortant\" OR typeMouvement = \"Entrant\")";
+    const sql = "SELECT `idEscale`, `numEscale`, escales.idNav, navires.numNav, navires.nomNav, navires.longueursNav, escales.idQuai, quais.nomQuai, typeMouvement, DATE(`ETD`) AS dateDepartEst, TIME(`ETA`) AS heureDepartEst, `provenance`, `dateCreationEscale` FROM `escales` JOIN navires ON escales.idNav = navires.idNav JOIN quais ON escales.idQuai = quais.idQuai WHERE DATE(`ETD`) = CURRENT_DATE AND etatEscale = \"Prévu\" AND (typeMouvement = \"Sortant\" OR typeMouvement = \"Entrant\")";
 
     db.query(sql, (err, data) => {
         if (err) res.status(500).send({error: err.message});
@@ -57,7 +57,7 @@ const getCurrEscaleSortant = asyncHandler(async (req, res) => {
 })
 // GET LATE ESCALE FOR NAVIRE DEPARTURE
 const getLateEscaleSortant = asyncHandler(async (req, res) => {
-    const sql = "SELECT `idEscale`, `numEscale`, escales.idNav, navires.numNav, navires.nomNav, navires.longueursNav, escales.idQuai, quais.nomQuai, quais.longueurDispo, typeMouvement, DATE(`ETD`) AS dateDepartEst, TIME(`ETA`) AS heureDepartEst, `provenance`, `dateCreationEscale` FROM `escales` JOIN navires ON escales.idNav = navires.idNav JOIN quais ON escales.idQuai = quais.idQuai WHERE DATE(`ETD`) < CURRENT_DATE AND etatEscale = \"Prévu\" AND (typeMouvement = \"Sortant\" OR typeMouvement = \"Entrant\")";
+    const sql = "SELECT `idEscale`, `numEscale`, escales.idNav, navires.numNav, navires.nomNav, navires.longueursNav, escales.idQuai, quais.nomQuai, typeMouvement, DATE(`ETD`) AS dateDepartEst, TIME(`ETA`) AS heureDepartEst, `provenance`, `dateCreationEscale` FROM `escales` JOIN navires ON escales.idNav = navires.idNav JOIN quais ON escales.idQuai = quais.idQuai WHERE DATE(`ETD`) < CURRENT_DATE AND etatEscale = \"Prévu\" AND (typeMouvement = \"Sortant\" OR typeMouvement = \"Entrant\")";
 
     db.query(sql, (err, data) => {
         if (err) res.status(500).send({error: err.message});

@@ -63,7 +63,6 @@ const columns = [
     { id: 'emplacementQuai', label: 'Emplacement'},
     { id: 'profondeurQuai', label: 'Profondeur (m)'},
     { id: 'longueursQuai', label: 'Longueur (m)'},
-    { id: 'longueurDispo', label: 'Longueur disponible (m)'},
 ];
 
 function Row({ row, search, handleAddNav, handleEdit, handleDelete, handleRemoveAssign } ) {
@@ -87,7 +86,6 @@ function Row({ row, search, handleAddNav, handleEdit, handleDelete, handleRemove
                 <TableCell align="right">{highlightSearchTerm(row.emplacementQuai.toString(), search)}</TableCell>
                 <TableCell align="right">{highlightSearchTerm(row.profondeurQuai.toString(), search)}</TableCell>
                 <TableCell align="right">{highlightSearchTerm(row.longueursQuai.toString(), search)}</TableCell>
-                <TableCell align="right">{highlightSearchTerm(row.longueurDispo.toString(), search)}</TableCell>
                 <TableCell align="center" sx={{padding: '0 !important'}}>
                     <IconButton
                         sx={{
@@ -165,7 +163,7 @@ function Row({ row, search, handleAddNav, handleEdit, handleDelete, handleRemove
                                                                 backgroundColor: 'rgb(211 47 47 / 6%)'
                                                             }
                                                         }}
-                                                        onClick={() => handleRemoveAssign({idNav: occ.idNav, longueurNav: occ.longueursNav, idQuai: row.idQuai, longueurDispo: row.longueurDispo})}
+                                                        onClick={() => handleRemoveAssign({idNav: occ.idNav, longueurNav: occ.longueursNav, idQuai: row.idQuai})}
                                                     >
                                                         <RemoveIcon fontSize='small' />
                                                     </IconButton>
@@ -293,10 +291,7 @@ const ListeQuai = () => {
 
     const removeAssignMutation = useMutation({
 
-        mutationFn: async ({idNav, idQuai, longueurDispo}) => {
-           
-            // Liberer longueur disponible
-            await axios.post("http://localhost:8081/quai/update/changeLongDispo", {idQuai, longueurDispo});
+        mutationFn: async ({idNav, idQuai}) => {
     
             // Faire partir le navire
             await axios.post("http://localhost:8081/navire/update/changeSituation", {idNav, situationNav: "parti"});
@@ -354,8 +349,6 @@ const ListeQuai = () => {
     };
 
     const handleConfirmRemove = async () => {
-
-        selectedRow.longueurDispo += selectedRow.longueurNav;
 
         await toast.promise(
             removeAssignMutation.mutateAsync(selectedRow),
@@ -462,7 +455,6 @@ const ListeQuai = () => {
                             <TableCell sx={{fontWeight: "bold"}} align="right">Emplacement</TableCell>
                             <TableCell sx={{fontWeight: "bold"}} align="right">Profondeur (m)</TableCell>
                             <TableCell sx={{fontWeight: "bold"}} align="right">Longueur (m)</TableCell>
-                            <TableCell sx={{fontWeight: "bold"}} align="right">Longueur Disponible (m)</TableCell>
                             <TableCell sx={{fontWeight: "bold"}} align="center">Action</TableCell>
                         </TableRow>
                     </TableHead>

@@ -100,13 +100,10 @@ const RetardEntrant = () => {
   // envoie de requete au serveur
   const mutation = useMutation({
 
-    mutationFn: async ({idEscale, idNav, idQuai, longueurDispo}) => {
+    mutationFn: async ({idEscale, idNav, idQuai}) => {
       
       // Terminer l'escale
       await axios.post("http://localhost:8081/escale/update/finish", {idEscale});
-
-      // Reduire la longueur disponible
-      await axios.post("http://localhost:8081/quai/update/changeLongDispo", {idQuai, longueurDispo});
 
       // Amarrer le navire
       await axios.post("http://localhost:8081/navire/update/changeSituation", {idNav, situationNav: "Amarré"});
@@ -132,9 +129,6 @@ const RetardEntrant = () => {
   });
 
   const handleArrived = (escale) => {
-
-    // Soustraire la longueur dispo du quai par la longueur du navire
-    escale.longueurDispo -= escale.longueursNav;
 
     toast.promise(
       mutation.mutateAsync(escale),
