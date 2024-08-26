@@ -35,7 +35,7 @@ const loginUser = asyncHandler(async (req, res) => {
             res.status(401).send({message: 'Email ou mot de passe invalide'});
             return;
         }
-        res.status(200).send({message: "Connecté"})
+        res.status(200).send(data)
     });
 })
 
