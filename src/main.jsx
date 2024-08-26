@@ -51,13 +51,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <Route path='/form/navire' element={<FormNavire/>}/>
           <Route path='/form/quai' element={<FormQuai/>}/>
           <Route path='/form/pilote' element={<FormPilote/>}/>
-
-          <Route path='/test/form/search' element={<FormSearch/>}/>
-          <Route path='/test/form/escale' element={<FormEscaleTest/>}/>
-          <Route path='/test/accordion/entrant' element={<EscaleEntrant/>}/>
-          <Route path='/test/accordion/sortant' element={<EscaleSortant/>}/>
-          <Route path='/test/accordion/manager' element={<EscaleManager/>}/>
-          <Route path='/test/stat' element={<Stat/>}/>
         </Routes>
       </BrowserRouter>
     </QueryClientProvider>
