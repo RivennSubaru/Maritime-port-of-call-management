@@ -24,6 +24,7 @@ import { useState } from 'react';
 import Draggable from 'react-draggable';
 import ErrorIcon from '@mui/icons-material/Error';
 import { toast } from 'react-hot-toast';
+import { formatDate } from '../_utils/dateFormatter';
 
 // Fonction pour surligner le texte recherché
 const highlightSearchTerm = (text, searchTerm) => {
@@ -127,29 +128,74 @@ const TableListe = ({columns, apiUrl, Item, FormComponent, setNotif}) => {
     /* IMPRESSION PDF */
     const handlePrintPDF = () => {
 
-        // init du document pdf
-        const doc = new jsPDF();
-        // En-tete de la table dans pdf (extraction des labels)
-        const tableColumn = columns.map(col => col.label);
+        // Initialisation du document PDF en mode paysage
+        const doc = new jsPDF('landscape'); // Changement ici pour spécifier l'orientation paysage
 
-        // Création des lignes du tableau
-        // On extrait les valeurs correspondant aux colonnes définies et on les ajoute à tableRows
-        const tableRows = [];
-        filteredData.forEach(row => {
-          const rowData = columns.map(col => row[col.id]);
-          tableRows.push(rowData);
-        });
+        if (Item === "escale") {
+            // En-tête de la table dans le PDF (extraction des labels) sans les colonnes ETA et ETD
+            const tableColumn = columns
+            .filter(col => col.id !== 'ETA' && col.id !== 'ETD')  // Filtrer les colonnes
+            .map(col => col.label);
+
+            // Création des lignes du tableau
+            const tableRows = [];
+
+            filteredData.forEach(row => {
+                const rowData = columns
+                    .filter(col => col.id !== 'ETA' && col.id !== 'ETD') // Filtrer les colonnes
+                    .map(col => {
+                        if (col.id === 'ATA' || col.id === 'ATD') {
+                            // Formater les champs de date ATA et ATD
+                            return formatDate(row[col.id]);
+                        } else {
+                            // Retourner la valeur brute pour les autres champs
+                            return row[col.id];
+                        }
+                    });
+                tableRows.push(rowData);
+            });
+
+            // Génération du tableau dans le PDF
+            doc.autoTable({
+                head: [tableColumn],  // en-tête
+                body: tableRows,      // lignes
+                startY: 20,           // position de départ du tableau sur l'axe Y (20 unités à partir du haut).
+                styles: { overflow: 'linebreak' }, // Permet de gérer les débordements de texte
+                theme: 'grid', // Optionnel : thème du tableau
+                headStyles: { fillColor: [22, 160, 133] }, // Optionnel : couleur de l'en-tête
+            });
+
+        } else {
+            
+            // En-tête de la table dans le PDF (extraction des labels)
+            const tableColumn = columns.map(col => col.label);
     
-        // Génération du tableau dans le PDF
-        doc.autoTable({
-          head: [tableColumn],  // en-tête
-          body: tableRows,      // lignes
-          startY: 20,           // position de départ du tableau sur l'axe Y (20 unités à partir du haut).
-        });
+            // Création des lignes du tableau
+            // On extrait les valeurs correspondant aux colonnes définies et on les ajoute à tableRows
+            const tableRows = [];
+            filteredData.forEach(row => {
+                const rowData = columns.map(col => row[col.id]);
+
+                tableRows.push(rowData);
+            });
+
+            // Génération du tableau dans le PDF
+            doc.autoTable({
+            head: [tableColumn],  // en-tête
+            body: tableRows,      // lignes
+            startY: 20,           // position de départ du tableau sur l'axe Y (20 unités à partir du haut).
+            styles: { overflow: 'linebreak' }, // Permet de gérer les débordements de texte
+            theme: 'grid', // Optionnel : thème du tableau
+            headStyles: { fillColor: [22, 160, 133] }, // Optionnel : couleur de l'en-tête
+            });
+        }
+        
+
 
         // Enregistrement du document PDF
         doc.save('table_data.pdf');
     };
+
 
 
     /* EXPORTATION EXCEL */
