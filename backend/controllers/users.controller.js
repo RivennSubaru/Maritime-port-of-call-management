@@ -10,7 +10,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const sql = 'INSERT INTO utilisateurs (pseudo, emailUser, password) VALUES (?, ?, ?)';
+    const sql = 'INSERT INTO utilisateurs (pseudo, emailUser, password, role) VALUES (?, ?, ?, "user")';
     const values = [pseudo, emailUser, hashedPassword];
 
     db.query(sql, values, (err, data) => {
