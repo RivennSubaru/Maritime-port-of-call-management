@@ -47,7 +47,7 @@ export default function StatBox() {
     // Filtrer les données en fonction du mois courant
     const filteredData = useMemo(() => {
         return countPerDay.filter(item => item.mois === currentMonth);
-    }, [currentMonth]);
+    }, [currentMonth, countPerDay]);
 
     // Extraire les labels et les données pour le graphique
     const xLabels = filteredData.map(item => `j${item.jours}`);
