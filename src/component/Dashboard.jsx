@@ -24,6 +24,7 @@ import ShowChartIcon from '@mui/icons-material/ShowChart';
 import { Badge, CircularProgress, Link } from '@mui/material';
 import ErrorIcon from '@mui/icons-material/Error';
 import AvatarLogout from './AvatarLogout';
+import { NavLink, useLocation } from 'react-router-dom'; // Utilisation de NavLink
 
 const drawerWidth = 240;
 
@@ -53,7 +54,6 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   alignItems: 'center',
   justifyContent: 'flex-end',
   padding: theme.spacing(0, 1),
-  // necessary for content to be below app bar
   ...theme.mixins.toolbar,
 }));
 
@@ -92,10 +92,10 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   }),
 );
 
-
-export default function Dashboard({isPending, isError, retards}) {
+export default function Dashboard({ isPending, isError, retards }) {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
+  const location = useLocation(); // Utilisation de useLocation pour connaître le chemin actuel
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -105,24 +105,31 @@ export default function Dashboard({isPending, isError, retards}) {
     setOpen(false);
   };
 
-  // Custom
   const RetardButton = () => {
     if (isPending) {
-      return <CircularProgress color="secondary" size={25}/>
+      return <CircularProgress color="secondary" size={25} />
     }
 
     if (isError) {
-      return <ErrorIcon/>
+      return <ErrorIcon />
     }
 
     return (
       <IconButton href='/retard' color="inherit">
-          <Badge badgeContent={retards.length} color="error">
-            <AssignmentLateIcon />
-          </Badge>
+        <Badge badgeContent={retards.length} color="error">
+          <AssignmentLateIcon />
+        </Badge>
       </IconButton>
     );
   }
+
+  const menuItems = [
+    { text: 'Tableau de bord', icon: <DashboardIcon />, path: '/tableauBord' },
+    { text: 'Liste des navires', icon: <DirectionsBoatIcon />, path: '/navire' },
+    { text: 'Liste des quais', icon: <AnchorIcon />, path: '/quai' },
+    { text: 'Liste des escales', icon: <SailingIcon />, path: '/escale' },
+    { text: 'Statistique', icon: <ShowChartIcon />, path: '/stat' }
+  ];
 
   return (
     <>
@@ -130,7 +137,7 @@ export default function Dashboard({isPending, isError, retards}) {
       <AppBar position="fixed" open={open}>
         <Toolbar
           sx={{
-            pr: '24px', // keep right padding when drawer closed
+            pr: '24px',
           }}
         >
           <IconButton
@@ -148,8 +155,8 @@ export default function Dashboard({isPending, isError, retards}) {
           <Typography variant="h6" noWrap component="div" flex={1}>
             SPAT
           </Typography>
-          <RetardButton/>
-          <AvatarLogout/>
+          <RetardButton />
+          <AvatarLogout />
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={open}>
@@ -160,13 +167,24 @@ export default function Dashboard({isPending, isError, retards}) {
         </DrawerHeader>
         <Divider />
         <List>
-          {['Tableau de bord', 'Liste des navires', 'Liste des quais', 'Liste des escales'].map((text, index) => (
-            <Link href={["/tableauBord", "/navire", "/quai", "/escale"].find((n, i) => i == index)} key={text} sx={{ display: 'block', textDecoration: "none", color: "rgba(0, 0, 0, 0.54)" }}>
+          {menuItems.map((item) => (
+            <NavLink
+              to={item.path}
+              key={item.text}
+              style={({ isActive }) => ({
+                textDecoration: 'none',
+                color: isActive ? theme.palette.primary.main : 'rgba(0, 0, 0, 0.54)',
+              })}
+            >
               <ListItemButton
                 sx={{
                   minHeight: 48,
                   justifyContent: open ? 'initial' : 'center',
                   px: 2.5,
+                  color: 'inherit',
+                  '&:hover': {
+                    color: theme.palette.primary.main,
+                  },
                 }}
               >
                 <ListItemIcon
@@ -174,38 +192,14 @@ export default function Dashboard({isPending, isError, retards}) {
                     minWidth: 0,
                     mr: open ? 3 : 'auto',
                     justifyContent: 'center',
+                    color: 'inherit',
                   }}
                 >
-                  {[<DashboardIcon/>, <DirectionsBoatIcon />, <AnchorIcon />, <SailingIcon />].find((n, i) => i === index)}
+                  {item.icon}
                 </ListItemIcon>
-                <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
+                <ListItemText primary={item.text} sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
-            </Link>
-          ))}
-        </List>
-        <Divider />
-        <List>
-          {['Statistique'].map((text, index) => (
-            <Link href={["/stat"].find((n, i) => i == index)} key={text} sx={{ display: 'block', textDecoration: "none", color: "rgba(0, 0, 0, 0.54)" }}>
-              <ListItemButton
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? 'initial' : 'center',
-                  px: 2.5,
-                }}
-              >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : 'auto',
-                    justifyContent: 'center',
-                  }}
-                >
-                  {[<ShowChartIcon/>].find((n, i) => i === index)}
-                </ListItemIcon>
-                <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
-              </ListItemButton>
-            </Link>
+            </NavLink>
           ))}
         </List>
       </Drawer>
