@@ -32,6 +32,8 @@ import jsPDF from 'jspdf';
 import ExcelJS from 'exceljs';
 import AssignNav from '../component/AssignNav';
 
+const role = localStorage.getItem('role');
+
 // Fonction pour surligner le texte recherché
 const highlightSearchTerm = (text, searchTerm) => {
     if (!searchTerm) return text;
@@ -111,18 +113,20 @@ function Row({ row, search, handleAddNav, handleEdit, handleDelete, handleRemove
                     >
                         <EditIcon fontSize='small' />
                     </IconButton>
-                    <IconButton
-                        sx={{
-                            color: 'gray', // Couleur de base
-                            '&:hover': {
-                                color: 'error.main', // Couleur au survol (par défaut la couleur d'erreur de MUI)
-                                backgroundColor: 'rgb(211 47 47 / 6%)'
-                            }
-                        }}
-                        onClick={() => handleDelete(row)}
-                    >
-                        <DeleteIcon fontSize='small' />
-                    </IconButton>
+                    {role == "admin" && 
+                        <IconButton
+                            sx={{
+                                color: 'gray', // Couleur de base
+                                '&:hover': {
+                                    color: 'error.main', // Couleur au survol (par défaut la couleur d'erreur de MUI)
+                                    backgroundColor: 'rgb(211 47 47 / 6%)'
+                                }
+                            }}
+                            onClick={() => handleDelete(row)}
+                        >
+                            <DeleteIcon fontSize='small' />
+                        </IconButton>
+                    }
                 </TableCell>
             </TableRow>
             <TableRow>

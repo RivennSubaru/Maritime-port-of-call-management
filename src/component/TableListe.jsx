@@ -56,6 +56,7 @@ const TableListe = ({columns, apiUrl, Item, FormComponent, setNotif}) => {
 
     //Recuperation du token
     const token = localStorage.getItem("token");
+    const role = localStorage.getItem("role");
 
     // Icone et label des menus rapides
     const actions = [
@@ -376,7 +377,7 @@ const TableListe = ({columns, apiUrl, Item, FormComponent, setNotif}) => {
                                     >
                                         <EditIcon fontSize='small' />
                                     </IconButton>
-                                    {Item != 'escale' &&
+                                    {Item != 'escale' && role == "admin" &&
                                     <IconButton
                                         sx={{
                                             color: 'gray', // Couleur de base
