@@ -105,9 +105,6 @@ const EscaleSortant = () => {
       await axios.post("http://localhost:8081/escale/update/start", {idEscale});
       
       if(typeMouvement == "Sortant"){
-       
-        // Liberer longueur disponible
-        await axios.post("http://localhost:8081/quai/update/changeLongDispo", {idQuai});
 
         // Faire partir le navire
         await axios.post("http://localhost:8081/navire/update/changeSituation", {idNav, situationNav: "parti"});

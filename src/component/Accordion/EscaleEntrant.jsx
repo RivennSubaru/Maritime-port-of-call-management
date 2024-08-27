@@ -104,9 +104,6 @@ const EscaleEntrant = () => {
       // Terminer l'escale
       await axios.post("http://localhost:8081/escale/update/finish", {idEscale});
 
-      // Reduire la longueur disponible
-      await axios.post("http://localhost:8081/quai/update/changeLongDispo", {idQuai});
-
       // Amarrer le navire
       await axios.post("http://localhost:8081/navire/update/changeSituation", {idNav, situationNav: "Amarré"});
 
@@ -127,6 +124,7 @@ const EscaleEntrant = () => {
     onSuccess: () => {
       // Recharger la liste apres l'operation
       queryClient.invalidateQueries("entrant");
+      queryClient.invalidateQueries("escale");
     }
   });
 
