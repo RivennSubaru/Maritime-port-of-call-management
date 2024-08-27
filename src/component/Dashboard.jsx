@@ -161,15 +161,20 @@ export default function Dashboard({ isPending, isError, retards }) {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap component="div" flex={1}>
-            SPAT
-          </Typography>
+          <Typography variant="h6" noWrap component="div" flex={1}/>
           <RetardButton />
           <AvatarLogout />
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={open}>
         <DrawerHeader>
+          <div className='entete'>
+            <p className='logoContainer'><img src='../../pictures/logo_spat png.png'/></p>
+            <div className='titre spat'>
+              <p id='portToamasina'>PORT TOAMASINA</p>
+              <p id='spat'>Société du Port à gestion Autonome de Toamasina</p>
+            </div>
+          </div>
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
           </IconButton>

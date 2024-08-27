@@ -23,3 +23,32 @@ section.retard {
     padding-left: 16px;
     color: #00000040;
 }
+
+.entete p img {
+    width: 35px;
+    height: 35px;
+}
+
+.entete {
+    display: flex;
+    flex-direction: row;
+    position: absolute;
+    left: 12px;
+    top: 15px;
+}
+.entete .logoContainer {
+    margin: 0;
+}
+
+.titre.spat #spat {
+    font-size: 7px;
+    margin: 0;
+    color: #6c6c6c;
+}
+
+.titre.spat #portToamasina {
+    color: #1976d2;
+    font-size: 15px;
+    font-weight: bold;
+    margin: 0;
+}
