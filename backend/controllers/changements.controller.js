@@ -2,10 +2,10 @@ const asyncHandler = require('express-async-handler');
 const db = require('../config/db');
 
 const addChange = asyncHandler(async (req, res) => {
-    const {idNav, idQuai, typeChange, dateChange} = req.body;
+    const {idNav, idQuai, typeChange} = req.body;
 
-    const sql = "INSERT INTO `changements`(`idNav`, `idQuai`, `typeChange`, `dateChange`) VALUES (?, ?, ?, ?)";
-    const values = [idNav, idQuai, typeChange, dateChange];
+    const sql = "INSERT INTO `changements`(`idNav`, `idQuai`, `typeChange`, `dateChange`) VALUES (?, ?, ?, NOW())";
+    const values = [idNav, idQuai, typeChange];
 
     db.query(sql, values, (err, data) => {
         if (err) {
