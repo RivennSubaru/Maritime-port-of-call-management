@@ -111,12 +111,12 @@ const Connexion = () => {
                     alignItems: 'center',
                 }}
             >
-                <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-                    <LockOutlinedIcon />
-                </Avatar>
-                <Typography component="h1" variant="h5">
+                <p style={{margin: 0}}>
+                    <img alt='logo spat' style={{margin: 0, width: "250px"}} src='../../pictures/logo_spat png.png'/>
+                </p>
+                {/* <Typography component="h1" variant="h5">
                     Connexion
-                </Typography>
+                </Typography> */}
                 <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate sx={{ mt: 1 }}>
                     <TextField
                         margin="normal"
