@@ -53,8 +53,8 @@ const Inscription = () => {
             toast.error("Les mots de passes ne correspondent pas");
 
         } else {
-            const {pseudo, emailUser, password} = data;
-            const dataCopy = {pseudo, emailUser, password};
+            const {pseudo, password} = data;
+            const dataCopy = {pseudo, password};
 
             toast.promise(
                 mutation.mutateAsync(dataCopy),
@@ -96,19 +96,6 @@ const Inscription = () => {
                         {...register("pseudo", {required: "Ce champ ne peut être vide"})}
                         error={!!errors.pseudo}
                         helperText={errors.pseudo ? errors.pseudo.message : ""}
-                    />
-                </Grid>
-                <Grid item xs={12}>
-                    <TextField
-                        required
-                        fullWidth
-                        id="email"
-                        label="Adresse email"
-                        autoComplete="email"
-                        type='email'
-                        {...register("emailUser", {required: "Ce champ ne peut être vide"})}
-                        error={!!errors.email}
-                        helperText={errors.email ? errors.email.message : ""}
                     />
                 </Grid>
                 <Grid item xs={12}>

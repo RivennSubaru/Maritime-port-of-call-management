@@ -4,7 +4,6 @@ import FormNavire from './Formulaire/FormNavire'
 
 const columns = [
     { id: 'pseudo', label: 'Pseudo', minWidth: 170 },
-    { id: 'emailUser', label: 'Email', minWidth: 100 },
     { id: 'role', label: 'Rôle', minWidth: 100 },
 ]; 
 

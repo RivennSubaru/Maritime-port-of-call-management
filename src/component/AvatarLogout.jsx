@@ -18,7 +18,6 @@ const AvatarLogout = () => {
     const handleLogout = () => {
         // Suppression des informations du localStorage
         localStorage.removeItem("token");
-        localStorage.removeItem("userMail");
         localStorage.removeItem("pseudo");
         localStorage.removeItem("role");
 

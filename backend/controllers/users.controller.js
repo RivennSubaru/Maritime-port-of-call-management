@@ -6,12 +6,12 @@ require('dotenv').config();
 
 // INSCRIPTION
 const registerUser = asyncHandler(async (req, res) => {
-    const {pseudo, emailUser, password} = req.body;
+    const {pseudo, password} = req.body;
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const sql = 'INSERT INTO utilisateurs (pseudo, emailUser, password, role) VALUES (?, ?, ?, "user")';
-    const values = [pseudo, emailUser, hashedPassword];
+    const sql = 'INSERT INTO utilisateurs (pseudo, password, role) VALUES (?, ?, "user")';
+    const values = [pseudo, hashedPassword];
 
     db.query(sql, values, (err, data) => {
         if (err) {
@@ -24,17 +24,17 @@ const registerUser = asyncHandler(async (req, res) => {
 
 // LOGIN
 const loginUser = asyncHandler(async (req, res) => {
-    const {emailUser, password} = req.body;
+    const {pseudo, password} = req.body;
 
-    const sql = 'SELECT * FROM utilisateurs WHERE emailUser = ?';
+    const sql = 'SELECT * FROM utilisateurs WHERE pseudo = ?';
 
-    db.query(sql, [emailUser], async (err, data) => {
+    db.query(sql, [pseudo], async (err, data) => {
         if (err) {
             res.status(500).send({error: err.message});
             return;
         }
         if (data.length === 0 || !(await bcrypt.compare(password, data[0].password))) {
-            res.status(401).send({message: 'Email ou mot de passe invalide'});
+            res.status(401).send({message: 'pseudo ou mot de passe invalide'});
             return;
         }
         
@@ -60,7 +60,7 @@ const loginUser = asyncHandler(async (req, res) => {
 
 // GET ALL (WITHOUT PASS)
 const getAllUser = asyncHandler(async (req, res) => {
-    const sql = "SELECT `idUser` AS id, `pseudo`, `emailUser`, `role` FROM `utilisateurs`";
+    const sql = "SELECT `idUser` AS id, `pseudo`, `role` FROM `utilisateurs`";
 
     db.query(sql, (err, data) => {
         if (err) res.status(500).send({error: err.message});

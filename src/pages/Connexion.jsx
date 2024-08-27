@@ -35,7 +35,7 @@ const Connexion = () => {
     const navigateTo = useNavigate();
 
     useEffect(() => {
-        if (localStorage.getItem("userMail")) {
+        if (localStorage.getItem("pseudo")) {
             navigateTo("/");
         }
     })
@@ -54,7 +54,7 @@ const Connexion = () => {
         onError: (error) => {
             // Gestion des erreur
             if (error.status === 401) {
-                toast.error("Email ou mot de passe invalide");
+                toast.error("Pseudo ou mot de passe invalide");
             } else if (error.status === 500) {
                 toast.error("Une erreur est survenue sur le serveur");
             } else {
@@ -70,13 +70,11 @@ const Connexion = () => {
         onSuccess: (res) => {
             // Récupération du token JWT depuis la réponse
             const token = res.data.token;
-            const userEmail = res.data.email;
             const pseudo = res.data.pseudo;
             const role = res.data.role;
 
             // Stockage des informations utilisateur et du token
             localStorage.setItem("token", token);
-            localStorage.setItem("userMail", userEmail);
             localStorage.setItem("pseudo", pseudo);
             localStorage.setItem("role", role);
 
@@ -119,16 +117,14 @@ const Connexion = () => {
                 </Typography> */}
                 <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate sx={{ mt: 1 }}>
                     <TextField
-                        margin="normal"
                         required
                         fullWidth
-                        id="email"
-                        label="Adresse email"
-                        autoFocus
-                        type='email'
-                        {...register("emailUser", {required: "Ce champ ne peut être vide", pattern: /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/})}
-                        error={!!errors.emailUser}
-                        helperText={errors.emailUser ? errors.emailUser.message : ""}
+                        id="pseudo"
+                        label="Pseudo"
+                        autoComplete="family-name"
+                        {...register("pseudo", {required: "Ce champ ne peut être vide"})}
+                        error={!!errors.pseudo}
+                        helperText={errors.pseudo ? errors.pseudo.message : ""}
                     />
                     <TextField
                         margin="normal"
