@@ -16,6 +16,7 @@ import RetardEscale from './pages/RetardEscale.jsx'
 import AdminRoute from './component/Routes/AdminRoute.jsx'
 import UserRoute from './component/Routes/UserRoute.jsx'
 import UserManager from './pages/UserManager.jsx'
+import ListePilote from './pages/ListePilote.jsx'
 
 const queryClient = new QueryClient();
 
@@ -33,6 +34,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             <Route path='/quai' element={<UserRoute element={ListeQuai} />} />
             <Route path='/navire' element={<UserRoute element={ListeNavire} />} />
             <Route path='/retard' element={<UserRoute element={RetardEscale} />} />
+            <Route path='/pilote' element={<UserRoute element={ListePilote} />} />
 
             {/* Routes protégées accessibles uniquement aux administrateurs */}
             <Route path='/stat' element={<AdminRoute element={Stat} />} />
