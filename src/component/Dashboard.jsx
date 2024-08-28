@@ -21,13 +21,14 @@ import SailingIcon from '@mui/icons-material/Sailing';
 import AnchorIcon from '@mui/icons-material/Anchor';
 import DirectionsBoatIcon from '@mui/icons-material/DirectionsBoat';
 import ShowChartIcon from '@mui/icons-material/ShowChart';
-import { Badge, CircularProgress, Link } from '@mui/material';
+import { Badge, CircularProgress, Link, SvgIcon } from '@mui/material';
 import ErrorIcon from '@mui/icons-material/Error';
 import AvatarLogout from './AvatarLogout';
 import { NavLink, useLocation } from 'react-router-dom'; // Utilisation de NavLink
 import AvatarAndName from './AvatarAndName';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUsers } from '@fortawesome/free-solid-svg-icons';
+import { faUsers, faUserTie } from '@fortawesome/free-solid-svg-icons';
+import PropTypes from 'prop-types';
 
 const drawerWidth = 240;
 
@@ -95,6 +96,37 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   }),
 );
 
+const FontAwesomeSvgIcon = React.forwardRef((props, ref) => {
+  const { icon } = props;
+
+  const {
+    icon: [width, height, , , svgPathData],
+  } = icon;
+
+  return (
+    <SvgIcon ref={ref} viewBox={`0 0 ${width} ${height}`}>
+      {typeof svgPathData === 'string' ? (
+        <path d={svgPathData} />
+      ) : (
+        /**
+         * A multi-path Font Awesome icon seems to imply a duotune icon. The 0th path seems to
+         * be the faded element (referred to as the "secondary" path in the Font Awesome docs)
+         * of a duotone icon. 40% is the default opacity.
+         *
+         * @see https://fontawesome.com/how-to-use/on-the-web/styling/duotone-icons#changing-opacity
+         */
+        svgPathData.map((d, i) => (
+          <path style={{ opacity: i === 0 ? 0.4 : 1 }} d={d} />
+        ))
+      )}
+    </SvgIcon>
+  );
+});
+
+FontAwesomeSvgIcon.propTypes = {
+  icon: PropTypes.any.isRequired,
+};
+
 export default function Dashboard({ isPending, isError, retards }) {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
@@ -129,6 +161,7 @@ export default function Dashboard({ isPending, isError, retards }) {
 
   const menuItems = [
     { text: 'Tableau de bord', icon: <DashboardIcon />, path: '/tableauBord' },
+    { text: 'Liste des pilotes', icon: <FontAwesomeSvgIcon icon={faUserTie} />, path: '/pilote' },
     { text: 'Liste des navires', icon: <DirectionsBoatIcon />, path: '/navire' },
     { text: 'Liste des quais', icon: <AnchorIcon />, path: '/quai' },
     { text: 'Liste des escales', icon: <SailingIcon />, path: '/escale' },
@@ -136,7 +169,7 @@ export default function Dashboard({ isPending, isError, retards }) {
 
   // Ajout de l'élément de menu pour les statistiques si l'utilisateur est administrateur
   if (role) {
-    menuItems.push({ text: 'Gerer utilisateurs', icon: <FontAwesomeIcon icon={faUsers} />, path: '/usermanager' });
+    menuItems.push({ text: 'Gerer utilisateurs', icon: <FontAwesomeSvgIcon icon={faUsers} />, path: '/usermanager' });
     menuItems.push({ text: 'Statistique', icon: <ShowChartIcon />, path: '/stat' });
   }
 
