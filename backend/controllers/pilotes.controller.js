@@ -19,7 +19,7 @@ const addPilote = asyncHandler(async (req, res) => {
 
 // GET ALL PILOTE
 const getAllPilote = asyncHandler(async (req, res) => {
-    const sql = "SELECT * FROM pilotes";
+    const sql = "SELECT `idPilote` AS id, `nomPilote`, `prenomPilote`, `telPilote`, `emailPilote` FROM `pilotes`";
 
     db.query(sql, (err, data) => {
         if (err) res.status(500).send({error: err.message});
@@ -27,4 +27,20 @@ const getAllPilote = asyncHandler(async (req, res) => {
     })
 })
 
-module.exports = {addPilote, getAllPilote};
+// UPDATE PILOTE
+const updatePilote = asyncHandler(async (req, res) => {
+    const {nomPilote, prenomPilote, telPilote, emailPilote, id} = req.body;
+
+    const sql = "UPDATE `pilotes` SET `nomPilote`= ?, `prenomPilote`= ?, `telPilote` = ?, `emailPilote` = ? WHERE idPilote = ?";
+    const values = [nomPilote, prenomPilote, telPilote, emailPilote, id];
+
+    db.query(sql, values, (err, data) => {
+        if (err) {
+            res.status(500).send({error: err});
+            return;
+        }
+        res.status(201).send({message: "Pilote modifié"});
+    })
+});
+
+module.exports = {addPilote, getAllPilote, updatePilote};
