@@ -16,7 +16,7 @@ db.connect((err) => {
         console.error("Connexion à la base de donnée échoué: " + err.stack);
         return;
     }
-    console.log("Connecter à la base de donnée");
+    console.log("Connecté à la base de donnée");
 })
 
 module.exports = db;
