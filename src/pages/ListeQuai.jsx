@@ -113,19 +113,20 @@ function Row({ row, search, handleAddNav, handleEdit, handleDelete, handleRemove
                     >
                         <EditIcon fontSize='small' />
                     </IconButton>
-                    {role == "admin" && 
-                        <IconButton
-                            sx={{
-                                color: 'gray', // Couleur de base
-                                '&:hover': {
-                                    color: 'error.main', // Couleur au survol (par défaut la couleur d'erreur de MUI)
-                                    backgroundColor: 'rgb(211 47 47 / 6%)'
-                                }
-                            }}
-                            onClick={() => handleDelete(row)}
-                        >
-                            <DeleteIcon fontSize='small' />
-                        </IconButton>
+                    {
+                        role === "admin" && 
+                            <IconButton
+                                sx={{
+                                    color: 'gray', // Couleur de base
+                                    '&:hover': {
+                                        color: 'error.main', // Couleur au survol (par défaut la couleur d'erreur de MUI)
+                                        backgroundColor: 'rgb(211 47 47 / 6%)'
+                                    }
+                                }}
+                                onClick={() => handleDelete(row)}
+                            >
+                                <DeleteIcon fontSize='small' />
+                            </IconButton>
                     }
                 </TableCell>
             </TableRow>
