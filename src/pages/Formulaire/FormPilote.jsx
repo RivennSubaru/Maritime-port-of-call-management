@@ -8,16 +8,28 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { Controller, useForm } from 'react-hook-form';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
+import { useEffect } from 'react';
 
-const FormPilote = () => {
+const FormPilote = ({initialValues, handleClose}) => {
     const {handleSubmit, control, reset, formState:{errors}} = useForm();
+
+    // Pour actualiser automatiquement la liste
+    const queryClient = useQueryClient();
 
     const mutation = useMutation({
         mutationFn: async (data) => {
-            await axios.post("http://localhost:8081/pilote/add", data);
+            if (initialValues) {
+
+                // Cas de modification
+                await axios.post("http://localhost:8081/pilote/update", data);
+            } else {
+
+                // Cas d'ajout
+                await axios.post("http://localhost:8081/pilote/add", data);
+            }
         },
         onError: (error) => {
             setTimeout(() => {
@@ -29,19 +41,35 @@ const FormPilote = () => {
                 );
             }, 1000);
             console.log(error);
+        },
+        onSuccess: () => {
+            reset([]);
+            
+            // Recharger la liste apres ajout ou modification
+            queryClient.invalidateQueries("pilote");
+
+            // Fermer la fenetre
+            handleClose();
         }
     })
 
-    const onSubmit = (data) => {
-        toast.promise(
+    const onSubmit = async (data) => {
+        await toast.promise(
             mutation.mutateAsync(data),
             {
                 loading: "chargement...",
-                success: "Pilote ajouté",
+                success: initialValues ? "Pilote modifié" : "Pilote ajouté",
                 error: "Pilote non ajouté"
             }
         )
     }
+
+    // Preremplissage du formulaire
+    useEffect(() => {
+        if (initialValues) {
+            reset(initialValues);
+        }
+    }, [initialValues, reset]);
 
     return (
         <Container component="main" maxWidth="xs">
@@ -153,7 +181,7 @@ const FormPilote = () => {
                         variant="contained"
                         sx={{ mt: 3, mb: 2, bgcolor: "#3fc8ff"}}
                     >
-                        Ajouter
+                        {initialValues ? "Modifier" : "Ajouter"}
                     </Button>
                 </Box>
             </Box>
