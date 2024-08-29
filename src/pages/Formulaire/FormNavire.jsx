@@ -50,7 +50,7 @@ const FormNavire = ({initialValues, handleClose}) => {
     // Afficher la liste des pilotes
     const afficheListePilotes = () => {
 
-        const {isPending, isError, data: pilotes} = fetchQuery(fetchPilote, "pilotes")
+        const {isPending, isError, data: pilotes} = fetchQuery(fetchPilote, "pilotes");
 
         if (isPending) {
             return [<MenuItem key="loading" value="" disabled>Chargement...</MenuItem>];
@@ -61,7 +61,7 @@ const FormNavire = ({initialValues, handleClose}) => {
         }
     
         return pilotes.map((pilote) => (
-            <MenuItem key={pilote.idPilote} value={pilote.idPilote}>{pilote.nomPilote + ' ' + pilote.prenomPilote}</MenuItem>
+            <MenuItem key={pilote.id} value={pilote.id}>{pilote.nomPilote + ' ' + pilote.prenomPilote}</MenuItem>
         ));
     };
 
@@ -70,8 +70,6 @@ const FormNavire = ({initialValues, handleClose}) => {
         setPiloteName(event.target.value);
         setValue('piloteName', event.target.value);
         setValue('idPilote', event.target.value);
-
-        console.log(event.target.value);
     };
 
     // Gestion de l'affichage de la formulaire spéciale pilote
