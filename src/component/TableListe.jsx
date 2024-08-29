@@ -377,19 +377,19 @@ const TableListe = ({columns, apiUrl, Item, FormComponent, setNotif}) => {
                                     >
                                         <EditIcon fontSize='small' />
                                     </IconButton>
-                                    {Item != 'escale' && role == "admin" &&
-                                    <IconButton
-                                        sx={{
-                                            color: 'gray', // Couleur de base
-                                            '&:hover': {
-                                                color: 'error.main', // Couleur au survol (par défaut la couleur d'erreur de MUI)
-                                                backgroundColor: 'rgba(211, 47, 47, 0.04)'
-                                            }
-                                        }}
-                                        onClick={() => handleDelete(row)}
-                                    >
-                                        <DeleteIcon fontSize='small' />
-                                    </IconButton>
+                                    {(Item !== 'escale' && Item !== 'pilote') && role == "admin" &&
+                                        <IconButton
+                                            sx={{
+                                                color: 'gray', // Couleur de base
+                                                '&:hover': {
+                                                    color: 'error.main', // Couleur au survol (par défaut la couleur d'erreur de MUI)
+                                                    backgroundColor: 'rgba(211, 47, 47, 0.04)'
+                                                }
+                                            }}
+                                            onClick={() => handleDelete(row)}
+                                        >
+                                            <DeleteIcon fontSize='small' />
+                                        </IconButton>
                                     }
                                 </TableCell>
                             </TableRow>
