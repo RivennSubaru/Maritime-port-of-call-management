@@ -120,7 +120,7 @@ const Connexion = () => {
                         required
                         fullWidth
                         id="pseudo"
-                        label="Pseudo"
+                        label="Nom d'utilisateur"
                         autoComplete="family-name"
                         {...register("pseudo", {required: "Ce champ ne peut être vide"})}
                         error={!!errors.pseudo}
